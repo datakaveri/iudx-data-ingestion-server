@@ -17,4 +17,8 @@ public class Constants {
 	public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
 	public static final String NGSILD_ENTITIES_URL = NGSILD_BASE_PATH + "/entities";
 
+	// request/response params
+	public static final String CONTENT_TYPE = "content-type";
+	public static final String APPLICATION_JSON = "application/json";
+
 }
