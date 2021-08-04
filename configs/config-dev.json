@@ -1,0 +1,45 @@
+{
+	"version": "1.0",
+	"zookeepers": [
+		"zookeeper"
+	],
+	"clusterId": "iudx-di-cluster",
+	"host": "server",
+	"modules": [
+		{
+			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
+			"verticleInstances": 2,
+			"dataBrokerIP": "",
+			"dataBrokerPort": "",
+			"dataBrokerVhost": "",
+			"dataBrokerUserName": "",
+			"dataBrokerPassword": "",
+			"dataBrokerManagementPort": "",
+			"connectionTimeout": "6000",
+			"requestedHeartbeat": "60",
+			"handshakeTimeout": "6000",
+			"requestedChannelMax": "5",
+			"networkRecoveryInterval": "500",
+			"automaticRecoveryEnabled": "true"
+		},
+		{
+			"id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
+			"verticleInstances": 2,
+			"keystore": "configs/keystore.jks",
+			"keystorePassword": "",
+			"authServerHost": "localhost.auth",
+			"catServerHost": "localhost.catalogue",
+			"catServerPort": 1234,
+			"resourceServerId": "<id-of-rs-in-catalogue>",
+			"serverMode": "testing"
+		},
+		{
+			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
+			"ssl": false,
+			"production": true,
+			"keystore": "configs/keystore.jks",
+			"keystorePassword": "",
+			"verticleInstances": 2
+		}
+	]
+}
