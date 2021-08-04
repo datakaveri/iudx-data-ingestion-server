@@ -1,5 +1,16 @@
 package iudx.data.ingestion.server.apiserver;
 
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_ACCEPT;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_ALLOW_ORIGIN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_CONTENT_LENGTH;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_CONTENT_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_HOST;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_ORIGIN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_REFERER;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +21,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
@@ -18,7 +28,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
-import static iudx.data.ingestion.server.apiserver.util.Constants.*;
+import iudx.data.ingestion.server.databroker.DataBrokerService;
 
 /**
  * The Data Ingestion API Verticle.
@@ -52,6 +62,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 	private boolean isSSL, isProduction;
 	private String keystore;
 	private String keystorePassword;
+	private DataBrokerService databroker;
 
 	@Override
 	public void start() throws Exception {
@@ -130,6 +141,8 @@ public class ApiServerVerticle extends AbstractVerticle {
 		server = vertx.createHttpServer(serverOptions);
 		server.requestHandler(router).listen(port);
 
+		databroker = DataBrokerService.createProxy(vertx, BROKER_SERVICE_ADDRESS);
+
 	}
 
 	/**
@@ -141,13 +154,33 @@ public class ApiServerVerticle extends AbstractVerticle {
 
 	private void handleEntitiesPostQuery(RoutingContext routingContext) {
 		LOGGER.debug("Info:handleEntitiesQuery method started.;");
-		HttpServerRequest request = routingContext.request();
 		JsonObject requestJson = routingContext.getBodyAsJson();
 		LOGGER.debug("Info: request Json :: ;" + requestJson);
 
 		/* Handles HTTP response from server to client */
 		HttpServerResponse response = routingContext.response();
 
+		databroker.publishData(requestJson, handler -> {
+			if (handler.succeeded()) {
+				LOGGER.info("Success: Count Success");
+				handleSuccessResponse(response, 200, handler.result().toString());
+			} else if (handler.failed()) {
+				LOGGER.error("Fail: Count Fail");
+			}
+		});
+
+	}
+
+	/**
+	 * handle HTTP response.
+	 * 
+	 * @param response       response object
+	 * @param responseType   Http status for response
+	 * @param isBodyRequired body is required or not for response
+	 */
+
+	private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
+		response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(statusCode).end(result);
 	}
 
 }
