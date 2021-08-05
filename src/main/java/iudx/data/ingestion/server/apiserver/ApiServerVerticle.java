@@ -58,7 +58,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
 	private HttpServer server;
 	private Router router;
-	private int port = 8443;
+	private int port = 18443;
 	private boolean isSSL, isProduction;
 	private String keystore;
 	private String keystorePassword;
@@ -78,14 +78,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 		allowedHeaders.add(HEADER_ALLOW_ORIGIN);
 
 		Set<HttpMethod> allowedMethods = new HashSet<>();
-		allowedMethods.add(HttpMethod.GET);
 		allowedMethods.add(HttpMethod.POST);
-		allowedMethods.add(HttpMethod.OPTIONS);
-		allowedMethods.add(HttpMethod.DELETE);
-		allowedMethods.add(HttpMethod.PATCH);
-		allowedMethods.add(HttpMethod.PUT);
-
-		router = Router.router(vertx);
 
 		/* Define the APIs, methods, endpoints and associated methods. */
 
@@ -101,7 +94,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
 		router.route().handler(BodyHandler.create());
 
-		router.post(NGSILD_ENTITIES_URL).handler(this::handleEntitiesPostQuery);
+		router.post(NGSILD_ENTITIES_URL).consumes(APPLICATION_JSON).handler(this::handleEntitiesPostQuery);
 
 		/* Read ssl configuration. */
 		isSSL = config().getBoolean("ssl");
