@@ -153,7 +153,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 	 */
 
 	private void handleEntitiesPostQuery(RoutingContext routingContext) {
-		LOGGER.debug("Info:handleEntitiesQuery method started.;");
+		LOGGER.debug("Info:handleEntitiesPostQuery method started.;");
 		JsonObject requestJson = routingContext.getBodyAsJson();
 		LOGGER.debug("Info: request Json :: ;" + requestJson);
 
@@ -162,10 +162,10 @@ public class ApiServerVerticle extends AbstractVerticle {
 
 		databroker.publishData(requestJson, handler -> {
 			if (handler.succeeded()) {
-				LOGGER.info("Success: Count Success");
+				LOGGER.info("Success: Ingestion Success");
 				handleSuccessResponse(response, 200, handler.result().toString());
 			} else if (handler.failed()) {
-				LOGGER.error("Fail: Count Fail");
+				LOGGER.error("Fail: Ingestion Fail");
 			}
 		});
 
