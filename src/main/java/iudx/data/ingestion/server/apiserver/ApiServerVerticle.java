@@ -175,8 +175,8 @@ public class ApiServerVerticle extends AbstractVerticle {
 	 * handle HTTP response.
 	 * 
 	 * @param response       response object
-	 * @param responseType   Http status for response
-	 * @param isBodyRequired body is required or not for response
+	 * @param statusCode   Http status for response
+	 * @param result response
 	 */
 
 	private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
