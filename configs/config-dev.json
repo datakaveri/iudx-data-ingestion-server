@@ -1,0 +1,34 @@
+{
+	"version": "1.0",
+	"zookeepers": [
+		"zookeeper"
+	],
+	"clusterId": "iudx-di-cluster",
+	"host": "server",
+	"modules": [
+		{
+			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
+			"verticleInstances": 1,
+			"dataBrokerIP": "databroker.iudx.io",
+			"dataBrokerPort": 29042,
+			"dataBrokerVhost": "IUDX",
+			"dataBrokerUserName": "admin",
+			"dataBrokerPassword": "k7ueZ5$W}a%JJTkh",
+			"dataBrokerManagementPort": 30042,
+			"connectionTimeout": 6000,
+			"requestedHeartbeat": 60,
+			"handshakeTimeout": 6000,
+			"requestedChannelMax": 5,
+			"networkRecoveryInterval": 500,
+			"automaticRecoveryEnabled": "true"
+		},
+		{
+			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
+			"ssl": true,
+			"production": false,
+			"keystore": "configs/keystore.jks",
+			"keystorePassword": "password",
+			"verticleInstances": 2
+		}
+	]
+}

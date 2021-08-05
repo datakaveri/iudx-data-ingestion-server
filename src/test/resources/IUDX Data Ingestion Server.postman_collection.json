@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "466d39b4-bf06-442c-830f-c362eba0951b",
+		"name": "IUDX Data Ingestion Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "200 (success) Valid Method, JSON Object",
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"a\": \"b\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "405 (Method Not Allowed) Invalid API method",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"strictSSL": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"a\": \"b\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "400 (Bad Request) Not a Json Input",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"strictSSL": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"a\": \"b\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "404 (Not Found) Endpoint Not Found",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"strictSSL": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"a\": \"b\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/notfound-endpoint",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"notfound-endpoint"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
