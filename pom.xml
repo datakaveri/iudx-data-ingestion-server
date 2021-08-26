@@ -27,6 +27,7 @@
 		<junit-jupiter.params>5.5.2</junit-jupiter.params>
 		<slf4j.version>1.7.25</slf4j.version>
 		<lmax-disruptor.version>3.4.4</lmax-disruptor.version>
+		<jackson-core.version>2.12.3</jackson-core.version>
 
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
@@ -34,8 +35,6 @@
 		<exec.mainClass>iudx.data.ingestion.server.deploy.Deployer</exec.mainClass>
 		<exec.mainClassDev>iudx.data.ingestion.server.deploy.DeployerDev
 		</exec.mainClassDev>
-
-		<jackson-core.version>2.12.3</jackson-core.version>
 	</properties>
 
 	<dependencyManagement>

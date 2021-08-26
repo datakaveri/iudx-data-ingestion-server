@@ -82,10 +82,6 @@ public class DataBrokerVerticle extends AbstractVerticle {
 
     client = RabbitMQClient.create(vertx, config);
 
-    /*
-     * Create a Web Client with the configuration and vertx cluster instance.
-     */
-
     rabbitWebClient = new RabbitWebClient(vertx, webConfig, webClientProperties);
 
     binder = new ServiceBinder(vertx);

@@ -81,7 +81,7 @@ public class RabbitClient {
           .put(EXCHANGE_SET, exchangeList);
       promise.complete(response);
     } else {
-      String url = "/api/exchanges" + vHost;
+      String url = "/api/exchanges/" + vHost;
       rabbitWebClient.requestAsync(REQUEST_GET, url)
           .onComplete(ar -> {
             if (ar.succeeded()) {
