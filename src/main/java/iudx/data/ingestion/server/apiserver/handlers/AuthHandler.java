@@ -6,7 +6,7 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
 import static iudx.data.ingestion.server.apiserver.util.Constants.API_METHOD;
 import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
 import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITITES_URL_REGEX;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITES_URL_REGEX;
 import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
@@ -22,7 +22,6 @@ import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 /**
  * IUDX Authentication handler to authenticate token passed in HEADER
@@ -117,7 +116,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   private String getNormalizedPath(String url) {
     LOGGER.debug("URL : " + url);
     String path = null;
-    if (url.matches(ENTITITES_URL_REGEX)) {
+    if (url.matches(ENTITES_URL_REGEX)) {
       path = NGSILD_ENTITIES_URL;
     }
     return path;

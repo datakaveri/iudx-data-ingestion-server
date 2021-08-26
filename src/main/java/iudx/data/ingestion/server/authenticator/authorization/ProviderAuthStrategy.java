@@ -1,7 +1,6 @@
 package iudx.data.ingestion.server.authenticator.authorization;
 
 import static iudx.data.ingestion.server.authenticator.authorization.Api.ENTITIES;
-import static iudx.data.ingestion.server.authenticator.authorization.Method.GET;
 import static iudx.data.ingestion.server.authenticator.authorization.Method.POST;
 
 import io.vertx.core.json.JsonArray;
@@ -20,14 +19,10 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
   static Map<String, List<AuthorizationRequest>> providerAuthorizationRules = new HashMap<>();
 
   static {
-
     // api access list/rules
     List<AuthorizationRequest> apiAccessList = new ArrayList<>();
     apiAccessList.add(new AuthorizationRequest(POST, ENTITIES));
-    apiAccessList.add(new AuthorizationRequest(GET, ENTITIES));
     providerAuthorizationRules.put("api", apiAccessList);
-
-    // ingestion access list/rules
   }
 
   @Override

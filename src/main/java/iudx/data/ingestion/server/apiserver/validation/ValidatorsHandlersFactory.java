@@ -1,8 +1,7 @@
 package iudx.data.ingestion.server.apiserver.validation;
 
-import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILDQUERY_ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_QUERY_ID;
 
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.apiserver.validation.types.IDTypeValidator;
@@ -39,7 +38,7 @@ public class ValidatorsHandlersFactory {
 
   private List<Validator> getEntityRequestValidations(JsonObject body) {
     List<Validator> validators = new ArrayList<>();
-    validators.add(new IDTypeValidator(body.getString(NGSILDQUERY_ID), true));
+    validators.add(new IDTypeValidator(body.getString(NGSILD_QUERY_ID), true));
     return validators;
   }
 

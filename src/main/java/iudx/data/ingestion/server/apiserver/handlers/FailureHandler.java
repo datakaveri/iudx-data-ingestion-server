@@ -18,7 +18,7 @@ public class FailureHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext context) {
     Throwable failure = context.failure();
-    LOGGER.info("in failure handler 1");
+    LOGGER.info("In failure handler.");
 
     if (failure instanceof DxRuntimeException) {
       DxRuntimeException exception = (DxRuntimeException) failure;

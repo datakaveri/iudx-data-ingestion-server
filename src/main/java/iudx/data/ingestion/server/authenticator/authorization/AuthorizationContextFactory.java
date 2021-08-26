@@ -1,18 +1,16 @@
 package iudx.data.ingestion.server.authenticator.authorization;
 
-import iudx.data.ingestion.server.authenticator.Constants;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_DELEGATE;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_PROVIDER;
 
 public class AuthorizationContextFactory {
 
   public static AuthorizationStrategy create(String role) {
     switch (role) {
-      case Constants.JSON_CONSUMER: {
-        return new ConsumerAuthStrategy();
-      }
-      case Constants.JSON_PROVIDER: {
+      case JSON_PROVIDER: {
         return new ProviderAuthStrategy();
       }
-      case Constants.JSON_DELEGATE: {
+      case JSON_DELEGATE: {
         return new DelegateAuthStrategy();
       }
       default:

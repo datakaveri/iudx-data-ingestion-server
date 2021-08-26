@@ -17,24 +17,22 @@ public class Constants {
   // NGSI-LD endpoints
   public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
   public static final String NGSILD_ENTITIES_URL = NGSILD_BASE_PATH + "/entities";
+
   // path regex
-  public static final String ENTITITES_URL_REGEX = NGSILD_ENTITIES_URL + "(.*)";
+  public static final String ENTITES_URL_REGEX = NGSILD_ENTITIES_URL + "(.*)";
 
   // IUDX management endpoints
-  public static final String IUDX_MANAGEMENT_URL = "/management";
   public static final String IUDX_ADAPTOR_URL = "/ngsi-ld/v1";
   public static final String IUDX_MANAGEMENT_ADAPTER_URL = IUDX_ADAPTOR_URL + "/ingestion";
-  public static final String ADAPTER_URL_REGEX = IUDX_MANAGEMENT_ADAPTER_URL + "(.*)";
 
   /**
    * API Documentation endpoint
    */
   public static final String ROUTE_STATIC_SPEC = "/apis/spec";
   public static final String ROUTE_DOC = "/apis";
-  public static final List<String> bypassEndpoint = List.of(ROUTE_STATIC_SPEC, ROUTE_DOC);
 
   // ngsi-ld/IUDX query paramaters
-  public static final String NGSILDQUERY_ID = "id";
+  public static final String NGSILD_QUERY_ID = "id";
 
   // Header params
   public static final String HEADER_TOKEN = "token";
@@ -52,14 +50,8 @@ public class Constants {
 
   // json fields
   public static final String JSON_TYPE = "type";
-  public static final String JSON_ENTITIES = "entities";
   public static final String JSON_TITLE = "title";
   public static final String JSON_DETAIL = "detail";
-  public static final String DOMAIN = "domain";
-  public static final String USERSHA = "userSha";
-  public static final String RESOURCE_SERVER = "resourceServer";
-  public static final String RESOURCE_GROUP = "resourceGroup";
-  public static final String RESOURCE_NAME = "resourceName";
 
   // messages (Error, Exception, messages..)
   public static final String MSG_BAD_QUERY = "Bad query";

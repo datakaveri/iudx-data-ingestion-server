@@ -18,7 +18,6 @@ public class Constants {
   public static final String CAT_HOST = "host";
   public static final String CAT_SERVER_HOST = "catServerHost";
   public static final String CAT_SERVER_PORT = "catServerPort";
-  public static final String JSON_CONSUMER = "consumer";
   public static final String JSON_PROVIDER = "provider";
   public static final String JSON_DELEGATE = "delegate";
 }
