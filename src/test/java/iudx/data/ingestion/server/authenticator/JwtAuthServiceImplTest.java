@@ -63,7 +63,8 @@ public class JwtAuthServiceImplTest {
     // since test token doesn't contain valid id's, so forcibly put some dummy id in the cache for test.
     openId = "foobar.iudx.io";
     closeId = "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group";
-    invalidId = "";
+
+    invalidId = "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group1";
 
     jwtAuthenticationService.resourceIdCache.put(openId, "OPEN");
     jwtAuthenticationService.resourceIdCache.put(closeId, "CLOSED");
@@ -134,7 +135,6 @@ public class JwtAuthServiceImplTest {
   public void disallow4ClosedEndpoint(VertxTestContext testContext) {
 
     //failing because IsValidId commented in JwtAuthenticationServiceImpl line number 91.
-
     JsonObject authInfo = new JsonObject();
 
     authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
@@ -152,12 +152,14 @@ public class JwtAuthServiceImplTest {
     });
   }
 
+
   @Test
   @DisplayName("success - allow delegate access to /entities endpoint")
   public void success4DelegateTokenEntitiesAPI(VertxTestContext testContext) {
 
     JsonObject request = new JsonObject();
     JsonObject authInfo = new JsonObject();
+
 
     authInfo.put("token", JwtTokenHelper.closedDelegateApiToken);
     authInfo.put("id", closeId);

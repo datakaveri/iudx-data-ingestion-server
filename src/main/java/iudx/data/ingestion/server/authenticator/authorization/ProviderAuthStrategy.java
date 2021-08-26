@@ -23,6 +23,7 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
     List<AuthorizationRequest> apiAccessList = new ArrayList<>();
     apiAccessList.add(new AuthorizationRequest(POST, ENTITIES));
     providerAuthorizationRules.put("api", apiAccessList);
+
   }
 
   @Override

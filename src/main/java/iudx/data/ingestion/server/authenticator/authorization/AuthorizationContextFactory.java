@@ -3,6 +3,7 @@ package iudx.data.ingestion.server.authenticator.authorization;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_DELEGATE;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_PROVIDER;
 
+
 public class AuthorizationContextFactory {
 
   public static AuthorizationStrategy create(String role) {

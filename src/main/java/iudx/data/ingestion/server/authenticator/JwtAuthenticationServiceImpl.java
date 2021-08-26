@@ -79,7 +79,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     String token = authenticationInfo.getString(TOKEN);
 
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
-
     // stop moving forward if jwtDecode is a failure.
 
     ResultContainer result = new ResultContainer();
@@ -88,7 +87,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
 
-//      return isValidId(result.jwtData, id);
+    //      return isValidId(result.jwtData, id);
       //uncomment above line once you get a valid JWT token. and delete below line
 
       return Future.succeededFuture(true);
@@ -185,11 +184,11 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     return promise.future();
   }
-
-  // class to contain intermediate data for token introspection
+    // class to contain intermediate data for token introspection
   final class ResultContainer {
     JwtData jwtData;
     boolean isResourceExist;
+
   }
 
 

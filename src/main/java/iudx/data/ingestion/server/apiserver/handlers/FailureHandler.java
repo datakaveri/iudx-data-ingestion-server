@@ -18,8 +18,8 @@ public class FailureHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext context) {
     Throwable failure = context.failure();
-    LOGGER.info("In failure handler.");
 
+    LOGGER.info("In failure handler.");
     if (failure instanceof DxRuntimeException) {
       DxRuntimeException exception = (DxRuntimeException) failure;
       LOGGER.error(exception.getUrn().getUrn() + " : " + exception.getMessage());
@@ -45,7 +45,6 @@ public class FailureHandler implements Handler<RoutingContext> {
           .putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
           .setStatusCode(HttpStatus.SC_BAD_REQUEST)
           .end(validationFailureResponse(validationErrorMessage).toString());
-
     }
 
     context.next();

@@ -12,6 +12,7 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
+
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
