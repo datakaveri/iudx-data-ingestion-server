@@ -170,7 +170,7 @@
 		</dependency>
         <dependency>
             <groupId>datakaveri.org</groupId>
-            <artifactId>iudx.resource.server</artifactId>
+            <artifactId>iudx.data.ingestion.server</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
