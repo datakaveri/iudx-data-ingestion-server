@@ -33,7 +33,6 @@ public class RabbitWebClient {
 
   public Future<HttpResponse<Buffer>> requestAsync(String requestType, String url,
                                                    JsonObject requestJson) {
-    LOGGER.debug("Info : RabbitMQClientImpl#requestAsync() started");
     LOGGER.debug("Info : " + requestType + " : " + url + " : " + requestJson);
     Promise<HttpResponse<Buffer>> promise = Promise.promise();
     HttpRequest<Buffer> webRequest = createRequest(requestType, url);
@@ -49,7 +48,7 @@ public class RabbitWebClient {
   }
 
   public Future<HttpResponse<Buffer>> requestAsync(String requestType, String url) {
-    LOGGER.debug("Info : RabbitMQClientImpl#requestAsync() started");
+    LOGGER.debug("Info : " + requestType + " : " + url);
     Promise<HttpResponse<Buffer>> promise = Promise.promise();
     HttpRequest<Buffer> webRequest = createRequest(requestType, url);
     webRequest.send(ar -> {

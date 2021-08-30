@@ -1,14 +1,17 @@
 package iudx.data.ingestion.server.databroker;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rabbitmq.RabbitMQClient;
+import iudx.data.ingestion.server.databroker.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
@@ -17,11 +20,14 @@ public class DataBrokerServiceImpl implements DataBrokerService {
   private static final Logger LOGGER = LogManager.getLogger(DataBrokerServiceImpl.class);
   private final RabbitClient rabbitClient;
   private final String databrokerVhost;
-  private HashSet<String> exchangeList = new HashSet();
+  private final Cache<String, Boolean> exchangeListCache = CacheBuilder.newBuilder().maximumSize(1000)
+      .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
 
   public DataBrokerServiceImpl(RabbitMQClient client, RabbitWebClient rabbitWebClient, String vHost) {
     this.rabbitClient = new RabbitClient(client, rabbitWebClient);
     this.databrokerVhost = vHost;
+
+    rabbitClient.populateExchangeCache(databrokerVhost, exchangeListCache);
   }
 
   @Override
@@ -29,14 +35,16 @@ public class DataBrokerServiceImpl implements DataBrokerService {
     // TODO Auto-generated method stub
     LOGGER.debug("Info : DataBrokerServiceImpl#publishData() started");
     if (request != null && !request.isEmpty()) {
-      rabbitClient.getAllExchanges(request, databrokerVhost, exchangeList)
+      JsonObject metaData = Util.getMetadata(request);
+      String exchange = metaData.getString(EXCHANGE_NAME);
+      Boolean doesExchangeExist = exchangeListCache.getIfPresent(exchange);
+      rabbitClient.getExchange(exchange, databrokerVhost, doesExchangeExist)
           .compose(ar -> {
-            exchangeList = (HashSet<String>) ar.getValue(EXCHANGE_SET);
             Boolean exchangeFound = ar.getBoolean(DOES_EXCHANGE_EXIST);
-            if (!exchangeFound) {
+            exchangeListCache.put(exchange, exchangeFound);
+            if(!exchangeFound) {
               return Future.failedFuture("Bad Request: Resource ID does not exist");
             }
-            JsonObject metaData = ar.getJsonObject(EXCHANGE_METADATA);
             return rabbitClient.publishMessage(request, metaData);
           })
           .onSuccess(ar -> {

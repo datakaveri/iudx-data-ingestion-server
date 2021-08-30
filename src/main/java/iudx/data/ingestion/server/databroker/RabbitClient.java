@@ -1,15 +1,15 @@
 package iudx.data.ingestion.server.databroker;
 
+import com.google.common.cache.Cache;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rabbitmq.RabbitMQClient;
 import iudx.data.ingestion.server.databroker.util.Util;
+import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.HashSet;
 
 import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
@@ -68,41 +68,63 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> getAllExchanges(JsonObject request, String vHost, HashSet<String> exchangeList) {
+  private Future<JsonObject> fetchExchange(String exchangeName, String vHost) {
+    LOGGER.debug("INFO: Fetching Exchange: {} from vHost: {}", exchangeName, vHost);
     Promise<JsonObject> promise = Promise.promise();
-    JsonObject response = new JsonObject();
-    JsonObject metaData = Util.getMetadata(request);
-    String exchangeName = metaData.getString(EXCHANGE_NAME);
-    response.put(EXCHANGE_METADATA, metaData);
-    LOGGER.debug("Fetching all exchanges");
-    if (!exchangeList.isEmpty() && exchangeList.contains(exchangeName)) {
-      response
-          .put(DOES_EXCHANGE_EXIST, true)
-          .put(EXCHANGE_SET, exchangeList);
-      promise.complete(response);
-    } else {
-      String url = "/api/exchanges/" + vHost;
-      rabbitWebClient.requestAsync(REQUEST_GET, url)
-          .onComplete(ar -> {
-            if (ar.succeeded()) {
-              HashSet<String> updatedList = new HashSet<>();
-              JsonArray allExchanges = ar.result().bodyAsJsonArray();
-              for (int i = 0; i < allExchanges.size(); i++) {
-                JsonObject exchangeObj = allExchanges.getJsonObject(i);
-                String exchange = exchangeObj.getString(NAME);
-                if (!exchange.isEmpty()) {
-                  updatedList.add(exchange);
-                }
-              }
-              response
-                  .put(EXCHANGE_SET, updatedList)
-                  .put(DOES_EXCHANGE_EXIST, updatedList.contains(exchangeName));
-              promise.complete(response);
+    JsonObject result = new JsonObject();
+    String exchangeUrl = Util.convertExchangeIntoUrl(exchangeName);
+    String url = "/api/exchanges/" + vHost + "/" + exchangeUrl;
+    rabbitWebClient.requestAsync(REQUEST_GET, url)
+        .onComplete(ar -> {
+          if (ar.succeeded()) {
+            if (ar.result().statusCode() == HttpStatus.SC_OK) {
+              result.put(DOES_EXCHANGE_EXIST, true);
             } else {
-              promise.fail(ar.cause());
-              LOGGER.error("ERROR: Could not get all exchanges due to {}", ar.cause().toString());
+              result.put(DOES_EXCHANGE_EXIST, false);
+            }
+            promise.complete(result);
+          } else {
+            promise.fail(ar.cause());
+          }
+        });
+    return promise.future();
+  }
+
+  public Future<Boolean> populateExchangeCache(String vHost, Cache<String, Boolean> exchangeListCache) {
+    Promise<Boolean> promise = Promise.promise();
+    String url = "/api/exchanges/" + vHost;
+    rabbitWebClient.requestAsync(REQUEST_GET, url)
+        .onSuccess(ar -> {
+          JsonArray response = ar.bodyAsJsonArray();
+          response.forEach(json -> {
+            JsonObject exchange = (JsonObject) json;
+            String exchangeName = exchange.getString(NAME);
+            if (!exchangeName.isEmpty()) {
+              LOGGER.debug("Adding {} exchange into cache", exchangeName);
+              exchangeListCache.put(exchangeName, true);
             }
           });
+        })
+        .onFailure(ar -> {
+          LOGGER.fatal(ar.getCause());
+        });
+    promise.complete(true);
+    return promise.future();
+  }
+
+  public Future<JsonObject> getExchange(String exchange, String vHost, Boolean doesExchangeExist) {
+    LOGGER.debug("INFO: Getting exchange: {} from vHost: {}", exchange, vHost);
+    Promise<JsonObject> promise = Promise.promise();
+    JsonObject response = new JsonObject();
+    if (doesExchangeExist == null) {
+      LOGGER.debug("INFO: Cache miss");
+      fetchExchange(exchange, vHost)
+          .onSuccess(promise::complete)
+          .onFailure(ar -> promise.fail(ar.getCause()));
+    } else {
+      LOGGER.debug("INFO: Cache hit, with result: {}", doesExchangeExist);
+      response.put(DOES_EXCHANGE_EXIST, doesExchangeExist);
+      promise.complete(response);
     }
     return promise.future();
   }
