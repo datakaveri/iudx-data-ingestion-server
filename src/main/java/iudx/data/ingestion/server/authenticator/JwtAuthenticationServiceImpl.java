@@ -87,7 +87,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
 
-    //      return isValidId(result.jwtData, id);
+      //   return isValidId(result.jwtData, id);
       //uncomment above line once you get a valid JWT token. and delete below line
 
       return Future.succeededFuture(true);
