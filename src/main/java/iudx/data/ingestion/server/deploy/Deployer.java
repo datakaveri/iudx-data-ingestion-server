@@ -164,7 +164,7 @@ public class Deployer {
 	      latch_cluster.await(5, TimeUnit.SECONDS);
 	      vertx.close(handler -> {
 	        if (handler.succeeded()) {
-	          LOGGER.info("vertx closed succesfully");
+	          LOGGER.info("vertx closed successfully");
 	          latch_vertx.countDown();
 	        } else {
 	          LOGGER.warn("Vertx didn't close properly, reason:" + handler.cause());

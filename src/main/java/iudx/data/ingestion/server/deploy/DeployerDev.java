@@ -24,11 +24,14 @@ public class DeployerDev {
 	private static final Logger LOGGER = LogManager.getLogger(DeployerDev.class);
 
 	public static void recursiveDeploy(Vertx vertx, JsonObject configs, int i) {
+		LOGGER.info("value of i"+ configs.toString());
 		if (i >= configs.getJsonArray("modules").size()) {
 			LOGGER.info("Deployed all");
 			return;
 		}
 		JsonObject config = configs.getJsonArray("modules").getJsonObject(i);
+		String hostName = configs.getString("host");
+		config.put("host", hostName);
 		String moduleName = config.getString("id");
 		int numInstances = config.getInteger("verticleInstances");
 		vertx.deployVerticle(moduleName, new DeploymentOptions().setInstances(numInstances).setConfig(config), ar -> {
