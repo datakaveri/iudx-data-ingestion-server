@@ -39,7 +39,11 @@
 			"production": true,
 			"keystore": "configs/keystore.jks",
 			"keystorePassword": "",
-			"verticleInstances": 2
+			"verticleInstances": 2,
+			"authServerHost": "localhost.auth",
+			"catServerHost": "",
+			"catServerPort": 123,
+			"resourceServerId": "localhost.rs"
 		}
 	]
 }
