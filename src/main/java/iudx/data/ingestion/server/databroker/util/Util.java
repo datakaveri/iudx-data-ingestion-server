@@ -1,8 +1,6 @@
 package iudx.data.ingestion.server.databroker.util;
 
-import static iudx.data.ingestion.server.databroker.util.Constants.EXCHANGE_NAME;
-import static iudx.data.ingestion.server.databroker.util.Constants.ROUTING_KEY;
-import static iudx.data.ingestion.server.databroker.util.Constants.ROUTING_KEY_ALL;
+import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 import io.vertx.core.json.JsonObject;
 
@@ -13,13 +11,19 @@ public class Util {
     String id = request.getString("id");
     String[] arr = id.split("/");
     String exchangeName = getExchangeName(arr);
-    result.put(EXCHANGE_NAME, exchangeName);
+    result
+        .put(EXCHANGE_NAME, exchangeName)
+        .put(EXCHANGE_URL, getExchangeUrl(arr));
     if (arr.length == 5) {
       result.put(ROUTING_KEY, getRoutingKey(exchangeName, getResourceName(arr)));
     } else {
       result.put(ROUTING_KEY, getRoutingKey(exchangeName));
     }
     return result;
+  }
+
+  public static String convertExchangeIntoUrl(String exchange) {
+    return exchange.replaceAll("/", "%2F");
   }
 
   private static String getResourceName(String[] arr) {
@@ -63,5 +67,14 @@ public class Util {
     StringBuilder sb = new StringBuilder(exchangeName);
     return sb.append('/').append('.').append(resourceName).toString();
   }
-}
 
+  private static String getExchangeUrl(String[] arr) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 4; i++) {
+      sb.append(arr[i]);
+      sb.append("%2F");
+    }
+    sb.setLength(sb.length() - 1);
+    return sb.toString();
+  }
+}
