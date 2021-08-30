@@ -78,8 +78,10 @@ public class RabbitClient {
         .onComplete(ar -> {
           if (ar.succeeded()) {
             if (ar.result().statusCode() == HttpStatus.SC_OK) {
+              LOGGER.debug("Given exchange exists");
               result.put(DOES_EXCHANGE_EXIST, true);
             } else {
+              LOGGER.debug("Given exchange does not exists");
               result.put(DOES_EXCHANGE_EXIST, false);
             }
             promise.complete(result);
@@ -122,7 +124,7 @@ public class RabbitClient {
           .onSuccess(promise::complete)
           .onFailure(ar -> promise.fail(ar.getCause()));
     } else {
-      LOGGER.debug("INFO: Cache hit, with result: {}", doesExchangeExist);
+      LOGGER.debug("INFO: Cache hit");
       response.put(DOES_EXCHANGE_EXIST, doesExchangeExist);
       promise.complete(response);
     }

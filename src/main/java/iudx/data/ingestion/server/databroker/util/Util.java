@@ -23,7 +23,7 @@ public class Util {
   }
 
   public static String convertExchangeIntoUrl(String exchange) {
-    return exchange.replaceAll("/", "%");
+    return exchange.replaceAll("/", "%2F");
   }
 
   private static String getResourceName(String[] arr) {
@@ -72,7 +72,7 @@ public class Util {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < 4; i++) {
       sb.append(arr[i]);
-      sb.append('%');
+      sb.append("%2F");
     }
     sb.setLength(sb.length() - 1);
     return sb.toString();

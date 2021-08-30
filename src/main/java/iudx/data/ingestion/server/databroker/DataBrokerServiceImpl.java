@@ -41,10 +41,10 @@ public class DataBrokerServiceImpl implements DataBrokerService {
       rabbitClient.getExchange(exchange, databrokerVhost, doesExchangeExist)
           .compose(ar -> {
             Boolean exchangeFound = ar.getBoolean(DOES_EXCHANGE_EXIST);
-            exchangeListCache.put(exchange, exchangeFound);
             if(!exchangeFound) {
               return Future.failedFuture("Bad Request: Resource ID does not exist");
             }
+            exchangeListCache.put(exchange, true);
             return rabbitClient.publishMessage(request, metaData);
           })
           .onSuccess(ar -> {
