@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 public enum ResponseUrn {
 
-  SUCCESS("urn:dx:rs:success", "successful operations"),
+  SUCCESS("urn:dx:rs:success", "success"),
   INVALID_PARAM("urn:dx:rs:invalidParameter", "Invalid parameter passed"),
   INVALID_OPERATION("urn:dx:rs:invalidOperation", "Invalid operation"),
   UNAUTHORIZED_ENDPOINT("urn:dx:rs:unauthorizedEndpoint", "Access to endpoint is not available"),
@@ -13,6 +13,7 @@ public enum ResponseUrn {
   MISSING_TOKEN("urn:dx:rs:missingAuthorizationToken", "Token needed and not present"),
   INVALID_TOKEN("urn:dx:rs:invalidAuthorizationToken", "Token is invalid"),
   RESOURCE_NOT_FOUND("urn:dx:rs:resourceNotFound", "Document of given id does not exist"),
+  BAD_REQUEST("urn:dx:rs:badRequest","Bad request"),
 
 
   LIMIT_EXCEED("urn:dx:rs:requestLimitExceeded", "Operation exceeds the default value of limit"),
