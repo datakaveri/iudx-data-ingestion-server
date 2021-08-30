@@ -90,7 +90,6 @@ public class DataBrokerVerticle extends AbstractVerticle {
     /* Publish the Data Broker service with the Event Bus against an address. */
 
     consumer = binder.setAddress(BROKER_SERVICE_ADDRESS).register(DataBrokerService.class, databroker);
-
   }
 
   @Override
