@@ -1,6 +1,17 @@
 package iudx.data.ingestion.server.apiserver;
 
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
+import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
+import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -17,15 +28,13 @@ import io.vertx.ext.web.handler.CorsHandler;
 import iudx.data.ingestion.server.apiserver.handlers.AuthHandler;
 import iudx.data.ingestion.server.apiserver.handlers.FailureHandler;
 import iudx.data.ingestion.server.apiserver.handlers.ValidationHandler;
+import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
 import iudx.data.ingestion.server.apiserver.service.CatalogueService;
 import iudx.data.ingestion.server.apiserver.util.Constants;
+import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import iudx.data.ingestion.server.databroker.DataBrokerService;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Data Ingestion API Verticle.
@@ -178,10 +187,12 @@ public class ApiServerVerticle extends AbstractVerticle {
             handleSuccessResponse(response, 200, handler.result().toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
+            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
           }
         });
       } else {
         LOGGER.error("Fail: ID does not exist. ");
+        handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
       }
     });
   }
@@ -198,5 +209,17 @@ public class ApiServerVerticle extends AbstractVerticle {
     response.putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON).setStatusCode(statusCode)
         .end(result);
   }
+
+  private void handleFailedResponse(HttpServerResponse response, int statusCode, ResponseUrn failureType) {
+    HttpStatusCode status = HttpStatusCode.getByValue(statusCode);
+    response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(status.getValue())
+    .end(generateResponse(failureType, status).toString());
+  }
+
+  private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {
+    return new JsonObject().put(JSON_TYPE, urn.getUrn()).put(JSON_DETAIL,
+        statusCode.getDescription());
+  }
+
 
 }
