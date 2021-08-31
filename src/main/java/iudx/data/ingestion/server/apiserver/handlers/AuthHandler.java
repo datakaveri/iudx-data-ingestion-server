@@ -1,17 +1,7 @@
 package iudx.data.ingestion.server.apiserver.handlers;
 
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.INVALID_TOKEN;
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.RESOURCE_NOT_FOUND;
-import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
-import static iudx.data.ingestion.server.apiserver.util.Constants.API_METHOD;
-import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
-import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITES_URL_REGEX;
-import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
-import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
+import static iudx.data.ingestion.server.apiserver.util.Constants.*;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -100,6 +90,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {
     return new JsonObject()
         .put(JSON_TYPE, urn.getUrn())
+        .put(JSON_TITLE, statusCode.getDescription())
         .put(JSON_DETAIL, statusCode.getDescription());
   }
 
