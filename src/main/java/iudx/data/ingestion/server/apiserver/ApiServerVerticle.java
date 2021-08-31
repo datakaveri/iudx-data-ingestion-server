@@ -40,9 +40,8 @@ import iudx.data.ingestion.server.databroker.DataBrokerService;
  * The Data Ingestion API Verticle.
  * <h1>Data Ingestion API Verticle</h1>
  * <p>
- * The API Server verticle implements the IUDX Data Ingestion APIs. It handles
- * the API requests from the clients and interacts with the associated Service
- * to respond.
+ * The API Server verticle implements the IUDX Data Ingestion APIs. It handles the API requests from
+ * the clients and interacts with the associated Service to respond.
  * </p>
  *
  * @version 1.0
@@ -160,8 +159,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   }
 
   /**
-   * This method is used to handle all data publication for endpoint
-   * /ngsi-ld/v1/entities.
+   * This method is used to handle all data publication for endpoint /ngsi-ld/v1/entities.
    *
    * @param routingContext RoutingContext Object
    */
@@ -171,7 +169,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     JsonObject requestJson = routingContext.getBodyAsJson();
     LOGGER.debug("Info: request Json :: ;" + requestJson);
 
-//    ValidatorsHandlersFactory validationFactory = new ValidatorsHandlersFactory();
+    // ValidatorsHandlersFactory validationFactory = new ValidatorsHandlersFactory();
     String id = requestJson.getString(ID);
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
@@ -200,20 +198,23 @@ public class ApiServerVerticle extends AbstractVerticle {
   /**
    * handle HTTP response.
    *
-   * @param response   response object
+   * @param response response object
    * @param statusCode Http status for response
-   * @param result     response
+   * @param result response
    */
 
   private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
+    JsonObject res = new JsonObject();
+    res.put(JSON_TYPE, ResponseUrn.SUCCESS.getUrn())
+            .put(JSON_DETAIL, ResponseUrn.SUCCESS.getMessage());
     response.putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON).setStatusCode(statusCode)
-        .end(result);
+        .end(res.toString());
   }
 
   private void handleFailedResponse(HttpServerResponse response, int statusCode, ResponseUrn failureType) {
     HttpStatusCode status = HttpStatusCode.getByValue(statusCode);
     response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(status.getValue())
-    .end(generateResponse(failureType, status).toString());
+        .end(generateResponse(failureType, status).toString());
   }
 
   private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {

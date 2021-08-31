@@ -4,6 +4,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import iudx.data.ingestion.server.apiserver.exceptions.DxRuntimeException;
+import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
 import iudx.data.ingestion.server.apiserver.response.RestResponse;
 import iudx.data.ingestion.server.apiserver.util.Constants;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
@@ -39,7 +40,7 @@ public class FailureHandler implements Handler<RoutingContext> {
     }
 
     if (failure instanceof RuntimeException) {
-
+      LOGGER.error(failure.getMessage());
       String validationErrorMessage = Constants.MSG_BAD_QUERY;
       context.response()
           .putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
@@ -52,9 +53,10 @@ public class FailureHandler implements Handler<RoutingContext> {
   }
 
   private JsonObject validationFailureResponse(String message) {
+    ResponseUrn badReq=ResponseUrn.BAD_REQUEST;
     return new JsonObject()
-        .put(Constants.JSON_TYPE, HttpStatus.SC_BAD_REQUEST)
-        .put(Constants.JSON_TITLE, "Bad Request")
+        .put(Constants.JSON_TYPE, badReq.getUrn())
+        .put(Constants.JSON_TITLE, badReq.getMessage())
         .put(Constants.JSON_DETAIL, message);
   }
 

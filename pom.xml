@@ -27,6 +27,7 @@
 		<junit-jupiter.params>5.7.2</junit-jupiter.params>
 		<slf4j.version>1.7.32</slf4j.version>
 		<lmax-disruptor.version>3.4.4</lmax-disruptor.version>
+		<jackson-core.version>2.12.3</jackson-core.version>
 
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
@@ -34,7 +35,6 @@
 		<exec.mainClass>iudx.data.ingestion.server.deploy.Deployer</exec.mainClass>
 		<exec.mainClassDev>iudx.data.ingestion.server.deploy.DeployerDev
 		</exec.mainClassDev>
-
 	</properties>
 
 	<dependencyManagement>
@@ -54,37 +54,30 @@
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-codegen</artifactId>
 			<classifier>processor</classifier>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-proxy</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-hazelcast</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-discovery</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-web</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-web-client</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -94,7 +87,6 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-rabbitmq-client</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -109,7 +101,6 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-junit5</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -120,7 +111,6 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-unit</artifactId>
-			<version>4.1.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -141,7 +131,6 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-micrometer-metrics</artifactId>
-			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
@@ -164,9 +153,23 @@
 			<version>${lmax-disruptor.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson-core.version}</version>
+		</dependency>
+	  <dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-auth-jwt</artifactId>
-			<version>4.1.2</version>
 		</dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -183,12 +186,9 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-json-schema</artifactId>
-            <version>4.0.3</version>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
-
 
 	<build>
 		<plugins>
