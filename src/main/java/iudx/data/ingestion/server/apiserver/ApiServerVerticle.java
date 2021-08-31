@@ -1,11 +1,7 @@
 package iudx.data.ingestion.server.apiserver;
 
 import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
-import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
-import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -206,7 +202,8 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
     JsonObject res = new JsonObject();
     res.put(JSON_TYPE, ResponseUrn.SUCCESS.getUrn())
-            .put(JSON_DETAIL, ResponseUrn.SUCCESS.getMessage());
+        .put(JSON_TITLE, ResponseUrn.SUCCESS.getMessage())
+        .put(JSON_DETAIL, ResponseUrn.SUCCESS.getMessage());
     response.putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON).setStatusCode(statusCode)
         .end(res.toString());
   }
