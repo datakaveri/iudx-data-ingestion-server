@@ -11,9 +11,7 @@ public class Util {
     String id = request.getString("id");
     String[] arr = id.split("/");
     String exchangeName = getExchangeName(arr);
-    result
-        .put(EXCHANGE_NAME, exchangeName)
-        .put(EXCHANGE_URL, getExchangeUrl(arr));
+    result.put(EXCHANGE_NAME, exchangeName);
     if (arr.length == 5) {
       result.put(ROUTING_KEY, getRoutingKey(exchangeName, getResourceName(arr)));
     } else {
@@ -22,8 +20,8 @@ public class Util {
     return result;
   }
 
-  public static String convertExchangeIntoUrl(String exchange) {
-    return exchange.replaceAll("/", "%2F");
+  public static String convertStringIntoUrl(String s) {
+    return s.replaceAll("/", "%2F");
   }
 
   private static String getResourceName(String[] arr) {
@@ -68,13 +66,10 @@ public class Util {
     return sb.append('/').append('.').append(resourceName).toString();
   }
 
-  private static String getExchangeUrl(String[] arr) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 4; i++) {
-      sb.append(arr[i]);
-      sb.append("%2F");
-    }
-    sb.setLength(sb.length() - 1);
-    return sb.toString();
+  public static JsonObject getResponseJson(int type, String title, String detail) {
+    JsonObject entries = new JsonObject();
+    return entries.put(TYPE, type)
+        .put(TITLE, title)
+        .put(DETAIL, detail);
   }
 }
