@@ -4,7 +4,8 @@ public enum HttpStatusCode {
 
   BAD_REQUEST(400, "Bad Request"),
   RESOURCE_NOT_FOUND(404, "Resource not in Catalogue."),
-  INVALID_TOKEN(401, "Unauthorized");
+  INVALID_TOKEN(401, "Unauthorized"),
+  INVALID_QUEUE_VALUE(404,"Invalid Queue from Client.");
 
   private final int value;
   private final String description;

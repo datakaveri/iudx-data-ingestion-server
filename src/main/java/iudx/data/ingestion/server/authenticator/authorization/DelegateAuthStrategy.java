@@ -2,6 +2,9 @@ package iudx.data.ingestion.server.authenticator.authorization;
 
 
 import static iudx.data.ingestion.server.authenticator.authorization.Api.ENTITIES;
+import static iudx.data.ingestion.server.authenticator.authorization.Api.INGESTION;
+import static iudx.data.ingestion.server.authenticator.authorization.Method.DELETE;
+import static iudx.data.ingestion.server.authenticator.authorization.Method.GET;
 import static iudx.data.ingestion.server.authenticator.authorization.Method.POST;
 
 import io.vertx.core.json.JsonArray;
@@ -23,6 +26,12 @@ public class DelegateAuthStrategy implements AuthorizationStrategy {
     List<AuthorizationRequest> apiAccessList = new ArrayList<>();
     apiAccessList.add(new AuthorizationRequest(POST, ENTITIES));
     delegateAuthorizationRules.put("api", apiAccessList);
+
+    // ingestion access list/rules
+    List<AuthorizationRequest> ingestAccessList = new ArrayList<>();
+    ingestAccessList.add(new AuthorizationRequest(POST, INGESTION));
+    ingestAccessList.add(new AuthorizationRequest(DELETE, INGESTION));
+    delegateAuthorizationRules.put("ingestion", ingestAccessList);
   }
 
   @Override
@@ -30,15 +39,19 @@ public class DelegateAuthStrategy implements AuthorizationStrategy {
     JsonArray access = jwtData.getCons() != null ? jwtData.getCons().getJsonArray("access") : null;
     boolean result = false;
     if (access == null) {
-      return result;
+      return false;
     }
     String endpoint = authRequest.getApi().getApiEndpoint();
     Method method = authRequest.getMethod();
     LOGGER.info("authorization request for : " + endpoint + " with method : " + method.name());
     LOGGER.info("allowed access : " + access);
 
-    if (!result && access.contains("api")) {
+    if (access.contains("api")) {
       result = delegateAuthorizationRules.get("api").contains(authRequest);
+    }
+
+    if (access.contains("ingestion")) {
+      result = delegateAuthorizationRules.get("ingestion").contains(authRequest);
     }
 
     return result;

@@ -54,30 +54,58 @@
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-codegen</artifactId>
 			<classifier>processor</classifier>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-proxy</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-hazelcast</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-discovery</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-web</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-web-client</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -87,6 +115,10 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-rabbitmq-client</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -101,6 +133,10 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-junit5</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -111,6 +147,10 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-unit</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -131,6 +171,10 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-micrometer-metrics</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
@@ -170,6 +214,10 @@
 	  <dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-auth-jwt</artifactId>
+<<<<<<< HEAD
+=======
+			<version>4.0.3</version>
+>>>>>>> /ingestion added.
 		</dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -227,7 +275,7 @@
 						<jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
 					</systemPropertyVariables>
 					<excludes>
-						<!-- classes are excluded since they are not testable or don't add 
+						<!-- classes are excluded since they are not testable or don't add
 							any value if test cases are written. -->
 						<!-- ApiServerVerticle testing is covered in integration for now. -->
 						<exclude>iudx/data/ingestion/server/apiserver/*.class</exclude>

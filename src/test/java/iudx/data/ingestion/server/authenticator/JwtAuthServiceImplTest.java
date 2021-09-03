@@ -101,7 +101,7 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
 
-    jwtAuthenticationService.validateAccess(jwtData, true, authInfo).onComplete(handler -> {
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
       if (handler.succeeded()) {
         testContext.completeNow();
       } else {
@@ -224,7 +224,7 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("")));
 
-    jwtAuthenticationService.validateAccess(jwtData, false, authInfo).onComplete(handler -> {
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
       if (handler.succeeded()) {
         testContext.failNow("invalid access provided");
       } else {
@@ -254,7 +254,7 @@ public class JwtAuthServiceImplTest {
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
 
 
-    jwtAuthenticationService.validateAccess(jwtData, false, authInfo).onComplete(handler -> {
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
       if (handler.succeeded()) {
         testContext.completeNow();
       } else {

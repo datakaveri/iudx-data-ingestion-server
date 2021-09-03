@@ -83,26 +83,25 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
-      result.jwtData = decodeHandler;
-      return isValidAudienceValue(result.jwtData);
-    }).compose(audienceHandler -> {
+          result.jwtData = decodeHandler;
+          return isValidAudienceValue(result.jwtData);
+        }).compose(audienceHandler -> {
 
-      //   return isValidId(result.jwtData, id);
-      //uncomment above line once you get a valid JWT token. and delete below line
+          //   return isValidId(result.jwtData, id);
+          //uncomment above line once you get a valid JWT token. and delete below line
 
-      return Future.succeededFuture(true);
-    }).compose(validIdHandler -> {
-      return validateAccess(result.jwtData, result.isResourceExist, authenticationInfo);
-    }).onComplete(completeHandler -> {
-      if (completeHandler.succeeded()) {
-        LOGGER.debug("Completion handler");
-        handler.handle(Future.succeededFuture(completeHandler.result()));
-      } else {
-        LOGGER.debug("Failure handler");
-        LOGGER.error("error : " + completeHandler.cause().getMessage());
-        handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
-      }
-    });
+          return Future.succeededFuture(true);
+        }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
+        .onComplete(completeHandler -> {
+          if (completeHandler.succeeded()) {
+            LOGGER.debug("Completion handler");
+            handler.handle(Future.succeededFuture(completeHandler.result()));
+          } else {
+            LOGGER.debug("Failure handler");
+            LOGGER.error("error : " + completeHandler.cause().getMessage());
+            handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
+          }
+        });
     return this;
   }
 
@@ -126,8 +125,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     return promise.future();
   }
 
-  public Future<JsonObject> validateAccess(JwtData jwtData, boolean resourceExist,
-                                           JsonObject authInfo) {
+  public Future<JsonObject> validateAccess(JwtData jwtData, JsonObject authInfo) {
     LOGGER.info("validateAccess() started");
     Promise<JsonObject> promise = Promise.promise();
 
@@ -141,7 +139,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
     if (jwtAuthStrategy.isAuthorized(authRequest, jwtData)) {
       JsonObject jsonResponse = new JsonObject();
-
       if (jwtData.getRole().equalsIgnoreCase(JSON_PROVIDER)) {
         jsonResponse.put(JSON_PROVIDER, jwtData.getSub());
       } else if (jwtData.getRole().equalsIgnoreCase(JSON_DELEGATE)) {
@@ -184,7 +181,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     return promise.future();
   }
-    // class to contain intermediate data for token introspection
+
+  // class to contain intermediate data for token introspection
   final class ResultContainer {
     JwtData jwtData;
     boolean isResourceExist;

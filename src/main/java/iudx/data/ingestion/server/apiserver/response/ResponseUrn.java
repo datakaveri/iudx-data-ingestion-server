@@ -24,7 +24,7 @@ public enum ResponseUrn {
   INVALID_PAYLOAD_FORMAT("urn:dx:rs:invalidPayloadFormat",
       "Invalid json format in post request [schema mismatch]"),
   INVALID_PARAM_VALUE("urn:dx:rs:invalidParameterValue", "Invalid parameter value passed"),
-
+  INVALID_QUEUE_VALUE("urn:dx:rs:invalidQueueValue", "Invalid Queue value passed"),
   BACKING_SERVICE_FORMAT("urn:dx:rs:backend", "format error from backing service [cat,auth etc.]"),
   SCHEMA_READ_ERROR("urn:dx:rs:readError", "Fail to read file"),
   YET_NOT_IMPLEMENTED("urn:dx:rs:general", "urn yet not implemented in backend verticle.");

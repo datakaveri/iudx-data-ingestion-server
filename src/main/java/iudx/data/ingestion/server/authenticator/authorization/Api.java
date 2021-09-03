@@ -2,8 +2,9 @@ package iudx.data.ingestion.server.authenticator.authorization;
 
 import java.util.stream.Stream;
 
-public enum Api {
-  ENTITIES("/ngsi-ld/v1/entities");
+public enum  Api {
+  ENTITIES("/ngsi-ld/v1/entities"),
+  INGESTION("/ngsi-ld/v1/ingestion");
 
   private final String endpoint;
 

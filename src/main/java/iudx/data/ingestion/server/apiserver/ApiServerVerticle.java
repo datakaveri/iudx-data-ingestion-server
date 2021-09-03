@@ -1,13 +1,11 @@
 package iudx.data.ingestion.server.apiserver;
 
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
-import static iudx.data.ingestion.server.apiserver.util.Constants.*;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
+import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -31,6 +29,10 @@ import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import iudx.data.ingestion.server.databroker.DataBrokerService;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Data Ingestion API Verticle.
@@ -110,6 +112,25 @@ public class ApiServerVerticle extends AbstractVerticle {
         .handler(AuthHandler.create(vertx))
         .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
 
+    ValidationHandler postIngestionValidationHandler =
+        new ValidationHandler(vertx, RequestType.INGEST);
+
+    ValidationHandler deleteIngestionValidationHandler =
+        new ValidationHandler(vertx, RequestType.INGEST_DELETE);
+
+    router.post(Constants.IUDX_MANAGEMENT_ADAPTER_URL).consumes(APPLICATION_JSON)
+        .handler(postIngestionValidationHandler)
+        .handler(AuthHandler.create(vertx))
+        .handler(this::handleIngestPostQuery).handler(validationsFailureHandler);
+
+    router.delete(Constants.IUDX_MANAGEMENT_ADAPTER_URL).consumes(APPLICATION_JSON)
+        .handler(deleteIngestionValidationHandler)
+        .handler(AuthHandler.create(vertx))
+        .handler(this::handleIngestDeleteQuery)
+        .handler(validationsFailureHandler);
+
+
+
     /* Read ssl configuration. */
     isSSL = config().getBoolean("ssl");
 
@@ -172,10 +193,72 @@ public class ApiServerVerticle extends AbstractVerticle {
     HttpServerResponse response = routingContext.response();
     Future<Boolean> isIdExist = catalogueService.isItemExist(id);
     LOGGER.info("Success: " + isIdExist.succeeded());
-    isIdExist.onComplete(IdExisthandler -> {
-      if (IdExisthandler.succeeded()) {
-        LOGGER.info("Success: Ingestion Success");
+    isIdExist.onComplete(IdExistence -> {
+      if (IdExistence.succeeded()) {
+        LOGGER.info("Success: ID Found in Catalouge.");
         databroker.publishData(requestJson, handler -> {
+          if (handler.succeeded()) {
+            LOGGER.info("Success: Ingestion Success");
+            handleSuccessResponse(response, 200, handler.result().toString());
+          } else if (handler.failed()) {
+            LOGGER.error("Fail: Ingestion Fail");
+            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
+          }
+        });
+      } else {
+        LOGGER.error("Fail: ID does not exist. ");
+        handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
+      }
+    });
+  }
+
+
+  public void handleIngestPostQuery(RoutingContext routingContext) {
+    LOGGER.debug("Info:handleIngestPostQuery method started.");
+    JsonObject requestJson = routingContext.getBodyAsJson();
+    LOGGER.debug("Info: request Json :: ;" + requestJson);
+
+    String id = requestJson.getString(ID);
+    LOGGER.info("ID " + id);
+    /* Handles HTTP response from server to client */
+    HttpServerResponse response = routingContext.response();
+    Future<Boolean> isIdExist = catalogueService.isItemExist(id);
+    isIdExist.onComplete(IdExistence -> {
+      LOGGER.info("Success: " + isIdExist.succeeded());
+      if (IdExistence.succeeded()) {
+        LOGGER.info("Success: ID Found in Catalogue.");
+        databroker.ingestPostData(requestJson, handler -> {
+          if (handler.succeeded()) {
+            LOGGER.info("Success: Ingestion Success");
+            handleSuccessResponse(response, 200, handler.result().toString());
+          } else if (handler.failed()) {
+            LOGGER.error("Fail: Ingestion Fail");
+            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
+          }
+        });
+      } else {
+        LOGGER.error("Fail: ID does not exist. ");
+        handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
+      }
+    });
+
+  }
+
+  public void handleIngestDeleteQuery(RoutingContext routingContext) {
+    LOGGER.debug("Info:handleIngestPostQuery method started.");
+    JsonObject requestJson = routingContext.getBodyAsJson();
+    LOGGER.debug("Info: request Json :: ;" + requestJson);
+
+    String id = requestJson.getString(ID);
+    LOGGER.info("ID " + id);
+    /* Handles HTTP response from server to client */
+    HttpServerResponse response = routingContext.response();
+    Future<Boolean> isIdExist = catalogueService.isItemExist(id);
+    LOGGER.info("Success: " + isIdExist.succeeded());
+    isIdExist.onComplete(IdExistence -> {
+      if (IdExistence.succeeded()) {
+        LOGGER.info("Success: ID Found in Catalogue.");
+        databroker.ingestDeleteData(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
             handleSuccessResponse(response, 200, handler.result().toString());
@@ -194,9 +277,9 @@ public class ApiServerVerticle extends AbstractVerticle {
   /**
    * handle HTTP response.
    *
-   * @param response response object
+   * @param response   response object
    * @param statusCode Http status for response
-   * @param result response
+   * @param result     response
    */
 
   private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
@@ -208,7 +291,8 @@ public class ApiServerVerticle extends AbstractVerticle {
         .end(res.toString());
   }
 
-  private void handleFailedResponse(HttpServerResponse response, int statusCode, ResponseUrn failureType) {
+  private void handleFailedResponse(HttpServerResponse response, int statusCode,
+                                    ResponseUrn failureType) {
     HttpStatusCode status = HttpStatusCode.getByValue(statusCode);
     response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(status.getValue())
         .end(generateResponse(failureType, status).toString());

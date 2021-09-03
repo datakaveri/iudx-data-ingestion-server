@@ -1,6 +1,10 @@
 package iudx.data.ingestion.server.authenticator.authorization;
 
 import static iudx.data.ingestion.server.authenticator.authorization.Api.ENTITIES;
+import static iudx.data.ingestion.server.authenticator.authorization.Api.INGESTION;
+import static iudx.data.ingestion.server.authenticator.authorization.DelegateAuthStrategy.delegateAuthorizationRules;
+import static iudx.data.ingestion.server.authenticator.authorization.Method.DELETE;
+import static iudx.data.ingestion.server.authenticator.authorization.Method.GET;
 import static iudx.data.ingestion.server.authenticator.authorization.Method.POST;
 
 import io.vertx.core.json.JsonArray;
@@ -24,6 +28,11 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
     apiAccessList.add(new AuthorizationRequest(POST, ENTITIES));
     providerAuthorizationRules.put("api", apiAccessList);
 
+    // ingestion access list/rules
+    List<AuthorizationRequest> ingestAccessList = new ArrayList<>();
+    ingestAccessList.add(new AuthorizationRequest(POST, INGESTION));
+    ingestAccessList.add(new AuthorizationRequest(DELETE, INGESTION));
+    providerAuthorizationRules.put("ingestion", ingestAccessList);
   }
 
   @Override
@@ -38,10 +47,13 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
     LOGGER.info("authorization request for : " + endpoint + " with method : " + method.name());
     LOGGER.info("allowed access : " + access);
 
-    if (!result && access.contains("api")) {
+    if (access.contains("api")) {
       result = providerAuthorizationRules.get("api").contains(authRequest);
     }
 
+    if (access.contains("ingestion")) {
+      result = delegateAuthorizationRules.get("ingestion").contains(authRequest);
+    }
     return result;
   }
 
