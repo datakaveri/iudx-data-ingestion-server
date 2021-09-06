@@ -4,6 +4,9 @@ import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 import io.vertx.core.json.JsonObject;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 public class Util {
 
   public static JsonObject getMetadata(JsonObject request) {
@@ -20,8 +23,8 @@ public class Util {
     return result;
   }
 
-  public static String convertStringIntoUrl(String s) {
-    return s.replaceAll("/", "%2F");
+  public static String encodeString(String s) {
+    return URLEncoder.encode(s, StandardCharsets.UTF_8);
   }
 
   private static String getResourceName(String[] arr) {
