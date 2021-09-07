@@ -223,24 +223,24 @@ public class ApiServerVerticle extends AbstractVerticle {
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
     Future<Boolean> isIdExist = catalogueService.isItemExist(id);
-    isIdExist.onComplete(IdExistence -> {
-      LOGGER.info("Success: " + isIdExist.succeeded());
-      if (IdExistence.succeeded()) {
-        LOGGER.info("Success: ID Found in Catalogue.");
-        databroker.ingestPostData(requestJson, handler -> {
-          if (handler.succeeded()) {
-            LOGGER.info("Success: Ingestion Success");
-            handleSuccessResponse(response, 200, handler.result().toString());
-          } else if (handler.failed()) {
-            LOGGER.error("Fail: Ingestion Fail");
-            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
-          }
-        });
-      } else {
-        LOGGER.error("Fail: ID does not exist. ");
-        handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
-      }
-    });
+//    isIdExist.onComplete(IdExistence -> {
+//      LOGGER.info("Success: " + isIdExist.succeeded());
+//      if (IdExistence.succeeded()) {
+//        LOGGER.info("Success: ID Found in Catalogue.");
+//        databroker.ingestPostData(requestJson, handler -> {
+//          if (handler.succeeded()) {
+//            LOGGER.info("Success: Ingestion Success");
+//            handleSuccessResponse(response, 200, handler.result().toString());
+//          } else if (handler.failed()) {
+//            LOGGER.error("Fail: Ingestion Fail");
+//            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
+//          }
+//        });
+//      } else {
+//        LOGGER.error("Fail: ID does not exist. ");
+//        handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
+//      }
+//    });
 
   }
 
@@ -258,15 +258,15 @@ public class ApiServerVerticle extends AbstractVerticle {
     isIdExist.onComplete(IdExistence -> {
       if (IdExistence.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
-        databroker.ingestDeleteData(requestJson, handler -> {
-          if (handler.succeeded()) {
-            LOGGER.info("Success: Ingestion Success");
-            handleSuccessResponse(response, 200, handler.result().toString());
-          } else if (handler.failed()) {
-            LOGGER.error("Fail: Ingestion Fail");
-            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
-          }
-        });
+//        databroker.ingestDeleteData(requestJson, handler -> {
+//          if (handler.succeeded()) {
+//            LOGGER.info("Success: Ingestion Success");
+//            handleSuccessResponse(response, 200, handler.result().toString());
+//          } else if (handler.failed()) {
+//            LOGGER.error("Fail: Ingestion Fail");
+//            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
+//          }
+//        });
       } else {
         LOGGER.error("Fail: ID does not exist. ");
         handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
