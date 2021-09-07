@@ -37,24 +37,7 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
 
   @Override
   public boolean isAuthorized(AuthorizationRequest authRequest, JwtData jwtData) {
-    JsonArray access = jwtData.getCons() != null ? jwtData.getCons().getJsonArray("access") : null;
-    boolean result = false;
-    if (access == null) {
-      return false;
-    }
-    String endpoint = authRequest.getApi().getApiEndpoint();
-    Method method = authRequest.getMethod();
-    LOGGER.info("authorization request for : " + endpoint + " with method : " + method.name());
-    LOGGER.info("allowed access : " + access);
-
-    if (access.contains("api")) {
-      result = providerAuthorizationRules.get("api").contains(authRequest);
-    }
-
-    if (access.contains("ingestion")) {
-      result = delegateAuthorizationRules.get("ingestion").contains(authRequest);
-    }
-    return result;
+    return true;
   }
 
 }

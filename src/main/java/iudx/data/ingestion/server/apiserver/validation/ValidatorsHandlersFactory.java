@@ -7,7 +7,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonObject;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.apiserver.validation.types.IDTypeValidator;
-import iudx.data.ingestion.server.apiserver.validation.types.QueueValidator;
+import iudx.data.ingestion.server.apiserver.validation.types.StringValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +54,7 @@ public class ValidatorsHandlersFactory {
     List<Validator> validators = new ArrayList<>();
     validators.add(new IDTypeValidator(body.getString(NGSILD_QUERY_ID), true));
     if (body.containsKey(QUEUE)) {
-      validators.add(new QueueValidator(body.getString(QUEUE)));
+      validators.add(new StringValidator(body.getString(QUEUE), body));
     }
     return validators;
   }

@@ -10,7 +10,7 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITIES_URL_R
 import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.INGESTION_URL_REGEX;
-import static iudx.data.ingestion.server.apiserver.util.Constants.IUDX_MANAGEMENT_ADAPTER_URL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_INGESTION_URL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
@@ -94,6 +94,7 @@ public class AuthHandler implements Handler<RoutingContext> {
     });
   }
 
+
   private String getIdFromRequest() {
     return request.getParam(ID);
   }
@@ -141,7 +142,7 @@ public class AuthHandler implements Handler<RoutingContext> {
     if (url.matches(ENTITIES_URL_REGEX)) {
       path = NGSILD_ENTITIES_URL;
     } else if (url.matches(INGESTION_URL_REGEX)) {
-      path = IUDX_MANAGEMENT_ADAPTER_URL;
+      path = NGSILD_INGESTION_URL;
     }
     return path;
   }

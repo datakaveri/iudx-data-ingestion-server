@@ -10,30 +10,17 @@ public class Constants {
   public static final String API_METHOD = "method";
   public static final String ID = "id";
 
-  // config
-  public static final String CONFIG_FILE = "config.properties";
-
   // NGSI-LD endpoints
   public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
   public static final String NGSILD_ENTITIES_URL = NGSILD_BASE_PATH + "/entities";
-
   // path regex
   public static final String ENTITIES_URL_REGEX = NGSILD_ENTITIES_URL + "(.*)";
+  public static final String NGSILD_INGESTION_URL = NGSILD_BASE_PATH + "/ingestion";
+  public static final String INGESTION_URL_REGEX = NGSILD_INGESTION_URL + "(.*)";
 
-  // IUDX management endpoints
-  public static final String IUDX_ADAPTOR_URL = "/ngsi-ld/v1";
-  public static final String IUDX_MANAGEMENT_ADAPTER_URL = IUDX_ADAPTOR_URL + "/ingestion";
-  public static final String INGESTION_URL_REGEX = IUDX_MANAGEMENT_ADAPTER_URL + "(.*)";
-
-  /**
-   * API Documentation endpoint
-   */
-  public static final String ROUTE_STATIC_SPEC = "/apis/spec";
-  public static final String ROUTE_DOC = "/apis";
-
-  // ngsi-ld/IUDX query paramaters
+  // ngsi-ld/IUDX query parameters
   public static final String NGSILD_QUERY_ID = "id";
-  public static final String QUEUE="queue";
+  public static final String QUEUE = "queue";
 
   // Header params
   public static final String HEADER_TOKEN = "token";
@@ -53,21 +40,16 @@ public class Constants {
   public static final String JSON_TYPE = "type";
   public static final String JSON_TITLE = "title";
   public static final String JSON_DETAIL = "detail";
-  public static final String JSON_VALUE = "value";
-  public static final String JSON_ATTRIBUTE = "attribute";
-  public static final String JSON_OPERATOR = "operator";
 
   // messages (Error, Exception, messages..)
   public static final String MSG_BAD_QUERY = "Bad query";
 
   // Validations
   public static final int VALIDATION_ID_MAX_LEN = 512;
-  public static final List<String> VALIDATION_ALLOWED_OPERATORS = List.of(">", "=", "<", ">=", "<=", "==", "!=");
-  public static final String VALIDATION_Q_ATTR_PATTERN = "^[a-zA-Z0-9_]{1,100}+$";
   public static final Pattern VALIDATION_ID_PATTERN = Pattern.compile(
       "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
   public static final Pattern VALIDATION_QUEUE_PATTERN =
       Pattern.compile(
-          "^[a-zA-Z0-9.]/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
+          "^[a-zA-Z0-9. _ \\/]{4,100}$");
 
 }

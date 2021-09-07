@@ -84,8 +84,35 @@ public class JwtAuthServiceImplTest {
 
 
   @Test
-  @DisplayName("success - allow access to all open endpoints")
-  public void allow4OpenEndpoint(VertxTestContext testContext) {
+  @DisplayName("success - allow access to all open ingestion endpoints")
+  public void allow4OpenIngestionEndpoint(VertxTestContext testContext) {
+    JsonObject authInfo = new JsonObject();
+
+    authInfo.put(ID, openId);
+    authInfo.put(API_ENDPOINT, Api.INGESTION.getApiEndpoint());
+    authInfo.put(METHOD, Method.POST);
+
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("ri:foobar.iudx.io");
+    jwtData.setRole("provider");
+    jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
+
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        testContext.failNow("invalid access");
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("success - allow access to all open api endpoints")
+  public void allow4OpenApiEndpoint(VertxTestContext testContext) {
     JsonObject authInfo = new JsonObject();
 
     authInfo.put(ID, openId);
@@ -111,8 +138,28 @@ public class JwtAuthServiceImplTest {
   }
 
   @Test
-  @DisplayName("success - allow access to closed endpoint")
-  public void allow4ClosedEndpoint(VertxTestContext testContext) {
+  @DisplayName("success - allow access to closed ingestion-endpoint")
+  public void allow4ClosedIngestionEndpoint(VertxTestContext testContext) {
+    JsonObject authInfo = new JsonObject();
+    authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
+    authInfo.put("id", closeId);
+    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("method", Method.POST);
+
+    JsonObject request = new JsonObject();
+
+    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        testContext.failNow("invalid access");
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("success - allow access to closed api-endpoint")
+  public void allow4ClosedApiEndpoint(VertxTestContext testContext) {
     JsonObject authInfo = new JsonObject();
     authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
     authInfo.put("id", closeId);
@@ -176,12 +223,48 @@ public class JwtAuthServiceImplTest {
   }
 
   @Test
+  @DisplayName("success - allow delegate access to /ingestion endpoint")
+  public void success4DelegateTokenIngestionAPI(VertxTestContext testContext) {
+
+    JsonObject request = new JsonObject();
+    JsonObject authInfo = new JsonObject();
+
+
+    authInfo.put("token", JwtTokenHelper.closedDelegateIngestionToken);
+    authInfo.put("id", closeId);
+    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("method", Method.POST);
+
+    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        testContext.failNow(handler.cause());
+      }
+    });
+  }
+
+  @Test
   @DisplayName("decode valid jwt")
   public void decodeJwtProviderSuccess(VertxTestContext testContext) {
     jwtAuthenticationService.decodeJwt(JwtTokenHelper.closedProviderApiToken)
         .onComplete(handler -> {
           if (handler.succeeded()) {
             assertEquals("provider", handler.result().getRole());
+            testContext.completeNow();
+          } else {
+            testContext.failNow(handler.cause());
+          }
+        });
+  }
+
+  @Test
+  @DisplayName("decode valid jwt - delegate")
+  public void decodeJwtDelegateSuccess(VertxTestContext testContext) {
+    jwtAuthenticationService.decodeJwt(JwtTokenHelper.closedDelegateApiToken)
+        .onComplete(handler -> {
+          if (handler.succeeded()) {
+            assertEquals("delegate", handler.result().getRole());
             testContext.completeNow();
           } else {
             testContext.failNow(handler.cause());
@@ -205,38 +288,8 @@ public class JwtAuthServiceImplTest {
   }
 
   @Test
-  @DisplayName("failure - provider access to /entities endpoint for access [api]")
-  public void access4ProviderTokenEntitiesAPI(VertxTestContext testContext) {
-
-    JsonObject authInfo = new JsonObject();
-
-    authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
-    authInfo.put("id", "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
-    authInfo.put("apiEndpoint", "/ngsi-ld/v1/entities");
-    authInfo.put("method", "GET");
-
-    JwtData jwtData = new JwtData();
-    jwtData.setIss("auth.test.com");
-    jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
-    jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
-    jwtData.setRole("provider");
-    jwtData.setCons(new JsonObject().put("access", new JsonArray().add("")));
-
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.failNow("invalid access provided");
-      } else {
-        LOGGER.debug("failed access ");
-        testContext.completeNow();
-      }
-    });
-  }
-
-  @Test
   @DisplayName("success - provider access to /entities endpoint for access [api]")
-  public void access4ProviderTokenIngestionPostAPI(VertxTestContext testContext) {
+  public void access4ProviderTokenEntitiesPostAPI(VertxTestContext testContext) {
 
     JsonObject authInfo = new JsonObject();
     authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
@@ -261,6 +314,172 @@ public class JwtAuthServiceImplTest {
         LOGGER.debug("failed access ");
         testContext.failNow("failed for provider");
 
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("success - provider access to /entities endpoint for access [api]")
+  public void access4ProviderTokenEntitiesDeleteAPI(VertxTestContext testContext) {
+
+    JsonObject authInfo = new JsonObject();
+    authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
+    authInfo.put("id", "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    authInfo.put("apiEndpoint", "/ngsi-ld/v1/entities");
+    authInfo.put("method", "DELETE");
+
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    jwtData.setRole("provider");
+    jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
+
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        LOGGER.debug("failed access ");
+        testContext.failNow("failed for provider");
+
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("success - provider access to /ingestion endpoint for access [api]")
+  public void access4ProviderTokenIngestionGetAPI(VertxTestContext testContext) {
+
+    JsonObject authInfo = new JsonObject();
+
+    authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
+    authInfo.put("id", "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    authInfo.put("apiEndpoint", "/ngsi-ld/v1/ingestion");
+    authInfo.put("method", "GET");
+
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1628713148L);
+    jwtData.setIat(1628669948L);
+    jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    jwtData.setRole("provider");
+    jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
+
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+        testContext.failNow("invalid access provided");
+      } else {
+        LOGGER.debug("failed access ");
+        testContext.failNow("invalid access provided");
+      }
+    });
+  }
+
+
+  @Test
+  @DisplayName("success - provider access to /ingestion endpoint for access [api]")
+  public void access4ProviderTokenIngestionPostAPI(VertxTestContext testContext) {
+
+    JsonObject authInfo = new JsonObject();
+    authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
+    authInfo.put("id", "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    authInfo.put("apiEndpoint", "/ngsi-ld/v1/ingestion");
+    authInfo.put("method", "POST");
+
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    jwtData.setRole("provider");
+    jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
+
+
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        LOGGER.debug("failed access ");
+        testContext.failNow("failed for provider");
+
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("success - provider access to /ingestion endpoint for access [api]")
+  public void access4ProviderTokenIngestionDeleteAPI(VertxTestContext testContext) {
+
+    JsonObject authInfo = new JsonObject();
+    authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
+    authInfo.put("id", "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    authInfo.put("apiEndpoint", "/ngsi-ld/v1/ingestion");
+    authInfo.put("method", "DELETE");
+
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
+    jwtData.setRole("provider");
+    jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
+
+
+    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        LOGGER.debug("failed access ");
+        testContext.failNow("failed for provider");
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("success - allow delegate access to /ingestion endpoint")
+  public void allow4DelegateTokenIngestAPI(VertxTestContext testContext) {
+
+    JsonObject request = new JsonObject();
+    JsonObject authInfo = new JsonObject();
+
+    authInfo.put("token", JwtTokenHelper.closedDelegateIngestionToken);
+    authInfo.put("id", closeId);
+    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("method", Method.POST);
+
+    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        testContext.failNow(handler.cause());
+      }
+    });
+  }
+
+
+  @Test
+  @DisplayName("success - allow provider access to /ingestion endpoint")
+  public void closeProviderTokenIngestPostAPI(VertxTestContext testContext) {
+
+    JsonObject request = new JsonObject();
+    JsonObject authInfo = new JsonObject();
+
+    authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
+    authInfo.put("id", closeId);
+    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("method", Method.POST);
+
+    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
+      if (handler.succeeded()) {
+        testContext.completeNow();
+      } else {
+        testContext.failNow(handler.cause());
       }
     });
   }
