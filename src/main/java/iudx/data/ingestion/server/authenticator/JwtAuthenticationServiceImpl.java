@@ -17,6 +17,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -132,13 +133,13 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Method method = Method.valueOf(authInfo.getString(METHOD));
     Api api = Api.fromEndpoint(authInfo.getString(API_ENDPOINT));
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
-
     AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(jwtData.getRole());
     LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
     JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
     if (jwtAuthStrategy.isAuthorized(authRequest, jwtData)) {
       JsonObject jsonResponse = new JsonObject();
+
       if (jwtData.getRole().equalsIgnoreCase(JSON_PROVIDER)) {
         jsonResponse.put(JSON_PROVIDER, jwtData.getSub());
       } else if (jwtData.getRole().equalsIgnoreCase(JSON_DELEGATE)) {
