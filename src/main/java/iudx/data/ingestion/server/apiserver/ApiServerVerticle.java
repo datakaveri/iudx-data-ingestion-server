@@ -227,7 +227,7 @@ public class ApiServerVerticle extends AbstractVerticle {
       LOGGER.info("Success: " + isIdExist.succeeded());
       if (IdExistence.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
-        databroker.ingestPostData(requestJson, handler -> {
+        databroker.ingestDataPost(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
             handleSuccessResponse(response, 200, handler.result().toString());
@@ -258,7 +258,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     isIdExist.onComplete(IdExistence -> {
       if (IdExistence.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
-        databroker.ingestDeleteData(requestJson, handler -> {
+        databroker.ingestDataDelete(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
             handleSuccessResponse(response, 200, handler.result().toString());
