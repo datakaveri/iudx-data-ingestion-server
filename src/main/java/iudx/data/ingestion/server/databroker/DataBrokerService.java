@@ -28,6 +28,28 @@ import io.vertx.core.json.JsonObject;
 public interface DataBrokerService {
 
   /**
+   * The ingestDataPost implements the registration of adaptor functionality with the data
+   * broker.
+   *
+   * @param request which is a JsonObject
+   * @param handler which is a Request Handler
+   * @return DataBrokerService which is a Service
+   **/
+  @Fluent
+  DataBrokerService ingestDataPost(JsonObject request, Handler<AsyncResult<JsonObject>> handler);
+
+  /**
+   * The ingestDataDelete implements the deletion of exchange
+   * broker.
+   *
+   * @param request which is a JsonObject
+   * @param handler which is a Request Handler
+   * @return DataBrokerService which is a Service
+   **/
+  @Fluent
+  DataBrokerService ingestDataDelete(JsonObject request, Handler<AsyncResult<JsonObject>> handler);
+
+  /**
    * The publishData implements the publish data functionality with the data
    * broker.
    *

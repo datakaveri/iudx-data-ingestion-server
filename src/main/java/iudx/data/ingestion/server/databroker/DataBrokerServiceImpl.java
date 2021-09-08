@@ -41,7 +41,7 @@ public class DataBrokerServiceImpl implements DataBrokerService {
       rabbitClient.getExchange(exchange, databrokerVhost, doesExchangeExist)
           .compose(ar -> {
             Boolean exchangeFound = ar.getBoolean(DOES_EXCHANGE_EXIST);
-            if(!exchangeFound) {
+            if (!exchangeFound) {
               return Future.failedFuture("Bad Request: Resource ID does not exist");
             }
             exchangeListCache.put(exchange, true);
@@ -62,6 +62,74 @@ public class DataBrokerServiceImpl implements DataBrokerService {
       handler.handle(Future.succeededFuture(new JsonObject()
           .put(TYPE, FAILURE)
           .put(ERROR_MESSAGE, "Bad Request: Request Json empty")
+      ));
+    }
+    return this;
+  }
+
+  @Override
+  public DataBrokerService ingestDataPost(JsonObject request, Handler<AsyncResult<JsonObject>> handler) {
+    LOGGER.debug("Info : DataBrokerServiceImpl#ingestData() started");
+    if (request != null && !request.isEmpty()) {
+      JsonObject object = new JsonObject()
+          .put(ERROR, null);
+      JsonObject metaData = Util.getMetadata(request);
+      String exchangeName = metaData.getString(EXCHANGE_NAME);
+      rabbitClient.getQueue(request, databrokerVhost)
+          .compose(ar -> {
+            LOGGER.debug("Info: Get queue successful");
+            object.mergeIn(metaData)
+                .put(QUEUE_NAME, ar.getString(QUEUE_NAME))
+                .put(ERROR, "Exchange creation failed");
+            return rabbitClient.createExchange(exchangeName, databrokerVhost);
+          })
+          .compose(ar -> {
+            LOGGER.debug("Info: Exchange creation successful");
+            object.put(ERROR, "Queue binding failed");
+            exchangeListCache.put(exchangeName, true);
+            return rabbitClient.bindQueue(object, databrokerVhost);
+          })
+          .onSuccess(ar -> {
+            LOGGER.debug("Info: Queue binding successful");
+            LOGGER.debug("Ingest data operation successful");
+            handler.handle(Future.succeededFuture(new JsonObject()
+                .put(TYPE, SUCCESS)));
+          })
+          .onFailure(ar -> {
+            LOGGER.error("Error: {}", object.getString(ERROR));
+            LOGGER.fatal("Error: Ingest data operation failed due to {}",
+                ar.getCause().toString());
+            handler.handle(Future.failedFuture(ar.getCause()));
+          });
+    }
+    return this;
+  }
+
+  @Override
+  public DataBrokerService ingestDataDelete(JsonObject request, Handler<AsyncResult<JsonObject>> handler) {
+    LOGGER.debug("Info: DataBrokerServiceImpl#ingestDataDelete() started");
+    if (request != null && !request.isEmpty()) {
+      JsonObject metaData = Util.getMetadata(request);
+      String exchangeName = metaData.getString(EXCHANGE_NAME);
+      rabbitClient.deleteExchange(exchangeName, databrokerVhost)
+          .onSuccess(ar -> {
+            LOGGER.debug("Deletion of exchange successful");
+            exchangeListCache.invalidate(exchangeName);
+            handler.handle(Future.succeededFuture(new JsonObject().put(TYPE, SUCCESS)));
+          })
+          .onFailure(ar -> {
+            LOGGER.debug("Could not delete exchange due to: {}", ar.getCause().toString());
+            handler.handle(Future.failedFuture(new JsonObject()
+                .put(TYPE, FAILURE)
+                .put(ERROR_MESSAGE, ar.getCause().getLocalizedMessage())
+                .toString()
+            ));
+          });
+    } else {
+      handler.handle(Future.failedFuture(new JsonObject()
+          .put(TYPE, FAILURE)
+          .put(ERROR_MESSAGE, "Bad Request: Request Json empty")
+          .toString()
       ));
     }
     return this;
