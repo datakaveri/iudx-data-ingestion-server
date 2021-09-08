@@ -1,7 +1,20 @@
 package iudx.data.ingestion.server.apiserver.handlers;
 
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
-import static iudx.data.ingestion.server.apiserver.util.Constants.*;
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.INVALID_TOKEN;
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.RESOURCE_NOT_FOUND;
+import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
+import static iudx.data.ingestion.server.apiserver.util.Constants.API_METHOD;
+import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
+import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITIES_URL_REGEX;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.INGESTION_URL_REGEX;
+import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_INGESTION_URL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -45,9 +58,22 @@ public class AuthHandler implements Handler<RoutingContext> {
     final String path = getNormalizedPath(request.path());
     final String method = context.request().method().toString();
 
+    String paramId = getIdFromRequest();
+    LOGGER.info("id from param : " + paramId);
+    String bodyId = getIdFromBody(context);
+    LOGGER.info("id from body : " + bodyId);
+
+    String id;
+    if (paramId != null && !paramId.isBlank()) {
+      id = paramId;
+    } else {
+      id = bodyId;
+    }
+    LOGGER.info("id : " + id);
+
     JsonObject authInfo =
         new JsonObject().put(API_ENDPOINT, path).put(HEADER_TOKEN, token).put(API_METHOD, method)
-            .put(ID, getIdFromBody(context, path));
+            .put(ID, id);
 
     LOGGER.debug("Info :" + context.request().path());
     LOGGER.debug("Info :" + context.request().path().split("/").length);
@@ -66,6 +92,11 @@ public class AuthHandler implements Handler<RoutingContext> {
       context.next();
       return;
     });
+  }
+
+
+  private String getIdFromRequest() {
+    return request.getParam(ID);
   }
 
   private void processAuthFailure(RoutingContext ctx, String result) {
@@ -94,7 +125,7 @@ public class AuthHandler implements Handler<RoutingContext> {
         .put(JSON_DETAIL, statusCode.getDescription());
   }
 
-  private String getIdFromBody(RoutingContext context, String api) {
+  private String getIdFromBody(RoutingContext context) {
     JsonObject body = context.getBodyAsJson();
     return body.getString(ID);
   }
@@ -108,8 +139,10 @@ public class AuthHandler implements Handler<RoutingContext> {
   private String getNormalizedPath(String url) {
     LOGGER.debug("URL : " + url);
     String path = null;
-    if (url.matches(ENTITES_URL_REGEX)) {
+    if (url.matches(ENTITIES_URL_REGEX)) {
       path = NGSILD_ENTITIES_URL;
+    } else if (url.matches(INGESTION_URL_REGEX)) {
+      path = NGSILD_INGESTION_URL;
     }
     return path;
   }
