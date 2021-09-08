@@ -75,15 +75,9 @@ public class AuthHandler implements Handler<RoutingContext> {
         new JsonObject().put(API_ENDPOINT, path).put(HEADER_TOKEN, token).put(API_METHOD, method)
             .put(ID, id);
 
-    LOGGER.debug("Info :" + context.request().path());
-    LOGGER.debug("Info :" + context.request().path().split("/").length);
-    LOGGER.debug("request" + requestJson);
-    LOGGER.debug("authInfo: " + authInfo);
-
     authenticator.tokenIntrospect(requestJson, authInfo, authHandler -> {
 
       if (authHandler.succeeded()) {
-        LOGGER.debug("Auth info : " + authHandler.result());
         context.data().put(AUTH_INFO, authHandler.result());
       } else {
         processAuthFailure(context, authHandler.cause().getMessage());
