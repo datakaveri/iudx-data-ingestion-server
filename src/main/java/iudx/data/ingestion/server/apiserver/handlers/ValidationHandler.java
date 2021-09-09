@@ -1,6 +1,7 @@
 package iudx.data.ingestion.server.apiserver.handlers;
 
 import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -29,10 +30,10 @@ public class ValidationHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext context) {
     ValidatorsHandlersFactory validationFactory = new ValidatorsHandlersFactory();
+    MultiMap parameters = context.request().params();
     JsonObject requestBody = context.getBodyAsJson();
-
     List<Validator>
-        validations = validationFactory.build(requestType, requestBody);
+        validations = validationFactory.build(requestType, requestBody, parameters);
     for (Validator validator : Optional.ofNullable(validations).orElse(Collections.emptyList())) {
       LOGGER.debug("validator :" + validator.getClass().getName());
       if (!validator.isValid()) {

@@ -17,6 +17,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -83,26 +84,25 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
-      result.jwtData = decodeHandler;
-      return isValidAudienceValue(result.jwtData);
-    }).compose(audienceHandler -> {
+          result.jwtData = decodeHandler;
+          return isValidAudienceValue(result.jwtData);
+        }).compose(audienceHandler -> {
 
-      //   return isValidId(result.jwtData, id);
-      //uncomment above line once you get a valid JWT token. and delete below line
+          //   return isValidId(result.jwtData, id);
+          //uncomment above line once you get a valid JWT token. and delete below line
 
-      return Future.succeededFuture(true);
-    }).compose(validIdHandler -> {
-      return validateAccess(result.jwtData, result.isResourceExist, authenticationInfo);
-    }).onComplete(completeHandler -> {
-      if (completeHandler.succeeded()) {
-        LOGGER.debug("Completion handler");
-        handler.handle(Future.succeededFuture(completeHandler.result()));
-      } else {
-        LOGGER.debug("Failure handler");
-        LOGGER.error("error : " + completeHandler.cause().getMessage());
-        handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
-      }
-    });
+          return Future.succeededFuture(true);
+        }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
+        .onComplete(completeHandler -> {
+          if (completeHandler.succeeded()) {
+            LOGGER.debug("Completion handler");
+            handler.handle(Future.succeededFuture(completeHandler.result()));
+          } else {
+            LOGGER.debug("Failure handler");
+            LOGGER.error("error : " + completeHandler.cause().getMessage());
+            handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
+          }
+        });
     return this;
   }
 
@@ -126,15 +126,13 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     return promise.future();
   }
 
-  public Future<JsonObject> validateAccess(JwtData jwtData, boolean resourceExist,
-                                           JsonObject authInfo) {
+  public Future<JsonObject> validateAccess(JwtData jwtData, JsonObject authInfo) {
     LOGGER.info("validateAccess() started");
     Promise<JsonObject> promise = Promise.promise();
 
     Method method = Method.valueOf(authInfo.getString(METHOD));
     Api api = Api.fromEndpoint(authInfo.getString(API_ENDPOINT));
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
-
     AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(jwtData.getRole());
     LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
     JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
@@ -184,7 +182,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     return promise.future();
   }
-    // class to contain intermediate data for token introspection
+
+  // class to contain intermediate data for token introspection
   final class ResultContainer {
     JwtData jwtData;
     boolean isResourceExist;

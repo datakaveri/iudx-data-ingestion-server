@@ -9,30 +9,18 @@ public class Constants {
   public static final String API_ENDPOINT = "apiEndpoint";
   public static final String API_METHOD = "method";
   public static final String ID = "id";
-  public static final String IDS = "ids";
-
-  // config
-  public static final String CONFIG_FILE = "config.properties";
 
   // NGSI-LD endpoints
   public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
   public static final String NGSILD_ENTITIES_URL = NGSILD_BASE_PATH + "/entities";
-
   // path regex
-  public static final String ENTITES_URL_REGEX = NGSILD_ENTITIES_URL + "(.*)";
+  public static final String ENTITIES_URL_REGEX = NGSILD_ENTITIES_URL + "(.*)";
+  public static final String NGSILD_INGESTION_URL = NGSILD_BASE_PATH + "/ingestion";
+  public static final String INGESTION_URL_REGEX = NGSILD_INGESTION_URL + "(.*)";
 
-  // IUDX management endpoints
-  public static final String IUDX_ADAPTOR_URL = "/ngsi-ld/v1";
-  public static final String IUDX_MANAGEMENT_ADAPTER_URL = IUDX_ADAPTOR_URL + "/ingestion";
-
-  /**
-   * API Documentation endpoint
-   */
-  public static final String ROUTE_STATIC_SPEC = "/apis/spec";
-  public static final String ROUTE_DOC = "/apis";
-
-  // ngsi-ld/IUDX query paramaters
+  // ngsi-ld/IUDX query parameters
   public static final String NGSILD_QUERY_ID = "id";
+  public static final String QUEUE = "queue";
 
   // Header params
   public static final String HEADER_TOKEN = "token";
@@ -60,8 +48,8 @@ public class Constants {
   public static final int VALIDATION_ID_MAX_LEN = 512;
   public static final Pattern VALIDATION_ID_PATTERN = Pattern.compile(
       "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
-  public static final Pattern ID_REGEX =
+  public static final Pattern VALIDATION_QUEUE_PATTERN =
       Pattern.compile(
-          "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
+          "^[a-zA-Z0-9. _ \\/]{4,100}$");
 
 }

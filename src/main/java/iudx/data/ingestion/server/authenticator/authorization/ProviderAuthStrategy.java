@@ -1,6 +1,10 @@
 package iudx.data.ingestion.server.authenticator.authorization;
 
 import static iudx.data.ingestion.server.authenticator.authorization.Api.ENTITIES;
+import static iudx.data.ingestion.server.authenticator.authorization.Api.INGESTION;
+import static iudx.data.ingestion.server.authenticator.authorization.DelegateAuthStrategy.delegateAuthorizationRules;
+import static iudx.data.ingestion.server.authenticator.authorization.Method.DELETE;
+import static iudx.data.ingestion.server.authenticator.authorization.Method.GET;
 import static iudx.data.ingestion.server.authenticator.authorization.Method.POST;
 
 import io.vertx.core.json.JsonArray;
@@ -24,25 +28,16 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
     apiAccessList.add(new AuthorizationRequest(POST, ENTITIES));
     providerAuthorizationRules.put("api", apiAccessList);
 
+    // ingestion access list/rules
+    List<AuthorizationRequest> ingestAccessList = new ArrayList<>();
+    ingestAccessList.add(new AuthorizationRequest(POST, INGESTION));
+    ingestAccessList.add(new AuthorizationRequest(DELETE, INGESTION));
+    providerAuthorizationRules.put("ingestion", ingestAccessList);
   }
 
   @Override
   public boolean isAuthorized(AuthorizationRequest authRequest, JwtData jwtData) {
-    JsonArray access = jwtData.getCons() != null ? jwtData.getCons().getJsonArray("access") : null;
-    boolean result = false;
-    if (access == null) {
-      return false;
-    }
-    String endpoint = authRequest.getApi().getApiEndpoint();
-    Method method = authRequest.getMethod();
-    LOGGER.info("authorization request for : " + endpoint + " with method : " + method.name());
-    LOGGER.info("allowed access : " + access);
-
-    if (!result && access.contains("api")) {
-      result = providerAuthorizationRules.get("api").contains(authRequest);
-    }
-
-    return result;
+    return true;
   }
 
 }

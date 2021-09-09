@@ -6,6 +6,7 @@ public enum HttpStatusCode {
   RESOURCE_NOT_FOUND(404, "Resource not in Catalogue."),
   INVALID_TOKEN(401, "Unauthorized");
 
+
   private final int value;
   private final String description;
 

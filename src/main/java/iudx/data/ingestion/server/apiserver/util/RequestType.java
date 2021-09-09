@@ -1,7 +1,9 @@
 package iudx.data.ingestion.server.apiserver.util;
 
 public enum RequestType {
-  ENTITY("entity");
+  ENTITY("entity"),
+  INGEST("ingest"),
+  INGEST_DELETE("ingestDelete");
 
   private String filename;
 
