@@ -1,6 +1,5 @@
 package iudx.data.ingestion.server.apiserver;
 
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
 import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
 import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
@@ -114,6 +113,8 @@ public class ApiServerVerticle extends AbstractVerticle {
         .handler(AuthHandler.create(vertx))
         .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
 
+    router.post(Constants.IUDX_MANAGEMENT_ADAPTER_URL).consumes(APPLICATION_JSON).handler(this::ingestDataPost);
+
     /* Read ssl configuration. */
     isSSL = config().getBoolean("ssl");
 
@@ -163,6 +164,19 @@ public class ApiServerVerticle extends AbstractVerticle {
    *
    * @param routingContext RoutingContext Object
    */
+
+  private void ingestDataPost(RoutingContext routingContext) {
+    HttpServerResponse response = routingContext.response();
+    JsonObject requestJson = routingContext.getBodyAsJson();
+    databroker.ingestDataPost(requestJson, handler -> {
+      if (handler.succeeded()) {
+        handleSuccessResponse(response, 200, handler.result().toString());
+      } else if (handler.failed()) {
+        LOGGER.error("Fail: Ingestion Fail");
+        handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
+      }
+    });
+  }
 
   private void handleEntitiesPostQuery(RoutingContext routingContext) {
     LOGGER.debug("Info:handleEntitiesPostQuery method started.");
