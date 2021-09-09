@@ -23,7 +23,7 @@ public class DataBrokerVerticle extends AbstractVerticle {
   private int dataBrokerPort;
   private int dataBrokerManagementPort;
   private String dataBrokerVhost;
-  private static String dataBrokerUserName;
+  private String dataBrokerUserName;
   private String dataBrokerPassword;
   private int connectionTimeout;
   private int requestedHeartbeat;
@@ -34,10 +34,6 @@ public class DataBrokerVerticle extends AbstractVerticle {
   private MessageConsumer<JsonObject> consumer;
   private RabbitWebClient rabbitWebClient;
   private WebClientOptions webConfig;
-
-  public static String getDataBrokerUserName() {
-    return dataBrokerUserName;
-  }
 
   @Override
   public void start() throws Exception {
@@ -58,11 +54,11 @@ public class DataBrokerVerticle extends AbstractVerticle {
     /* Configure the RabbitMQ Data Broker client with input from config files. */
 
     config = new RabbitMQOptions()
-//        .setUser(dataBrokerUserName)
-//        .setPassword(dataBrokerPassword)
-//        .setHost(dataBrokerIP)
-//        .setPort(dataBrokerPort)
-//        .setVirtualHost(dataBrokerVhost)
+        .setUser(dataBrokerUserName)
+        .setPassword(dataBrokerPassword)
+        .setHost(dataBrokerIP)
+        .setPort(dataBrokerPort)
+        .setVirtualHost(dataBrokerVhost)
         .setConnectionTimeout(connectionTimeout)
         .setRequestedHeartbeat(requestedHeartbeat)
         .setHandshakeTimeout(handshakeTimeout)
@@ -73,13 +69,13 @@ public class DataBrokerVerticle extends AbstractVerticle {
     webConfig = new WebClientOptions()
         .setKeepAlive(true)
         .setConnectTimeout(86400000)
-        .setDefaultHost("localhost")
-        .setDefaultPort(15672)
+        .setDefaultHost(dataBrokerIP)
+        .setDefaultPort(dataBrokerManagementPort)
         .setKeepAliveTimeout(86400000);
 
     JsonObject webClientProperties = new JsonObject()
-        .put(USERNAME, "temp")
-        .put(PASSWORD, "12345");
+        .put(USERNAME, dataBrokerUserName)
+        .put(PASSWORD, dataBrokerPassword);
     /*
      * Create a RabbitMQ Client with the configuration and vertx cluster instance.
      */
