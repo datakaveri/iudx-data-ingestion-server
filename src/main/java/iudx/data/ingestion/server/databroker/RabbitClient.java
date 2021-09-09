@@ -3,13 +3,17 @@ package iudx.data.ingestion.server.databroker;
 import com.google.common.cache.Cache;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.rabbitmq.RabbitMQClient;
 import iudx.data.ingestion.server.databroker.util.Util;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
@@ -68,30 +72,6 @@ public class RabbitClient {
     return promise.future();
   }
 
-  private Future<JsonObject> fetchExchange(String exchangeName, String vHost) {
-    LOGGER.debug("INFO: Fetching Exchange: {} from vHost: {}", exchangeName, vHost);
-    Promise<JsonObject> promise = Promise.promise();
-    JsonObject result = new JsonObject();
-    String exchangeUrl = Util.convertExchangeIntoUrl(exchangeName);
-    String url = "/api/exchanges/" + vHost + "/" + exchangeUrl;
-    rabbitWebClient.requestAsync(REQUEST_GET, url)
-        .onComplete(ar -> {
-          if (ar.succeeded()) {
-            if (ar.result().statusCode() == HttpStatus.SC_OK) {
-              LOGGER.debug("Given exchange exists");
-              result.put(DOES_EXCHANGE_EXIST, true);
-            } else {
-              LOGGER.debug("Given exchange does not exists");
-              result.put(DOES_EXCHANGE_EXIST, false);
-            }
-            promise.complete(result);
-          } else {
-            promise.fail(ar.cause());
-          }
-        });
-    return promise.future();
-  }
-
   public Future<Boolean> populateExchangeCache(String vHost, Cache<String, Boolean> exchangeListCache) {
     Promise<Boolean> promise = Promise.promise();
     String url = "/api/exchanges/" + vHost;
@@ -130,8 +110,6 @@ public class RabbitClient {
     }
     return promise.future();
   }
-<<<<<<< Updated upstream
-=======
 
   public Future<JsonObject> getQueue(JsonObject request, String vHost) {
     JsonObject response = new JsonObject();

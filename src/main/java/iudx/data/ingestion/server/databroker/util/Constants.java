@@ -9,7 +9,8 @@ public class Constants {
   public static final String TYPE = "type";
   public static final String FAILURE = "failure";
   public static final String SUCCESS = "success";
-
+  public static final String TITLE = "title";
+  public static final String DETAIL = "detail";
   public static final String NAME = "name";
 
   public static final String DOES_EXCHANGE_EXIST = "does_exchange_exist";
@@ -24,8 +25,6 @@ public class Constants {
   public static final String PASSWORD = "password";
 
   public static final int CACHE_TIMEOUT_AMOUNT = 30;
-<<<<<<< Updated upstream
-=======
 
   public static final String ALLOW = ".*";
   public static final String WRITE = "write";
@@ -39,7 +38,6 @@ public class Constants {
   public static final String EXCHANGE_DELETE_ERROR = "Deletion of Exchange failed";
   public static final String EXCHANGE_CREATE_ERROR = "Creation of Exchange failed";
   public static final String EXCHANGE = "exchange";
-  public static final String EXCHANGE_NAME = "exchangeName";
   public static final String EXCHANGE_NOT_FOUND = "Exchange not found";
   public static final String EXCHANGE_TYPE = "topic";
   public static final String AUTO_DELETE = "auto_delete";
@@ -73,5 +71,4 @@ public class Constants {
   public static final String QUEUE_DOES_NOT_EXISTS = "Queue does not exist";
   public static final String QUEUE_CREATE_ERROR = "Creation of Queue failed";
   public static final String QUEUE_DELETE_ERROR = "Deletion of Queue failed";
->>>>>>> Stashed changes
 }
