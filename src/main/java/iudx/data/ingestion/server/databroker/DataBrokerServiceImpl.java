@@ -93,7 +93,11 @@ public class DataBrokerServiceImpl implements DataBrokerService {
             LOGGER.debug("Info: Queue binding successful");
             LOGGER.debug("Ingest data operation successful");
             handler.handle(Future.succeededFuture(new JsonObject()
-                .put(TYPE, SUCCESS)));
+                .put(TYPE, SUCCESS)
+                .put(EXCHANGE_NAME, exchangeName)
+                .put(QUEUE_NAME, object.getString(QUEUE_NAME))
+                .put(ROUTING_KEY, object.getString(ROUTING_KEY))
+            ));
           })
           .onFailure(ar -> {
             LOGGER.error("Error: {}", object.getString(ERROR));
@@ -115,21 +119,19 @@ public class DataBrokerServiceImpl implements DataBrokerService {
           .onSuccess(ar -> {
             LOGGER.debug("Deletion of exchange successful");
             exchangeListCache.invalidate(exchangeName);
-            handler.handle(Future.succeededFuture(new JsonObject().put(TYPE, SUCCESS)));
+            handler.handle(Future.succeededFuture(new JsonObject().mergeIn(ar)));
           })
           .onFailure(ar -> {
             LOGGER.debug("Could not delete exchange due to: {}", ar.getCause().toString());
-            handler.handle(Future.failedFuture(new JsonObject()
+            handler.handle(Future.succeededFuture(new JsonObject()
                 .put(TYPE, FAILURE)
                 .put(ERROR_MESSAGE, ar.getCause().getLocalizedMessage())
-                .toString()
             ));
           });
     } else {
-      handler.handle(Future.failedFuture(new JsonObject()
+      handler.handle(Future.succeededFuture(new JsonObject()
           .put(TYPE, FAILURE)
           .put(ERROR_MESSAGE, "Bad Request: Request Json empty")
-          .toString()
       ));
     }
     return this;

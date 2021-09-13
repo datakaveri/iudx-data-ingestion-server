@@ -174,7 +174,7 @@ public class RabbitClient {
     return promise.future();
   }
 
-  private Future<JsonObject> createQueue(String queueName, String vHost) {
+  public Future<JsonObject> createQueue(String queueName, String vHost) {
     JsonObject finalResponse = new JsonObject();
     Promise<JsonObject> promise = Promise.promise();
     LOGGER.debug("Info: Creating queue {} for the request", queueName);
@@ -260,6 +260,7 @@ public class RabbitClient {
 
     rabbitWebClient.requestAsync(REQUEST_POST, url, bindRequest).onComplete(handler -> {
       if (handler.succeeded()) {
+        response.put(TYPE, SUCCESS);
         promise.complete(response);
       } else {
         promise.fail(handler.cause());
@@ -346,6 +347,34 @@ public class RabbitClient {
             EXCHANGE_DELETE_ERROR);
         LOGGER.error("Error : " + requestHandler.cause());
         promise.fail(errorJson.toString());
+      }
+    });
+    return promise.future();
+  }
+
+  public Future<JsonObject> deleteQueue(String queueName, String vhost) {
+    LOGGER.debug("Info : RabbitClient#deleteQueue() started");
+    Promise<JsonObject> promise = Promise.promise();
+    JsonObject finalResponse = new JsonObject();
+    LOGGER.debug("Deleting queue: {}", queueName);
+    String url = "/api/queues/" + vhost + "/" + Util.encodeString(queueName);
+    rabbitWebClient.requestAsync(REQUEST_DELETE, url).onComplete(ar -> {
+      if (ar.succeeded()) {
+        HttpResponse<Buffer> response = ar.result();
+        if (response != null && !response.equals(" ")) {
+          int status = response.statusCode();
+          if (status == HttpStatus.SC_NO_CONTENT) {
+            finalResponse.put(QUEUE, queueName);
+          } else if (status == HttpStatus.SC_NOT_FOUND) {
+            finalResponse.mergeIn(Util.getResponseJson(status, FAILURE, QUEUE_DOES_NOT_EXISTS));
+          }
+        }
+        LOGGER.info(finalResponse);
+        promise.complete(finalResponse);
+      } else {
+        LOGGER.error("Fail : deletion of queue failed - " + ar.cause());
+        finalResponse.mergeIn(Util.getResponseJson(500, FAILURE, QUEUE_DELETE_ERROR));
+        promise.fail(finalResponse.toString());
       }
     });
     return promise.future();

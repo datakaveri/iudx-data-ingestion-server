@@ -9,13 +9,14 @@ public class Constants {
   public static final String TYPE = "type";
   public static final String FAILURE = "failure";
   public static final String SUCCESS = "success";
-  public static final String DETAIL = "detail";
   public static final String TITLE = "title";
-
+  public static final String DETAIL = "detail";
   public static final String NAME = "name";
 
   public static final String DOES_EXCHANGE_EXIST = "does_exchange_exist";
   public static final String ERROR_MESSAGE = "error_message";
+  public static final String EXCHANGE_NAME = "exchangeName";
+  public static final String EXCHANGE_URL = "exchangeUrl";
 
   public static final String ROUTING_KEY = "routingKey";
   public static final String ROUTING_KEY_ALL = ".*";
@@ -37,7 +38,6 @@ public class Constants {
   public static final String EXCHANGE_DELETE_ERROR = "Deletion of Exchange failed";
   public static final String EXCHANGE_CREATE_ERROR = "Creation of Exchange failed";
   public static final String EXCHANGE = "exchange";
-  public static final String EXCHANGE_NAME = "exchangeName";
   public static final String EXCHANGE_NOT_FOUND = "Exchange not found";
   public static final String EXCHANGE_TYPE = "topic";
   public static final String AUTO_DELETE = "auto_delete";
@@ -60,6 +60,7 @@ public class Constants {
   public static final String TOPIC_PERMISSION_SET_ERROR = "Error in setting Topic permissions";
   public static final String TAGS = "tags";
 
+  public static final String QUEUE = "queue";
   public static final String QUEUE_FOUND = "Queue Found";
   public static final String QUEUE_NOT_FOUND = "Queue not Found";
   public static final String QUEUE_NAME = "queueName";
@@ -67,5 +68,7 @@ public class Constants {
   public static final String QUEUE_ALREADY_EXISTS = "Queue already exists";
   public static final String QUEUE_ALREADY_EXISTS_WITH_DIFFERENT_PROPERTIES =
       "Queue already exists with different properties";
+  public static final String QUEUE_DOES_NOT_EXISTS = "Queue does not exist";
   public static final String QUEUE_CREATE_ERROR = "Creation of Queue failed";
+  public static final String QUEUE_DELETE_ERROR = "Deletion of Queue failed";
 }
