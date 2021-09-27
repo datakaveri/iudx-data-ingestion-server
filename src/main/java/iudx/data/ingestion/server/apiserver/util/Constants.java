@@ -41,6 +41,14 @@ public class Constants {
   public static final String JSON_TITLE = "title";
   public static final String JSON_DETAIL = "detail";
 
+  /** API Documentation endpoint */
+  public static final String ROUTE_STATIC_SPEC = "/apis/spec";
+  public static final String ROUTE_DOC = "/apis";
+
+  /** Accept Headers and CORS */
+  public static final String MIME_APPLICATION_JSON = "application/json";
+  public static final String MIME_TEXT_HTML = "text/html";
+
   // messages (Error, Exception, messages..)
   public static final String MSG_BAD_QUERY = "Bad query";
 

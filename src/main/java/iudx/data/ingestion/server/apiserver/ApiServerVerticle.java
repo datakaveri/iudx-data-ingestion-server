@@ -6,6 +6,10 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_APPLICATION_JSON;
+import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_TEXT_HTML;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -129,6 +133,20 @@ public class ApiServerVerticle extends AbstractVerticle {
         .handler(this::handleIngestDeleteQuery)
         .handler(validationsFailureHandler);
 
+    /**
+     * Documentation routes
+     */
+    /* Static Resource Handler */
+    /* Get openapiv3 spec */
+    router.get(ROUTE_STATIC_SPEC).produces(MIME_APPLICATION_JSON).handler(routingContext -> {
+      HttpServerResponse response = routingContext.response();
+      response.sendFile("docs/openapi.yaml");
+    });
+    /* Get redoc */
+    router.get(ROUTE_DOC).produces(MIME_TEXT_HTML).handler(routingContext -> {
+      HttpServerResponse response = routingContext.response();
+      response.sendFile("docs/apidoc.html");
+    });
 
 
     /* Read ssl configuration. */
