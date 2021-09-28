@@ -1,6 +1,6 @@
 ![IUDX](./docs/iudx.png)
 # iudx-data-ingestion-server
-The <b>Data Ingestion Server</b> is the "Firewall" of the [IUDXs](https://iudx.org.in), allowing data to be published. It enables datasource *Providers* and *Delegates* to publish data using the IUDX data descriptor. It allows users to use the <b>HTTP protocol over TLS</b> for publication (HTTPs).
+The <b>Data Ingestion Server</b> is the "Ingestion Firewall and Data Cleaning Middleware" of [IUDX](https://iudx.org.in). It enables *Providers* and *Delegates* to publish data using the IUDX API as per the data descriptor using the <b>HTTP protocol over TLS</b>(HTTPs).
 
 <p align="center">
 <img src="docs/di_server_overview.jpg">
@@ -8,9 +8,9 @@ The <b>Data Ingestion Server</b> is the "Firewall" of the [IUDXs](https://iudx.o
 
 ## **Features**
 
--  Data Ingestion Server allows IUDX Data *Providers* and *Delegate* to publish data into the DX platform.
-- Allows IUDX admin to register and delete ingestion stream for one or more data resources using standard APIs, streaming subscriptions (AMQP), (MQTT) etc.
-- Integration with authorization server (token introspection) to serve private data as per the access control policies set by the provider.
+-  Data Ingestion Server allows IUDX Data *Providers* and *Delegate* to publish data into the IUDX platform
+- Allows IUDX admin to register and delete ingestion stream for one or more data resources using standard APIs
+- Integrated with IUDX authorization server (token introspection) to allow data publication
 - Secure data publication over TLS.
 - Scalable, service mesh architecture based implementation using open source components: Vert.X API framework and RabbitMQ for data broker.
 - Hazelcast and Zookeeper based cluster management and service discovery.
