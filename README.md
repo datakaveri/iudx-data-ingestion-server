@@ -63,9 +63,9 @@ Integration tests are through Postman/Newman whose script can be found from [her
 
 ## Contributing
 We follow Git Merge based workflow 
-1. Fork this repo
-2. Create a new feature branch in your fork. Multiple features must have a hyphen separated name, or refer to a milestone name as mentioned in Github -> Projects 
-3. Commit to your fork and raise a Pull Request with upstream
+1. Fork this repo.
+2. Create a new feature branch in your fork. Multiple features must have a hyphen separated name, or refer to a milestone name as mentioned in Github -> Projects.
+3. Commit to your fork and raise a Pull Request with upstream.
 
 ## License
 [MIT](LICENSE)
