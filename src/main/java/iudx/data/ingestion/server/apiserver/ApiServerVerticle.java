@@ -67,7 +67,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
   private HttpServer server;
   private Router router;
-  private int port = 18443;
+  private int port = 8443;
   private boolean isSSL, isProduction;
   private String keystore;
   private String keystorePassword;
