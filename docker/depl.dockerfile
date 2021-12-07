@@ -17,7 +17,7 @@ RUN mvn clean package -Dmaven.test.skip=true
 FROM openjdk:11-jre-slim-buster
 
 ARG VERSION
-ENV JAR="iudx.data.ingestion.server-0.0.1-SNAPSHOT.jar"
+ENV JAR="iudx.data.ingestion.server-cluster-0.0.1-SNAPSHOT-fat.jar"
 
 WORKDIR /usr/share/app
 COPY docs docs
