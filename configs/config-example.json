@@ -8,42 +8,40 @@
 	"modules": [
 		{
 			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
-			"verticleInstances": 2,
+			"verticleInstances": 1,
 			"dataBrokerIP": "",
-			"dataBrokerPort": "",
+			"dataBrokerPort": 2,
 			"dataBrokerVhost": "",
 			"dataBrokerUserName": "",
 			"dataBrokerPassword": "",
-			"dataBrokerManagementPort": "",
-			"connectionTimeout": "6000",
-			"requestedHeartbeat": "60",
-			"handshakeTimeout": "6000",
-			"requestedChannelMax": "5",
-			"networkRecoveryInterval": "500",
+			"dataBrokerManagementPort": 28041,
+			"connectionTimeout": 6000,
+			"requestedHeartbeat": 60,
+			"handshakeTimeout": 6000,
+			"requestedChannelMax": 5,
+			"networkRecoveryInterval": 500,
 			"automaticRecoveryEnabled": "true"
 		},
-		{
-			"id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
-			"verticleInstances": 2,
-			"keystore": "configs/keystore.jks",
-			"keystorePassword": "",
-			"authServerHost": "localhost.auth",
-			"catServerHost": "localhost.catalogue",
-			"catServerPort": 1234,
-			"resourceServerId": "<id-of-rs-in-catalogue>",
-			"serverMode": "testing"
-		},
+                {
+                        "id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
+                        "verticleInstances": 2,
+                        "keystore": "configs/keystore.jks",
+                        "keystorePassword": "",
+                        "authServerHost": "",
+                        "catServerHost": "",
+                        "catServerPort": 443,
+                        "resourceServerId": "datakaveri.org/f7e044eee8122b5c87dce6e7ad64f3266afa41dc/rs.iudx.io",
+                        "serverMode": "testing"
+                },
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
-			"ssl": false,
-			"production": true,
+			"ssl": true,
+			"production": false,
 			"keystore": "configs/keystore.jks",
 			"keystorePassword": "",
-			"verticleInstances": 2,
-			"authServerHost": "localhost.auth",
-			"catServerHost": "",
-			"catServerPort": 123,
-			"resourceServerId": "localhost.rs"
+                        "catServerHost": "",
+                        "catServerPort": 443,
+			"verticleInstances": 2
 		}
 	]
 }
