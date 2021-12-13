@@ -88,7 +88,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
           return isValidAudienceValue(result.jwtData);
         }).compose(audienceHandler -> {
 
-          //   return isValidId(result.jwtData, id);
+             return isValidId(result.jwtData, id);
           //uncomment above line once you get a valid JWT token. and delete below line
 
           return Future.succeededFuture(true);
@@ -175,9 +175,11 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     LOGGER.info("ID " + id);
     if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);
-    } else {
-      LOGGER.error("Incorrect id value in jwt");
-      promise.fail("Incorrect id value in jwt");
+    } else if (id.equalsIgnoreCase(jwtId)) {
+        promise.complete(true);
+      } else {
+    	LOGGER.error("Incorrect id value in jwt");
+        promise.fail("Incorrect id value in jwt");
     }
 
     return promise.future();
