@@ -17,4 +17,6 @@ public class Constants {
   public static final String CAT_SERVER_PORT = "catServerPort";
   public static final String JSON_PROVIDER = "provider";
   public static final String JSON_DELEGATE = "delegate";
+  public static final String JSON_IID = "iid";
+  public static final String JSON_USERID = "userid";
 }

@@ -40,6 +40,16 @@
 			"keystore": "configs/keystore.jks",
 			"keystorePassword": "",
 			"verticleInstances": 2
+		},
+		{
+			"id": "iudx.data.ingestion.server.metering.MeteringVerticle",
+			"verticleInstances": 1,
+			"meteringDatabaseIP": "",
+			"meteringDatabasePort": 1234,
+			"meteringDatabaseName": "",
+			"meteringDatabaseUserName": "",
+			"meteringDatabasePassword": "",
+			"meteringPoolSize": 25
 		}
 	]
 }

@@ -6,7 +6,9 @@ import static iudx.data.ingestion.server.authenticator.Constants.CAT_SERVER_HOST
 import static iudx.data.ingestion.server.authenticator.Constants.CAT_SERVER_PORT;
 import static iudx.data.ingestion.server.authenticator.Constants.ID;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_DELEGATE;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_IID;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_PROVIDER;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_USERID;
 import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
 import static iudx.data.ingestion.server.authenticator.Constants.TOKEN;
 
@@ -88,7 +90,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
           return isValidAudienceValue(result.jwtData);
         }).compose(audienceHandler -> {
 
-          //   return isValidId(result.jwtData, id);
+//             return isValidId(result.jwtData, id);
           //uncomment above line once you get a valid JWT token. and delete below line
 
           return Future.succeededFuture(true);
@@ -129,6 +131,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   public Future<JsonObject> validateAccess(JwtData jwtData, JsonObject authInfo) {
     LOGGER.info("validateAccess() started");
     Promise<JsonObject> promise = Promise.promise();
+    String jwtId = jwtData.getIid().split(":")[1];
 
     Method method = Method.valueOf(authInfo.getString(METHOD));
     Api api = Api.fromEndpoint(authInfo.getString(API_ENDPOINT));
@@ -139,7 +142,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
     if (jwtAuthStrategy.isAuthorized(authRequest, jwtData)) {
       JsonObject jsonResponse = new JsonObject();
-
+      jsonResponse.put(JSON_IID,jwtId);
+      jsonResponse.put(JSON_USERID, jwtData.getSub());
       if (jwtData.getRole().equalsIgnoreCase(JSON_PROVIDER)) {
         jsonResponse.put(JSON_PROVIDER, jwtData.getSub());
       } else if (jwtData.getRole().equalsIgnoreCase(JSON_DELEGATE)) {
@@ -157,8 +161,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   public Future<Boolean> isValidAudienceValue(JwtData jwtData) {
     Promise<Boolean> promise = Promise.promise();
 
-    LOGGER.info("AUD " + audience);
-    LOGGER.info("GET AUD " + jwtData.getAud());
     if (audience != null && audience.equalsIgnoreCase(jwtData.getAud())) {
       promise.complete(true);
     } else {

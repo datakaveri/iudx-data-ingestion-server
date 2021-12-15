@@ -9,12 +9,14 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITIES_URL_REGEX;
 import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.IID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.INGESTION_URL_REGEX;
 import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_INGESTION_URL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -78,7 +80,9 @@ public class AuthHandler implements Handler<RoutingContext> {
     authenticator.tokenIntrospect(requestJson, authInfo, authHandler -> {
 
       if (authHandler.succeeded()) {
-        context.data().put(AUTH_INFO, authHandler.result());
+        authInfo.put(IID, authHandler.result().getValue(IID));
+        authInfo.put(USER_ID, authHandler.result().getValue(USER_ID));
+        context.data().put(AUTH_INFO, authInfo);
       } else {
         processAuthFailure(context, authHandler.cause().getMessage());
         return;
