@@ -95,7 +95,7 @@ public class CatalogueService {
           if (responseHandler.succeeded()) {
             HttpResponse<Buffer> response = responseHandler.result();
             JsonObject responseBody = response.bodyAsJsonObject();
-            if (responseBody.getString("status").equalsIgnoreCase("urn:dx:cat:Success")
+            if (responseBody.getString("type").equalsIgnoreCase("urn:dx:cat:Success")
                 && responseBody.getInteger("totalHits") > 0) {
               LOGGER.info("ID exist.");
               promise.complete(responseHandler.succeeded());
