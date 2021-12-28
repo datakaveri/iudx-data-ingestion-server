@@ -1,5 +1,7 @@
 package iudx.data.ingestion.server.apiserver;
 
+import static iudx.data.ingestion.server.apiserver.util.Constants.API;
+import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
 import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
 import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
@@ -10,9 +12,11 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_APPLICATI
 import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_TEXT_HTML;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
+import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -33,6 +37,7 @@ import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import iudx.data.ingestion.server.databroker.DataBrokerService;
+import iudx.data.ingestion.server.metering.MeteringService;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -64,6 +69,7 @@ public class ApiServerVerticle extends AbstractVerticle {
    */
   private static final String AUTH_SERVICE_ADDRESS = "iudx.data.ingestion.authentication.service";
   private static final String BROKER_SERVICE_ADDRESS = "iudx.data.ingestion.broker.service";
+  private static final String METERING_SERVICE_ADDRESS = "iudx.data.ingestion.metering.service";
 
   private HttpServer server;
   private Router router;
@@ -74,6 +80,8 @@ public class ApiServerVerticle extends AbstractVerticle {
   private DataBrokerService databroker;
   private CatalogueService catalogueService;
   private AuthenticationService authenticationService;
+  private MeteringService meteringService;
+
 
   @Override
   public void start() throws Exception {
@@ -190,6 +198,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
     databroker = DataBrokerService.createProxy(vertx, BROKER_SERVICE_ADDRESS);
     authenticationService = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
+    meteringService=MeteringService.createProxy(vertx,METERING_SERVICE_ADDRESS);
     catalogueService = new CatalogueService(vertx, config());
   }
 
@@ -217,6 +226,7 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.publishData(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
+            Future.future(fu -> updateAuditTable(routingContext));
             handleSuccessResponse(response, 200, handler.result().toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
@@ -321,5 +331,27 @@ public class ApiServerVerticle extends AbstractVerticle {
         statusCode.getDescription());
   }
 
+  private Future<Void> updateAuditTable(RoutingContext context) {
+    Promise<Void> promise = Promise.promise();
+    JsonObject authInfo = (JsonObject) context.data().get("authInfo");
+
+    JsonObject request = new JsonObject();
+    request.put(USER_ID, authInfo.getValue(USER_ID));
+    request.put(ID, authInfo.getValue(ID));
+    request.put(API, authInfo.getValue(API_ENDPOINT));
+    meteringService.executeWriteQuery(
+        request,
+        handler -> {
+          if (handler.succeeded()) {
+            LOGGER.info("audit table updated");
+            promise.complete();
+          } else {
+            LOGGER.error("failed to update audit table");
+            promise.complete();
+          }
+        });
+
+    return promise.future();
+  }
 
 }

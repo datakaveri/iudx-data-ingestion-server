@@ -10,6 +10,7 @@ public class Constants {
   public static final String API_METHOD = "method";
   public static final String ID = "id";
 
+
   // NGSI-LD endpoints
   public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
   public static final String NGSILD_ENTITIES_URL = NGSILD_BASE_PATH + "/entities";
@@ -21,6 +22,10 @@ public class Constants {
   // ngsi-ld/IUDX query parameters
   public static final String NGSILD_QUERY_ID = "id";
   public static final String QUEUE = "queue";
+  public static final String USER_ID = "userid";
+  public static final String EXPIRY = "expiry";
+  public static final String IID = "iid";
+  public static final String API = "api";
 
   // Header params
   public static final String HEADER_TOKEN = "token";
