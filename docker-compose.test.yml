@@ -1,0 +1,53 @@
+version: '3.7'
+
+networks:
+  di-net:
+    driver: bridge
+
+services:
+
+  test:
+    image: iudx/di-test:latest
+    environment:
+      - RS_URL=https://rs.iudx.org.in
+      - LOG_LEVEL=DEBUG
+      - RS_JAVA_OPTS=-Xmx1024m
+    volumes:
+      - ./configs/config-dev.json:/usr/share/app/configs/config.json
+      - ./configs/keystore.jks:/usr/share/app/configs/keystore.jks
+      - ./docker/runTests.sh:/usr/share/app/docker/runTests.sh
+      - ./src/:/usr/share/app/src
+      - ${WORKSPACE}:/tmp/test
+    restart: on-failure
+    networks: 
+      - di-net
+    logging:
+         driver: "json-file"
+         options:
+             max-file: "5"
+             max-size: "100m"
+    command: bash -c "docker/runTests.sh && cp -r target /tmp/test"
+
+  perfTest:
+    image: iudx/di-test:latest
+    environment:
+      - RS_URL=https://rs.iudx.org.in
+      - LOG_LEVEL=DEBUG
+      - RS_JAVA_OPTS=-Xmx1024m
+    volumes:
+      - ./configs/config-dev.json:/usr/share/app/configs/config.json
+      - ./configs/keystore.jks:/usr/share/app/configs/keystore.jks
+      - ./docker/runTests.sh:/usr/share/app/docker/runTests.sh
+      - ./src/:/usr/share/app/src
+      - ${WORKSPACE}:/tmp/test
+    ports:
+      - "8443:8443"
+    restart: on-failure
+    networks: 
+      - di-net
+    logging:
+         driver: "json-file"
+         options:
+             max-file: "5"
+             max-size: "100m"
+    command: bash -c "mvn clean compile exec:java@data-ingestion-server"
