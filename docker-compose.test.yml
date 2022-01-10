@@ -7,7 +7,7 @@ networks:
 services:
 
   test:
-    image: iudx/di-test:latest
+    image: ghcr.io/karun-singh/di-test:latest
     environment:
       - RS_URL=https://rs.iudx.org.in
       - LOG_LEVEL=DEBUG
@@ -29,7 +29,7 @@ services:
     command: bash -c "docker/runTests.sh && cp -r target /tmp/test"
 
   perfTest:
-    image: iudx/di-test:latest
+    image: ghcr.io/karun-singh/di-test:latest
     environment:
       - RS_URL=https://rs.iudx.org.in
       - LOG_LEVEL=DEBUG
