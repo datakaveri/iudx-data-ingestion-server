@@ -13,8 +13,8 @@ services:
       - LOG_LEVEL=DEBUG
       - RS_JAVA_OPTS=-Xmx1024m
     volumes:
-      - ./configs/config-dev.json:/usr/share/app/configs/config-test.json
-      - ./configs/keystore.jks:/usr/share/app/configs/keystore.jks
+      - /home/ubuntu/configs/di-config-test.json:/usr/share/app/configs/config-test.json
+      - /home/ubuntu/configs/keystore-di.jks:/usr/share/app/configs/keystore.jks
       - ./docker/runTests.sh:/usr/share/app/docker/runTests.sh
       - ./src/:/usr/share/app/src
       - ${WORKSPACE}:/tmp/test
@@ -35,9 +35,8 @@ services:
       - LOG_LEVEL=DEBUG
       - RS_JAVA_OPTS=-Xmx1024m
     volumes:
-      - ./configs/config-dev.json:/usr/share/app/configs/config-test.json
-      - ./configs/keystore.jks:/usr/share/app/configs/keystore.jks
-      - ./docker/runTests.sh:/usr/share/app/docker/runTests.sh
+      - /home/ubuntu/configs/di-config-test.json:/usr/share/app/configs/config-test.json
+      - /home/ubuntu/configs/keystore-di.jks:/usr/share/app/configs/keystore.jks
       - ./src/:/usr/share/app/src
       - ${WORKSPACE}:/tmp/test
     ports:
