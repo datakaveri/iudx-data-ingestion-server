@@ -19,7 +19,6 @@ services:
       - ./docker/runTests.sh:/usr/share/app/docker/runTests.sh
       - ./src/:/usr/share/app/src
       - ${WORKSPACE}:/tmp/test
-    restart: on-failure
     networks: 
       - di-net
     logging:
@@ -42,7 +41,6 @@ services:
       - ${WORKSPACE}:/tmp/test
     ports:
       - "8443:8443"
-    restart: on-failure
     networks: 
       - di-net
     logging:
