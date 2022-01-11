@@ -40,11 +40,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
   private static final Logger LOGGER = LogManager.getLogger(JwtAuthenticationServiceImpl.class);
   // resourceIdCache will contain info about resources available(& their ACL) in ingestion server.
-  public final Cache<String, String> resourceIdCache = CacheBuilder
-      .newBuilder()
-      .maximumSize(1000)
-      .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES)
-      .build();
+  public final Cache<String, String> resourceIdCache = CacheBuilder.newBuilder().maximumSize(1000)
+      .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
   final JWTAuth jwtAuth;
   final WebClient catWebClient;
   final String host;
@@ -52,14 +49,12 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final String path;
   final String audience;
   // resourceGroupCache will contain ACL info about all resource group in ingestion server
-  private final Cache<String, String> resourceGroupCache = CacheBuilder
-      .newBuilder()
-      .maximumSize(1000)
-      .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES)
-      .build();
+  private final Cache<String, String> resourceGroupCache =
+      CacheBuilder.newBuilder().maximumSize(1000)
+          .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
 
   public JwtAuthenticationServiceImpl(Vertx vertx, final JWTAuth jwtAuth, final WebClient webClient,
-                                      final JsonObject config) {
+      final JsonObject config) {
     this.jwtAuth = jwtAuth;
     this.audience = config.getString(CAT_HOST);
     host = config.getString(CAT_SERVER_HOST);
@@ -67,15 +62,13 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     path = Constants.CAT_RSG_PATH;
     LOGGER.info("CONFIG " + config);
     WebClientOptions options = new WebClientOptions();
-    options.setTrustAll(true)
-        .setVerifyHost(false)
-        .setSsl(true);
+    options.setTrustAll(true).setVerifyHost(false).setSsl(true);
     catWebClient = WebClient.create(vertx, options);
   }
 
   @Override
   public AuthenticationService tokenIntrospect(JsonObject request, JsonObject authenticationInfo,
-                                               Handler<AsyncResult<JsonObject>> handler) {
+      Handler<AsyncResult<JsonObject>> handler) {
 
     String endPoint = authenticationInfo.getString(API_ENDPOINT);
     String id = authenticationInfo.getString(ID);
@@ -86,15 +79,15 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
-          result.jwtData = decodeHandler;
-          return isValidAudienceValue(result.jwtData);
-        }).compose(audienceHandler -> {
+      result.jwtData = decodeHandler;
+      return isValidAudienceValue(result.jwtData);
+    }).compose(audienceHandler -> {
 
-//             return isValidId(result.jwtData, id);
-          //uncomment above line once you get a valid JWT token. and delete below line
+      return isValidId(result.jwtData, id);
+      // uncomment above line once you get a valid JWT token. and delete below line
 
-          return Future.succeededFuture(true);
-        }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
+      // return Future.succeededFuture(true);
+    }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
         .onComplete(completeHandler -> {
           if (completeHandler.succeeded()) {
             LOGGER.debug("Completion handler");
@@ -116,14 +109,13 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     TokenCredentials creds = new TokenCredentials(jwtToken);
 
-    jwtAuth.authenticate(creds)
-        .onSuccess(user -> {
-          JwtData jwtData = new JwtData(user.principal());
-          promise.complete(jwtData);
-        }).onFailure(err -> {
-          LOGGER.error("failed to decode/validate jwt token : " + err.getMessage());
-          promise.fail("failed");
-        });
+    jwtAuth.authenticate(creds).onSuccess(user -> {
+      JwtData jwtData = new JwtData(user.principal());
+      promise.complete(jwtData);
+    }).onFailure(err -> {
+      LOGGER.error("failed to decode/validate jwt token : " + err.getMessage());
+      promise.fail("failed");
+    });
 
     return promise.future();
   }
@@ -177,11 +169,12 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     LOGGER.info("ID " + id);
     if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);
+    } else if (id.equalsIgnoreCase(jwtId)) {
+      promise.complete(true);
     } else {
       LOGGER.error("Incorrect id value in jwt");
       promise.fail("Incorrect id value in jwt");
     }
-
     return promise.future();
   }
 
