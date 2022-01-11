@@ -1,11 +1,11 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
   environment {
-    devRegistry = 'ghcr.io/karun-singh/di-dev'
-    deplRegistry = 'ghcr.io/karun-singh/di-depl'
-    testRegistry = 'ghcr.io/karun-singh/di-test:latest'
+    devRegistry = 'ghcr.io/datakaveri/di-dev'
+    deplRegistry = 'ghcr.io/datakaveri/di-depl'
+    testRegistry = 'ghcr.io/datakaveri/di-test:latest'
     registryUri = 'https://ghcr.io'
-    registryCredential = 'karun-ghcr'
+    registryCredential = 'datakaveri-ghcr'
     GIT_HASH = GIT_COMMIT.take(7)
   }
   agent { 
@@ -57,46 +57,20 @@ pipeline {
     stage('Run File server for Performance Tests'){
       steps{
         script{
-            // sh 'scp Jmeter/CatalogueServer.jmx jenkins@jenkins-master:/var/lib/jenkins/iudx/cat/Jmeter/'
             sh 'scp src/test/resources/IUDX_Data_Ingestion_Server.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/di/Newman/'
             sh 'docker-compose -f docker-compose.test.yml up -d perfTest'
             sh 'sleep 45'
         }
       }
     }
-    
-    // stage('Run Jmeter Performance Tests'){
-    //   steps{
-    //     node('master') {      
-    //       script{
-    //         sh 'rm -rf /var/lib/jenkins/iudx/cat/Jmeter/Report ; mkdir -p /var/lib/jenkins/iudx/cat/Jmeter/Report ; /var/lib/jenkins/apache-jmeter-5.4.1/bin/jmeter.sh -n -t /var/lib/jenkins/iudx/cat/Jmeter/CatalogueServer.jmx -l /var/lib/jenkins/iudx/cat/Jmeter/Report/JmeterTest.jtl -e -o /var/lib/jenkins/iudx/cat/Jmeter/Report'
-    //       }
-    //     }
-    //   }
-    // }
-    
-    // stage('Capture Jmeter report'){
-    //   steps{
-    //     node('master') {
-    //       perfReport errorFailedThreshold: 0, errorUnstableThreshold: 0, filterRegex: '', showTrendGraphs: true, sourceDataFiles: '/var/lib/jenkins/iudx/cat/Jmeter/Report/*.jtl'
-    //     }
-    //   }
-    //   post{
-    //     failure{
-    //       error "Test failure. Stopping pipeline execution!"
-    //     }
-    //   }
-    // }
 
     stage('OWASP ZAP pen test'){
       steps{
         node('master') {
           script{
             startZap ([host: 'localhost', port: 8090, zapHome: '/var/lib/jenkins/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/OWASP_ZAP/ZAP_2.11.0'])
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
               sh 'curl http://127.0.0.1:8090/JSON/pscan/action/disableScanners/?ids=10096'
               sh 'HTTP_PROXY=\'127.0.0.1:8090\' newman run /var/lib/jenkins/iudx/di/Newman/IUDX_Data_Ingestion_Server.postman_collection.json -e /home/ubuntu/configs/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/report.html'
-            }
             runZapAttack()
           }
         }
@@ -105,7 +79,7 @@ pipeline {
         always{
           node('master') {
             script{
-               archiveZap failAllAlerts: 15
+               archiveZap failHighAlerts: 1, failMediumAlerts: 1, failAllAlerts: 15
                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '/var/lib/jenkins/iudx/di/Newman/report/', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: ''])
             }  
           }
