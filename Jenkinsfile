@@ -1,4 +1,3 @@
-properties([pipelineTriggers([githubPush()])])
 pipeline {
   environment {
     devRegistry = 'ghcr.io/datakaveri/di-dev'
