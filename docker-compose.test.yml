@@ -38,7 +38,6 @@ services:
       - /home/ubuntu/configs/di-config-test.json:/usr/share/app/configs/config-test.json
       - /home/ubuntu/configs/keystore-di.jks:/usr/share/app/configs/keystore.jks
       - ./src/:/usr/share/app/src
-      - ${WORKSPACE}:/tmp/test
     ports:
       - "8443:8443"
     networks: 
