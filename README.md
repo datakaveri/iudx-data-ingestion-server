@@ -1,3 +1,10 @@
+[![Build Status](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fjenkins.iudx.io%3A8080%2Fjob%2Fiudx%2520data-ingestion-server%2520%28master%29%2520pipeline%2F)](http://jenkins.iudx.io:8080/job/iudx%20data-ingestion-server%20(master)%20pipeline//lastBuild/)
+[![Jenkins Coverage](https://img.shields.io/jenkins/coverage/jacoco?jobUrl=http%3A%2F%2Fjenkins.iudx.io%3A8080%2Fjob%2Fiudx%2520data-ingestion-server%2520%28master%29%2520pipeline%2F)](http://jenkins.iudx.io:8080/job/iudx%20data-ingestion-server%20(master)%20pipeline//lastBuild/jacoco/)
+[![Unit Tests](https://img.shields.io/jenkins/tests?jobUrl=http%3A%2F%2Fjenkins.iudx.io%3A8080%2Fjob%2Fiudx%2520data-ingestion-server%2520%28master%29%2520pipeline%2F)](http://jenkins.iudx.io:8080/job/iudx%20data-ingestion-server%20(master)%20pipeline//lastBuild/testReport/)
+[![Performance Tests](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fjenkins.iudx.io%3A8080%2Fjob%2Fiudx%2520data-ingestion-server%2520%28master%29%2520pipeline%2F)](http://jenkins.iudx.io:8080/job/iudx%20data-ingestion-server%20(master)%20pipeline//lastBuild/performance/)
+[![Security Tests](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fjenkins.iudx.io%3A8080%2Fjob%2Fiudx%2520data-ingestion-server%2520%28master%29%2520pipeline%2F)](http://jenkins.iudx.io:8080/job/iudx%20data-ingestion-server%20(master)%20pipeline//lastBuild/zap/)
+[![Integration Tests](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fjenkins.iudx.io%3A8080%2Fjob%2Fiudx%2520data-ingestion-server%2520%28master%29%2520pipeline%2F)](http://jenkins.iudx.io:8080/job/iudx%20data-ingestion-server%20(master)%20pipeline//HTML_20Report/)
+
 ![IUDX](./docs/iudx.png)
 # iudx-data-ingestion-server
 The <b>Data Ingestion Server</b> is the "Ingestion Firewall and Data Cleaning Middleware" of [IUDX](https://iudx.org.in). It enables *Providers* and *Delegates* to publish data using the IUDX API as per the data descriptor using the <b>HTTP protocol over TLS</b>(HTTPs).
