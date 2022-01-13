@@ -36,7 +36,7 @@ pipeline {
     stage('Capture Unit Test results'){
       steps{
         xunit (
-          thresholds: [ skipped(failureThreshold: '1'), failed(failureThreshold: '5') ],
+          thresholds: [ skipped(failureThreshold: '0'), failed(failureThreshold: '0') ],
           tools: [ JUnit(pattern: 'target/surefire-reports/*.xml') ]
         )
       }
@@ -53,7 +53,7 @@ pipeline {
       }
     }
 
-    stage('Run File server for Performance Tests'){
+    stage('Run data-ingestion server'){
       steps{
         script{
             sh 'scp src/test/resources/IUDX_Data_Ingestion_Server.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/di/Newman/'
@@ -63,7 +63,7 @@ pipeline {
       }
     }
 
-    stage('OWASP ZAP pen test'){
+    stage('Integration tests & ZAP pen test'){
       steps{
         node('master') {
           script{
@@ -79,8 +79,8 @@ pipeline {
           node('master') {
             script{
                archiveZap failHighAlerts: 1, failMediumAlerts: 1, failAllAlerts: 15
-               publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '/var/lib/jenkins/iudx/di/Newman/report/', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: ''])
             }  
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '/var/lib/jenkins/iudx/di/Newman/report/', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: '', reportName: 'Integration Test Report'])
           }
           script{
              sh 'docker-compose -f docker-compose.test.yml down --remove-orphans'
