@@ -24,7 +24,6 @@ public class DeployerDev {
 	private static final Logger LOGGER = LogManager.getLogger(DeployerDev.class);
 
 	public static void recursiveDeploy(Vertx vertx, JsonObject configs, int i) {
-		LOGGER.info("value of i"+ configs.toString());
 		if (i >= configs.getJsonArray("modules").size()) {
 			LOGGER.info("Deployed all");
 			return;

@@ -60,7 +60,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;
-    LOGGER.info("CONFIG " + config);
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
     catWebClient = WebClient.create(vertx, options);
@@ -165,7 +164,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   public Future<Boolean> isValidId(JwtData jwtData, String id) {
     Promise<Boolean> promise = Promise.promise();
     String jwtId = jwtData.getIid().split(":")[1];
-    LOGGER.info("JWT " + jwtId);
+    LOGGER.info("JWT ID" + jwtId);
     LOGGER.info("ID " + id);
     if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);

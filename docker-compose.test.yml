@@ -9,8 +9,8 @@ services:
   test:
     image: ghcr.io/datakaveri/di-test:latest
     environment:
-      - RS_URL=https://rs.iudx.org.in
-      - LOG_LEVEL=DEBUG
+      - DI_URL=https://rs.iudx.org.in
+      - LOG_LEVEL=INFO
       - RS_JAVA_OPTS=-Xmx1024m
     volumes:
       - /home/ubuntu/configs/di-config-test.json:/usr/share/app/configs/config-test.json
@@ -31,8 +31,8 @@ services:
   perfTest:
     image: ghcr.io/datakaveri/di-test:latest
     environment:
-      - RS_URL=https://rs.iudx.org.in
-      - LOG_LEVEL=DEBUG
+      - DI_URL=https://rs.iudx.org.in
+      - LOG_LEVEL=INFO
       - RS_JAVA_OPTS=-Xmx1024m
     volumes:
       - /home/ubuntu/configs/di-config-test.json:/usr/share/app/configs/config-test.json
