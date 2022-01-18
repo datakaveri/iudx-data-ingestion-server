@@ -171,7 +171,6 @@ public class ApiServerVerticle extends AbstractVerticle {
       /* Read the configuration and set the HTTPs server properties. */
 
       keystore = config().getString("keystore");
-      LOGGER.info("KEYSTORE: " + keystore);
       keystorePassword = config().getString("keystorePassword");
 
       /* Setup the HTTPs server properties, APIs and port. */

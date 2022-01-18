@@ -39,7 +39,6 @@ public class CatalogueService {
 
   public CatalogueService(Vertx vertx, JsonObject config) {
     this.vertx = vertx;
-    LOGGER.info("JSON" + config.toString());
     catHost = config.getString("catServerHost");
     catPort = config.getInteger("catServerPort");
     catSearchPath = Constants.CAT_RSG_PATH;

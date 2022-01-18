@@ -40,7 +40,6 @@ public class MeteringServiceTest {
     vertxObj = vertx;
     config = new Configuration();
     JsonObject dbConfig = config.configLoader(3, vertx);
-    LOGGER.info(dbConfig);
     databaseIP = dbConfig.getString("meteringDatabaseIP");
     databasePort = dbConfig.getInteger("meteringDatabasePort");
     databaseName = dbConfig.getString("meteringDatabaseName");
