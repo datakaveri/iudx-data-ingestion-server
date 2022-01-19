@@ -168,7 +168,7 @@ public class RabbitClient {
         response.put("getQueue_error", asyncResult.cause());
         promise.fail("getQueue_error" + asyncResult.cause());
       }
-      LOGGER.info("getQueue method response : " + response);
+      LOGGER.debug("getQueue method response : " + response);
       promise.complete(response);
     });
     return promise.future();
@@ -203,7 +203,7 @@ public class RabbitClient {
           }
         }
         promise.complete(finalResponse);
-        LOGGER.info("Success : " + finalResponse);
+        LOGGER.info("Success : Queue created ");
       } else {
         LOGGER.error("Fail : Creation of Queue failed - " + ar.cause());
         finalResponse.mergeIn(Util.getResponseJson(500, FAILURE, QUEUE_CREATE_ERROR));
