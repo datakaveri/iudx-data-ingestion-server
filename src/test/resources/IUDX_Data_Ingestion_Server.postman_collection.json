@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "b3b3fb2d-742d-4f57-9f65-0173204b3b82",
 		"name": "IUDX Data Ingestion Server",
-		"schema": "http://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -32,8 +32,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/entities",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -71,8 +71,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/entities",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -111,8 +111,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/entities",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -150,8 +150,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/entities",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -186,8 +186,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/entities",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -227,8 +227,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/ingestion",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/ingestion",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -263,8 +263,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/ingestion",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/ingestion",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -299,8 +299,8 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/ingestion",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/ingestion",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -315,7 +315,7 @@
 					"response": []
 				},
 				{
-					"name": "http://<<ingestion-server-url>>/ingestion (Type-4) Copy",
+					"name": "https://<<ingestion-server-url>>/ingestion (Type-4) Copy",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -326,8 +326,8 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/ingestion?id=datakaveri.org/facec5182e3bf44cc3ac42b0b611263676d668a2/rs.iudx.org.in/agartala-env-aqm/shyamali-bazar",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/ingestion?id=datakaveri.org/facec5182e3bf44cc3ac42b0b611263676d668a2/rs.iudx.org.in/agartala-env-aqm/shyamali-bazar",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
@@ -359,8 +359,8 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{host}}:{{port}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
-							"protocol": "http",
+							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"protocol": "https",
 							"host": [
 								"{{host}}"
 							],
