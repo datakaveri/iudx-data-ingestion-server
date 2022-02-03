@@ -28,7 +28,7 @@ services:
              max-size: "100m"
     command: bash -c "docker/runTests.sh"
 
-  perfTest:
+  integTest:
     image: ghcr.io/datakaveri/di-test:latest
     environment:
       - DI_URL=https://rs.iudx.org.in
