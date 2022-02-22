@@ -9,70 +9,6 @@
 			"name": "/entites request",
 			"item": [
 				{
-					"name": "404 (Not Found) Resource not in Catalogue",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Test the response code",
-									"pm.test(\"response is 404 (Not Found)\", function () {",
-									"    pm.response.to.have.status(404);",
-									"});",
-									"",
-									"// Test the response header",
-									"pm.test(\"Check response header\", function () {",
-									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
-									"});",
-									"",
-									"// Test the response",
-									"pm.test(\"Check response body\", function () {    ",
-									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"detail\", \"Resource not in Catalogue.\");",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"strictSSL": false
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "token",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n            \"currentLevel\": 1.16,\n            \"referenceLevel\": 15.9,\n            \"measuredDistance\": 14.74,\n            \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information/surat-itms-live-etaa\",\n            \"observationDateTime\": \"2020-09-20T18:30:00+05:30\",\n            \"deviceInfo\": {\n                \"deviceID\": \"FWR055\"\n            }\n        }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{host}}:{{port}}/ngsi-ld/v1/entities",
-							"protocol": "https",
-							"host": [
-								"{{host}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"ngsi-ld",
-								"v1",
-								"entities"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "200 (success) Valid Method, JSON Object",
 					"event": [
 						{
@@ -360,7 +296,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token}}",
+								"value": "{{token1}}",
 								"type": "text"
 							}
 						],
@@ -432,7 +368,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token}}",
+								"value": "{{token1}}",
 								"type": "text"
 							}
 						],
@@ -510,7 +446,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token}}",
+								"value": "{{token1}}",
 								"type": "text"
 							}
 						],
@@ -567,7 +503,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token}}",
+								"value": "{{token1}}",
 								"type": "text"
 							}
 						],
