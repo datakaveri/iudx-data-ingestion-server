@@ -1,9 +1,9 @@
 package iudx.data.ingestion.server.authenticator;
 
 import static iudx.data.ingestion.server.authenticator.Constants.API_ENDPOINT;
-import static iudx.data.ingestion.server.authenticator.Constants.CAT_HOST;
 import static iudx.data.ingestion.server.authenticator.Constants.CAT_SERVER_HOST;
 import static iudx.data.ingestion.server.authenticator.Constants.CAT_SERVER_PORT;
+import static iudx.data.ingestion.server.authenticator.Constants.DI_AUDIENCE;
 import static iudx.data.ingestion.server.authenticator.Constants.ID;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_DELEGATE;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_IID;
@@ -11,7 +11,9 @@ import static iudx.data.ingestion.server.authenticator.Constants.JSON_PROVIDER;
 import static iudx.data.ingestion.server.authenticator.Constants.JSON_USERID;
 import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
 import static iudx.data.ingestion.server.authenticator.Constants.TOKEN;
-
+import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.vertx.core.AsyncResult;
@@ -19,7 +21,6 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -32,9 +33,6 @@ import iudx.data.ingestion.server.authenticator.authorization.AuthorizationStrat
 import iudx.data.ingestion.server.authenticator.authorization.JwtAuthorization;
 import iudx.data.ingestion.server.authenticator.authorization.Method;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
-import java.util.concurrent.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
@@ -56,7 +54,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   public JwtAuthenticationServiceImpl(Vertx vertx, final JWTAuth jwtAuth, final WebClient webClient,
       final JsonObject config) {
     this.jwtAuth = jwtAuth;
-    this.audience = config.getString(CAT_HOST);
+    this.audience = config.getString(DI_AUDIENCE);
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;

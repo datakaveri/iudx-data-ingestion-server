@@ -4,7 +4,6 @@
 		"zookeeper"
 	],
 	"clusterId": "iudx-di-cluster",
-	"host": "server",
 	"modules": [
 		{
 			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
@@ -29,7 +28,8 @@
                         "keystorePassword": "password",
                         "authServerHost": "authvertx.iudx.io",
                         "catServerHost": "api.cat-test.iudx.io",
-                        "catServerPort": 443,
+                        "catServerPort": 443,	                        
+			"audience" : "<rs-domain>",
                         "resourceServerId": "datakaveri.org/f7e044eee8122b5c87dce6e7ad64f3266afa41dc/rs.iudx.io",
                         "serverMode": "testing"
                 },
