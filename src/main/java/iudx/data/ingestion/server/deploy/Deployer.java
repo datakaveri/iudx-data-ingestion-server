@@ -23,6 +23,7 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.cli.CLI;
@@ -211,6 +212,12 @@ public class Deployer {
 
 	  }
 
+      /**
+       * Graceful shutdown of Vertx application in a sequential manner - 1) undeploy verticle
+       * including unregistering of services through the stop method of verticle 2) unregister the
+       * vertx from cluster 3) shutdown of vertx 4) shutdown of log4j2. The function is triggered by
+       * shutdown hook on a normal shutdown of application.
+       */
 	  public static void gracefulShutdown() {
 	    Set<String> deployIDSet = vertx.deploymentIDs();
 	    Logger LOGGER = LogManager.getLogger(Deployer.class);
@@ -231,7 +238,18 @@ public class Deployer {
 	      });
 	    }
 	    try {
+          latch_verticles.await(5, TimeUnit.SECONDS);
+          LOGGER.info("All the verticles undeployed");
+          Promise<Void> promise = Promise.promise();
+          // leave the cluster
+          mgr.leave(promise);
+          LOGGER.info("vertx left cluster succesfully");
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        try {
 	      latch_cluster.await(5, TimeUnit.SECONDS);
+          // shutdown the vertx
 	      vertx.close(handler -> {
 	        if (handler.succeeded()) {
 	          LOGGER.info("vertx closed successfully");
@@ -248,7 +266,7 @@ public class Deployer {
 	      latch_vertx.await(5, TimeUnit.SECONDS);
 	      // then shut down log4j
 	      if( LogManager.getContext() instanceof LoggerContext ) {
-	        LOGGER.debug("Shutting down log4j2");
+            LOGGER.info("Shutting down log4j2");
 	        LogManager.shutdown((LoggerContext) LogManager.getContext());
 	      } else
 	        LOGGER.warn("Unable to shutdown log4j2");
@@ -264,7 +282,7 @@ public class Deployer {
 	        .addOption(new Option().setLongName("config").setShortName("c")
 	            .setRequired(true).setDescription("configuration file"))
 	        .addOption(new Option().setLongName("host").setShortName("i").setRequired(true)
-                .setDescription("public host"))
+                .setDescription("hostname for vertx clustering"))
 	        .addOption(new TypedOption<String>().setType(String.class).setLongName("modules")
 	            .setShortName("m").setRequired(false).setDefaultValue("all").setParsedAsList(true)
 	            .setDescription("comma separated list of verticle names to deploy. "
