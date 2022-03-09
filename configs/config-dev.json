@@ -24,8 +24,6 @@
                         "id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
                         "verticleInstances": 2,
                         "authServerHost": "authvertx.iudx.io",
-  			"keystore": "configs/keystore.jks",
-  			"keystorePassword": "",
                         "catServerHost": "api.cat-test.iudx.io",
                         "catServerPort": 443,	                        
 			"audience" : "<rs-domain>",
