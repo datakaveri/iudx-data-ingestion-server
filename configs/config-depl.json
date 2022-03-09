@@ -24,9 +24,9 @@
     {
       "id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
       "verticleInstances": 2,
+      "authServerHost": "localhost.auth",
       "keystore": "configs/keystore.jks",
       "keystorePassword": "",
-      "authServerHost": "localhost.auth",
       "catServerHost": "localhost.catalogue",
       "catServerPort": 1234,
       "audience": "<rs-domain-name>",
@@ -36,9 +36,7 @@
     {
       "id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
       "ssl": false,
-      "production": true,
-      "keystore": "configs/keystore.jks",
-      "keystorePassword": "",
+      "httpPort" : 8080,
       "verticleInstances": 2
     },
     {

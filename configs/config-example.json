@@ -24,9 +24,9 @@
                 {
                         "id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
                         "verticleInstances": 2,
-                        "keystore": "configs/keystore.jks",
-                        "keystorePassword": "",
                         "authServerHost": "",
+  			"keystore": "configs/keystore.jks",
+			"keystorePassword": "",
                         "catServerHost": "",
                         "catServerPort": 443,
                         "resourceServerId": "datakaveri.org/f7e044eee8122b5c87dce6e7ad64f3266afa41dc/rs.iudx.io",
@@ -35,7 +35,7 @@
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
 			"ssl": true,
-			"production": false,
+			"httpPort": 8443,
 			"keystore": "configs/keystore.jks",
 			"keystorePassword": "",
                         "catServerHost": "",

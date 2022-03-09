@@ -13,7 +13,10 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_TEXT_HTML
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
-
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -38,10 +41,6 @@ import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import iudx.data.ingestion.server.databroker.DataBrokerService;
 import iudx.data.ingestion.server.metering.MeteringService;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Data Ingestion API Verticle.
@@ -73,8 +72,8 @@ public class ApiServerVerticle extends AbstractVerticle {
 
   private HttpServer server;
   private Router router;
-  private int port = 8443;
-  private boolean isSSL, isProduction;
+  private int port;
+  private boolean isSSL;
   private String keystore;
   private String keystorePassword;
   private DataBrokerService databroker;
@@ -160,8 +159,6 @@ public class ApiServerVerticle extends AbstractVerticle {
     /* Read ssl configuration. */
     isSSL = config().getBoolean("ssl");
 
-    /* Read server deployment configuration. */
-    isProduction = config().getBoolean("production");
 
     HttpServerOptions serverOptions = new HttpServerOptions();
 
@@ -172,6 +169,12 @@ public class ApiServerVerticle extends AbstractVerticle {
 
       keystore = config().getString("keystore");
       keystorePassword = config().getString("keystorePassword");
+      
+      /*
+       * Default port when ssl is enabled is 8443. If set through config, then that value is taken
+       */
+      port = config().getInteger("httpPort") == null ? 8443
+          : config().getInteger("httpPort");
 
       /* Setup the HTTPs server properties, APIs and port. */
 
@@ -184,13 +187,12 @@ public class ApiServerVerticle extends AbstractVerticle {
       /* Setup the HTTP server properties, APIs and port. */
 
       serverOptions.setSsl(false);
-      if (isProduction) {
-        port = 80;
-      } else {
-        port = 8080;
-      }
+      /*
+       * Default port when ssl is disabled is 8080. If set through config, then that value is taken
+       */
+      port = config().getInteger("httpPort") == null ? 8080
+          : config().getInteger("httpPort");
     }
-
     serverOptions.setCompressionSupported(true).setCompressionLevel(5);
     server = vertx.createHttpServer(serverOptions);
     server.requestHandler(router).listen(port);
