@@ -4,10 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -29,8 +27,6 @@ public class DeployerDev {
 			return;
 		}
 		JsonObject config = configs.getJsonArray("modules").getJsonObject(i);
-		String hostName = configs.getString("host");
-		config.put("host", hostName);
 		String moduleName = config.getString("id");
 		int numInstances = config.getInteger("verticleInstances");
 		vertx.deployVerticle(moduleName, new DeploymentOptions().setInstances(numInstances).setConfig(config), ar -> {
