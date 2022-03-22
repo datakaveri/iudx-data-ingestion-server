@@ -20,6 +20,7 @@ services:
       - "zookeeper"
     ports:
       - "8080:8080"
+      - "8443:8443"
       - "9000:9000"
     restart: on-failure
     networks: 
@@ -42,7 +43,7 @@ services:
       - ./configs/keystore.jks:/usr/share/app/configs/keystore.jks
     ports:
       - "8080:8080"
-      - "9000:9000"
+      - "8443:8443"
     restart: on-failure
     networks: 
       - overlay-net

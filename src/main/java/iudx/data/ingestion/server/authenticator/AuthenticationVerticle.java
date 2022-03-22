@@ -1,20 +1,19 @@
 package iudx.data.ingestion.server.authenticator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Authentication Verticle.
@@ -47,9 +46,7 @@ public class AuthenticationVerticle extends AbstractVerticle {
     if (testing) {
       webClientOptions.setTrustAll(true).setVerifyHost(false);
     }
-    webClientOptions.setSsl(true)
-        .setKeyStoreOptions(new JksOptions().setPath(config.getString(Constants.KEYSTORE_PATH))
-            .setPassword(config.getString(Constants.KEYSTORE_PASSWORD)));
+    webClientOptions.setSsl(true);
     return WebClient.create(vertxObj, webClientOptions);
   }
 

@@ -15,7 +15,7 @@
         <curator.version>5.1.0</curator.version>
         <apache-commons-lang3.version>3.12.0</apache-commons-lang3.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
-        <apache-log4j-core.version>2.17.1</apache-log4j-core.version>
+        <apache-log4j2.version>2.17.1</apache-log4j2.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <checkstyle.version>8.42</checkstyle.version>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
@@ -28,7 +28,6 @@
         <slf4j.version>1.7.32</slf4j.version>
         <lmax-disruptor.version>3.4.4</lmax-disruptor.version>
         <jackson-core.version>2.12.3</jackson-core.version>
-
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +45,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-        </dependencies>
+            <!--  log4j2 bom to keep org.apache.logging.log4j artifacts version in sync -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${apache-log4j2.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>	
     </dependencyManagement>
 
     <dependencies>
@@ -58,10 +65,6 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-service-proxy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-hazelcast</artifactId>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -119,45 +122,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${apache-log4j-core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-micrometer-metrics</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <version>${micrometer.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-zookeeper</artifactId>
-            <version>${hazelcast.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.lmax</groupId>
-            <artifactId>disruptor</artifactId>
-            <version>${lmax-disruptor.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-core.version}</version>
@@ -198,7 +162,61 @@
             <artifactId>vertx-pg-client</artifactId>
             <version>4.0.3</version>
         </dependency>
-    </dependencies>
+        <!-- Packages for Vertx metrics through micrometer  -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-micrometer-metrics</artifactId>
+        </dependency>
+       <!-- micrometer core package  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
+        <!-- package required for exposing metrics in prometheus format  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
+        <!-- Packages for Vertx Hazelcast cluster manager  -->
+         <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-hazelcast</artifactId>
+        </dependency>
+        <!--  package for hazelcast based clustering using zookeeper -->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-zookeeper</artifactId>
+            <version>${hazelcast.version}</version>
+        </dependency>
+        <!-- Package for zookeeper curator client to register with  zookeepeer -->
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-x-discovery</artifactId>
+            <version>${curator.version}</version>
+        </dependency>
+        <!-- log4j2 logging dependencies-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <!-- slf4j to log4j2 bridge adapter, needed for 'io.netty' logs -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+        <!--LMAX Disruptor for enabling Asynchronous log4j2 Logging  -->
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>${lmax-disruptor.version}</version>
+        </dependency>
+	</dependencies>
 
     <build>
         <plugins>
@@ -304,6 +322,8 @@
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/io.vertx.core.spi.VerticleFactory
                                     </resource>
+                                    <resource>META-INF/services/io.vertx.core.spi.VertxServiceProvider
+                                    </resource>
                                 </transformer>
                             </transformers>
                             <artifactSet></artifactSet>
@@ -339,6 +359,8 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/io.vertx.core.spi.VerticleFactory
+                                    </resource>
+                                    <resource>META-INF/services/io.vertx.core.spi.VertxServiceProvider
                                     </resource>
                                 </transformer>
                             </transformers>
