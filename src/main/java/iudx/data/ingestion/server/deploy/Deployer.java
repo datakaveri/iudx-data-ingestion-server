@@ -18,6 +18,7 @@ import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.zookeeper.ZookeeperDiscoveryProperties;
 import com.hazelcast.zookeeper.ZookeeperDiscoveryStrategyFactory;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
@@ -162,6 +163,8 @@ public class Deployer {
 
 	  public static void setJVMmetrics() {
 	    MeterRegistry registry = BackendRegistries.getDefaultNow();
+			LOGGER.debug(registry);
+			new ClassLoaderMetrics().bindTo(registry);
 	    new JvmMemoryMetrics().bindTo(registry);
 	    new JvmGcMetrics().bindTo(registry);
 	    new ProcessorMetrics().bindTo(registry);
@@ -196,9 +199,11 @@ public class Deployer {
 	    VertxOptions options = new VertxOptions().setClusterManager(mgr).setEventBusOptions(ebOptions)
 	        .setMetricsOptions(getMetricsOptions());
 
+			LOGGER.debug("metrics-options" + options.getMetricsOptions());
 	    Vertx.clusteredVertx(options, res -> {
 	      if (res.succeeded()) {
 	        vertx = res.result();
+					LOGGER.debug(vertx.isMetricsEnabled());
 	        setJVMmetrics();
             if (modules.isEmpty()) {
               recursiveDeploy(vertx, configuration, 0);
@@ -226,6 +231,7 @@ public class Deployer {
 	    CountDownLatch latch_cluster = new CountDownLatch(1);
 	    CountDownLatch latch_vertx = new CountDownLatch(1);
 	    LOGGER.debug("number of verticles being undeployed are:" + deployIDSet.size());
+			// shutdown verticles
 	    for (String deploymentID : deployIDSet) {
 	      vertx.undeploy(deploymentID, handler -> {
 	        if (handler.succeeded()) {
