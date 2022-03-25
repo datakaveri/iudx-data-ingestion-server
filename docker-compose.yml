@@ -9,7 +9,7 @@ services:
   prod:
     image: iudx/di-depl:latest
     environment:
-      - DI_URL=https://rs.iudx.org.in
+      - DI_URL=https://di.iudx.org.in
       - LOG_LEVEL=INFO
       - DI_JAVA_OPTS=-Xmx4096m
     volumes:
@@ -35,7 +35,7 @@ services:
   dev:
     image: iudx/di-dev:latest
     environment:
-      - DI_URL=https://rs.iudx.org.in
+      - DI_URL=https://di.iudx.org.in
       - LOG_LEVEL=INFO
       - DI_JAVA_OPTS=-Xmx1024m
     volumes:

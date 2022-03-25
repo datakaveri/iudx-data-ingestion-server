@@ -9,7 +9,7 @@ services:
   test:
     image: ghcr.io/datakaveri/di-test:latest
     environment:
-      - DI_URL=https://rs.iudx.org.in
+      - DI_URL=https://di.iudx.org.in
       - LOG_LEVEL=INFO
       - RS_JAVA_OPTS=-Xmx1024m
     volumes:
@@ -31,7 +31,7 @@ services:
   integTest:
     image: ghcr.io/datakaveri/di-test:latest
     environment:
-      - DI_URL=https://rs.iudx.org.in
+      - DI_URL=https://di.iudx.org.in
       - LOG_LEVEL=INFO
       - RS_JAVA_OPTS=-Xmx1024m
     volumes:

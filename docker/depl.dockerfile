@@ -15,20 +15,16 @@ RUN mvn clean package -Dmaven.test.skip=true
 FROM openjdk:11-jre-slim-buster
 
 ARG VERSION
-ENV JAR="iudx.data.ingestion.server-dev-0.0.1-SNAPSHOT-fat.jar"
+ENV JAR="iudx.data.ingestion.server-cluster-0.0.1-SNAPSHOT-fat.jar"
 
 WORKDIR /usr/share/app
 # Copying openapi docs 
 COPY docs docs
 # Copying cluster fatjar from builder image stage to final image 
 COPY --from=builder /usr/share/app/target/${JAR} ./fatjar.jar
-# HTTP cat server port
-EXPOSE 8080
-# HTTPS cat server port
-EXPOSE 8443
-# Metrics http server port
-EXPOSE 9000 
-# creating a non-root user
+# expose http, https and metrics port
+EXPOSE 8080 8443 9000 
+# create non-root use 1001
 RUN useradd -r -u 1001 -g root di-user
 # Setting non-root user to use when container starts
 USER di-user
