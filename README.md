@@ -49,6 +49,44 @@ Make a config file based on the template in `./configs/config-example.json`
 2. Use the maven exec plugin based starter to start the server 
    `mvn clean compile exec:java@data-ingestion-server`
 
+### JAR based
+1. Install java 11 and maven
+2. Set Environment variables
+```
+export DI_URL=https://<rs-domain-name>
+export LOG_LEVEL=INFO
+```
+3. Use maven to package the application as a JAR
+   `mvn clean package -Dmaven.test.skip=true`
+4. 2 JAR files would be generated in the `target/` directory
+   - `iudx.data.ingestion.server-cluster-0.0.1-SNAPSHOT-fat.jar` - clustered vert.x containing micrometer metrics
+   - `iudx.data.ingestion.server-dev-0.0.1-SNAPSHOT-fat.jar` - non-clustered vert.x and does not contain micrometer metrics
+#### Running the clustered JAR
+**Note**: The clustered JAR requires Zookeeper to be installed. Refer [here](https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html) to learn more about how to set up Zookeeper. Additionally, the `zookeepers` key in the config being used needs to be updated with the IP address/domain of the system running Zookeeper.
+The JAR requires 3 runtime arguments when running:
+* --config/-c : path to the config file
+* --hostname/-i : the hostname for clustering
+* --modules/-m : comma separated list of module names to deploy
+  e.g. `java -jar ./fatjar.jar --host $(hostname) -c configs/config.json -m
+iudx.data.ingestion.server.ApiServerVerticle`
+  Use the `--help/-h` argument for more information. You may additionally append an `DI_JAVA_OPTS` environment variable containing any Java options to pass to the application.
+  e.g.
+```
+$ export RS_JAVA_OPTS="-Xmx4096m"
+$ java $RS_JAVA_OPTS -jar target/iudx.data.ingestion.server-cluster-0.0.1-SNAPSHOT-fat.jar ...
+```
+#### Running the non-clustered JAR
+The JAR requires 1 runtime argument when running:
+* --config/-c : path to the config file
+  e.g. `java -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory -jar target/iudx.data.ingestion.server-dev-0.0.1-SNAPSHOT-fat.jar -c configs/config.json`
+  Use the `--help/-h` argument for more information. You may additionally append an `RS_JAVA_OPTS` environment variable containing any Java options to pass to the application.
+  e.g.
+```
+$ export RS_JAVA_OPTS="-Xmx1024m"
+$ java $RS_JAVA_OPTS -jar target/iudx.data.ingestion.server-dev-0.0.1-SNAPSHOT-fat.jar ...
+```
+
+
 ### Testing
 
 ### Unit tests
