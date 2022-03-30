@@ -10,7 +10,7 @@
 The <b>Data Ingestion Server</b> is the "Ingestion Firewall and Data Cleaning Middleware" of [IUDX](https://iudx.org.in). It enables *Providers* and *Delegates* to publish data using the IUDX API as per the data descriptor using the <b>HTTP protocol over TLS</b>(HTTPs).
 
 <p align="center">
-<img src="docs/di_server_overview.jpg">
+<img src="docs/di_server_overview.png">
 </p>
 
 ## **Features**
@@ -30,7 +30,7 @@ The api docs can be found [here] *need to add the link here*.
 
 ### External dependencies installation
 
-The Latest ingestion pipeline connects to various external dependencies namely
+The Data ingestion pipeline connects to various external dependencies namely
  - RabbitMQ
  - ImmuDB
 
