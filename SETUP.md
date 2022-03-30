@@ -1,11 +1,14 @@
 Setup Guide
 ----
 
-This document contains the installation and configuration processes of the external modules of each Verticle in IUDX Latest Ingestion Pipeline Server.
+This document contains the installation and configuration processes of the external modules of each Verticle in IUDX Data Ingestion Pipeline Server.
+
+<p align="center">
+<img src="docs/di_server_overview.png">
+</p>
 
 
-
-Latest Ingestion Pipeline server connects with various external dependencies namely :
+Data Ingestion Pipeline server connects with various external dependencies namely :
 
  - `RabbitMQ` : used to publish and subscribe different types of messages or events.
  - `ImmuDB` : used to store metering related information.
