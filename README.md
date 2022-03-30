@@ -26,9 +26,19 @@ The <b>Data Ingestion Server</b> is the "Ingestion Firewall and Data Cleaning Mi
 ## API Docs 
 The api docs can be found [here] *need to add the link here*.
 
+## Prerequisites
+
+### External dependencies installation
+
+The Latest ingestion pipeline connects to various external dependencies namely
+ - RabbitMQ
+ - ImmuDB
+
+Find the installations of the above along with the configurations to modify the database url, port and associated credentials in the appropriate sections [here](SETUP.md)
+
 ## Get Started
 
-### Prerequisite - Make configuration
+### Make configuration
 Make a config file based on the template in `./configs/config-example.json` 
 - Generate a certificate using Lets Encrypt or other methods
 - Make a Java Keystore File and mention its path and password in the appropriate sections
