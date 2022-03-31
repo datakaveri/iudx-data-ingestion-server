@@ -53,7 +53,6 @@ In order to connect to the appropriate ImmuDB database, required information suc
 ```
 {
     "id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
-    "isWorkerVerticle":false,
     "verticleInstances": <num-of-verticle-instances>,
     "meteringDatabaseIP": "localhost",
     "meteringDatabasePort": <port-number>,
