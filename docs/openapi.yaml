@@ -7,7 +7,7 @@ consumes:
   - application/json
 info:
   title: IUDX Data Ingestion Server APIs
-  version: 1.0.0
+  version: 3.5.0
   description: >
     ## Introduction
 
