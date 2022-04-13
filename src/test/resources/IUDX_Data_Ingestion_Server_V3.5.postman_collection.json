@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "624ff776-8147-4961-a2ac-450687fd66d4",
+		"_postman_id": "aff79995-dc3a-49a7-a8f2-c2995efdc55a",
 		"name": "IUDX Data Ingestion Server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,15 +9,15 @@
 			"name": "/entites request",
 			"item": [
 				{
-					"name": "200 (success) Valid Method, JSON Object",
+					"name": "201 (success) Valid Method, JSON Object",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"// Test the response code",
-									"pm.test(\"response is 200 (OK)\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"// Test the response header",
@@ -263,15 +263,15 @@
 			"name": "/ingestion request",
 			"item": [
 				{
-					"name": "(200) ResourceGroup and Queue",
+					"name": "(201) ResourceGroup and Queue",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"// Test the response code",
-									"pm.test(\"response is 200 (OK)\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"// Test the response header",
@@ -326,7 +326,7 @@
 					"response": []
 				},
 				{
-					"name": "(200) ResourceId and Queue",
+					"name": "(201) ResourceId and Queue",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -342,8 +342,8 @@
 							"script": {
 								"exec": [
 									"// Test the response code",
-									"pm.test(\"response is 200 (OK)\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"// Test the response header",
