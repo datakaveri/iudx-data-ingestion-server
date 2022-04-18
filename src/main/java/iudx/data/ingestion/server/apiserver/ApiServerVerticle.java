@@ -169,7 +169,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
       keystore = config().getString("keystore");
       keystorePassword = config().getString("keystorePassword");
-      
+
       /*
        * Default port when ssl is enabled is 8443. If set through config, then that value is taken
        */
@@ -228,7 +228,7 @@ public class ApiServerVerticle extends AbstractVerticle {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
             Future.future(fu -> updateAuditTable(routingContext));
-            handleSuccessResponse(response, 200, handler.result().toString());
+            handleSuccessResponse(response, 201, handler.result().toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
             handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
@@ -259,7 +259,8 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.ingestDataPost(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
-            handleSuccessResponse(response, 200, handler.result().toString());
+            Future.future(fu -> updateAuditTable(routingContext));
+            handleSuccessResponse(response, 201, handler.result().toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
             handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
@@ -290,6 +291,7 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.ingestDataDelete(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
+            Future.future(fu -> updateAuditTable(routingContext));
             handleSuccessResponse(response, 200, handler.result().toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");

@@ -103,6 +103,7 @@ pipeline {
           docker.withRegistry( registryUri, registryCredential ) {
             devImage.push("4.0-alpha-${env.GIT_HASH}")
             deplImage.push("4.0-alpha-${env.GIT_HASH}")
+
           }
         }
       }
