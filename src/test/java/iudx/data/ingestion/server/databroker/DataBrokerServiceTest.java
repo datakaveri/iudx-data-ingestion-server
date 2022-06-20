@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import static iudx.data.ingestion.server.databroker.util.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@Disabled
 @ExtendWith(VertxExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DataBrokerServiceTest {

@@ -58,6 +58,18 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.11.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>3.11.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-codegen</artifactId>
             <classifier>processor</classifier>
@@ -261,7 +273,19 @@
                         <exclude>iudx/data/ingestion/server/apiserver/*.class</exclude>
                         <exclude>**/*VertxEBProxy.class</exclude>
                         <exclude>**/Constants.class</exclude>
+                        <exclude>**/*AuthenticationService.class</exclude>
                         <exclude>**/*VertxProxyHandler.class</exclude>
+                        <exclude>**/*DataBrokerServiceImpl.class</exclude>
+                        <exclude>**/*PostgresService.class</exclude>
+                        <exclude>**/*DataBrokerService.class</exclude>
+                        <exclude>**/*DatabaseService.class</exclude>
+                        <exclude>**/*Validator.class</exclude>
+                        <exclude>**/*CacheService.class</exclude>
+                        <exclude>**/*JwtDataConverter.class</exclude>
+                        <exclude>**/*JwtData.class</exclude>
+                        <exclude>**/*MeteringService.class</exclude>
+                        <exclude>**/*AuthorizationRequest.class</exclude>
+                        <exclude>**/*Util.class</exclude>
                         <exclude>**/*Verticle.class</exclude>
                         <exclude>iudx/data/ingestion/server/deploy/*.class</exclude>
                     </excludes>

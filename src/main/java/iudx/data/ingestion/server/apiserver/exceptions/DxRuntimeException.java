@@ -3,7 +3,7 @@ package iudx.data.ingestion.server.apiserver.exceptions;
 
 import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
 
-public final class DxRuntimeException extends RuntimeException {
+public class DxRuntimeException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 

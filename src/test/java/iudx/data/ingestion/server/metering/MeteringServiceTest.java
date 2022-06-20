@@ -1,16 +1,21 @@
 package iudx.data.ingestion.server.metering;
 
+import static iudx.data.ingestion.server.databroker.util.Constants.SUCCESS;
 import static iudx.data.ingestion.server.metering.util.Constants.API;
 import static iudx.data.ingestion.server.metering.util.Constants.ID;
 import static iudx.data.ingestion.server.metering.util.Constants.USER_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
 import iudx.data.ingestion.server.configuration.Configuration;
 import java.util.UUID;
+
+import iudx.data.ingestion.server.metering.util.ResponseBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,14 +71,27 @@ public class MeteringServiceTest {
     request.put(ID, "15c7506f-c800-48d6-adeb-0542b03947c6/integration-test-alias/");
     request.put(API, "/ngsi-ld/v1/subscription");
     meteringService.executeWriteQuery(
-        request,
-        vertxTestContext.succeeding(
-            response ->
-                vertxTestContext.verify(
-                    () -> {
-                      LOGGER.info("RESPONSE" + response.getString("title"));
-                      assertTrue(response.getString("title").equals("Success"));
-                      vertxTestContext.completeNow();
-                    })));
+            request,
+            vertxTestContext.succeeding(
+                    response ->
+                            vertxTestContext.verify(
+                                    () -> {
+                                      LOGGER.info("RESPONSE" + response.getString("title"));
+                                      assertTrue(response.getString("title").equals("Success"));
+                                      vertxTestContext.completeNow();
+                                    })));
+  }
+
+  @Test
+  @DisplayName("Set Type And Title Test")
+  public void setTypeAndTitleTest(VertxTestContext vertxTestContext){
+    ResponseBuilder responseBuilder= new ResponseBuilder("200");
+    responseBuilder.setTypeAndTitle(200);
+    assertEquals("success", ResponseUrn.SUCCESS.getMessage());
+    responseBuilder.setTypeAndTitle(204);
+    assertEquals("success",SUCCESS);
+    responseBuilder.setTypeAndTitle(400);
+    assertEquals("bad request parameter",ResponseUrn.BAD_REQUEST_URN.getMessage());
+    vertxTestContext.completeNow();
   }
 }

@@ -33,7 +33,7 @@ public class CatalogueService {
   private final Cache<String, List<String>> applicableFilterCache =
       CacheBuilder.newBuilder().maximumSize(1000)
           .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
-  private WebClient catWebClient;
+  public static WebClient catWebClient;
   private long cacheTimerid;
   private Vertx vertx;
 
@@ -46,7 +46,10 @@ public class CatalogueService {
 
     WebClientOptions options =
         new WebClientOptions().setTrustAll(true).setVerifyHost(false).setSsl(true);
-    catWebClient = WebClient.create(vertx, options);
+
+    if(catWebClient==null){
+      catWebClient = WebClient.create(vertx, options);
+    }
     populateCache();
     cacheTimerid = vertx.setPeriodic(TimeUnit.DAYS.toMillis(1), handler -> {
       populateCache();
@@ -58,7 +61,7 @@ public class CatalogueService {
    *
    * @return
    */
-  private Future<Boolean> populateCache() {
+  public Future<Boolean> populateCache() {
     Promise<Boolean> promise = Promise.promise();
     catWebClient.get(catPort, catHost, catSearchPath)
         .addQueryParam("property", "[iudxResourceAPIs]")
