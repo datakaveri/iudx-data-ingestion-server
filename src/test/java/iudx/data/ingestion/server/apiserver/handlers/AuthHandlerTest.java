@@ -118,7 +118,7 @@ public class AuthHandlerTest {
         JsonObject jsonObject =  new JsonObject().put("Dummy Key", "Dummy Value")
                 .put("IID", "Dummy IID value")
                 .put("USER_ID", "Dummy USER_ID");
-
+        //AuthenticationService authenticationServiceMock= mock(AuthenticationService.class);
         //HttpMethod httpMethodMock= mock(HttpMethod.class);
         //MultiMap mapss = MultiMap.caseInsensitiveMultiMap();
         MultiMap mapss= mock(MultiMap.class);

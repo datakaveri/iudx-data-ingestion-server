@@ -20,6 +20,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -80,7 +81,7 @@ public class CatalogueServiceTest {
 
 
     @Test
-    @DisplayName("Testing Success for isItemExist method with List of String IDs")
+    @DisplayName("Testing Success for isItemExist method with String IDs")
     public void testIsItemExistSuccess(VertxTestContext vertxTestContext)
     {
 
@@ -104,6 +105,32 @@ public class CatalogueServiceTest {
         verify(httpRequest,times(4)).addQueryParam(anyString(),anyString());
         verify(httpRequest,times(2)).send(any());
 
+    }
+
+
+    @Test
+    @DisplayName("Testing Failed for isItemExist method with String IDs")
+    public void testIsItemExistFail(VertxTestContext vertxTestContext)
+    {
+
+        JsonObject responseJSonObject = new JsonObject();
+        responseJSonObject.put("type","urn:dx:cat:Success");
+        responseJSonObject.put("totalHits", 0);
+        when(httpResponse.bodyAsJsonObject()).thenReturn(responseJSonObject);
+
+        catalogueService.isItemExist("asd/asd").onComplete(handler -> {
+            if (handler.succeeded())
+            {
+                vertxTestContext.failNow(handler.cause());
+                vertxTestContext.completeNow();
+            }
+            else
+            {
+                vertxTestContext.completeNow();
+            }
+        });
+        verify(CatalogueService.catWebClient,times(2)).get(anyInt(),anyString(),anyString());
+        verify(httpRequest,times(2)).send(any());
     }
 
 }

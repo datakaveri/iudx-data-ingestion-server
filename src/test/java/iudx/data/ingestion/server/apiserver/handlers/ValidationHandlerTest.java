@@ -39,29 +39,29 @@ public class ValidationHandlerTest {
         validationHandler =new ValidationHandler(vertx,RequestType.ENTITY);
     }
 
-    /*@Test
+    @Test
     @DisplayName("Validation Successful")
     public void testHandle(VertxTestContext vertxTestContext){
         MultiMap map = MultiMap.caseInsensitiveMultiMap();
         RoutingContext routingContextMock= mock(RoutingContext.class);
         HttpServerRequest httpServerRequestMock = mock(HttpServerRequest.class);
         JsonObject jsonObjectMock= new JsonObject();
-        jsonObjectMock.put("Dummy key", "Dummy value");
+        jsonObjectMock.put("Dummy key", "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information/surat-itms-live-eta");
 
         when(routingContextMock.request()).thenReturn(httpServerRequestMock);
         when(httpServerRequestMock.params()).thenReturn(map);
 
         parameters = MultiMap.caseInsensitiveMultiMap();
-        parameters.set(Constants.ID, "asdasd/asdasd/adasd/adasd/adasd");
+        parameters.set(Constants.ID, "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information/surat-itms-live-eta");
 
         when(routingContextMock.getBodyAsJson()).thenReturn(jsonObjectMock);
 
-        assertFalse(validator.isValid());
+        /*assertFalse(validator.isValid());*/
 
         validationHandler.handle(routingContextMock);
         verify(routingContextMock,times(1)).next();
         vertxTestContext.completeNow();
-    }*/
+    }
 
     @Test
     @DisplayName("Validation Failure")
