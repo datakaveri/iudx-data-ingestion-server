@@ -26,5 +26,10 @@ public class ResponseUrnTest {
         assertEquals("Token is invalid",ResponseUrn.INVALID_TOKEN.getMessage());
         vertxTestContext.completeNow();
     }
+    @Test
+    public void test2(VertxTestContext vertxTestContext){
+        assertNotNull(ResponseUrn.fromCode("urn:dx:rs:backend"));
+        vertxTestContext.completeNow();
+    }
 
 }

@@ -36,7 +36,7 @@ public class AuthHandler implements Handler<RoutingContext> {
 
   private static final Logger LOGGER = LogManager.getLogger(AuthHandler.class);
   private static final String AUTH_SERVICE_ADDRESS = "iudx.data.ingestion.authentication.service";
-  private static AuthenticationService authenticator;
+  static AuthenticationService authenticator;
   private final String AUTH_INFO = "authInfo";
   private HttpServerRequest request;
 
