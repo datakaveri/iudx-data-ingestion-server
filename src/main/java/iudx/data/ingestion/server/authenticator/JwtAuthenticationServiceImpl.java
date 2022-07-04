@@ -30,6 +30,7 @@ import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationContextFactory;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationRequest;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationStrategy;
+import iudx.data.ingestion.server.authenticator.authorization.IUDXRole;
 import iudx.data.ingestion.server.authenticator.authorization.JwtAuthorization;
 import iudx.data.ingestion.server.authenticator.authorization.Method;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
@@ -46,6 +47,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final int port;
   final String path;
   final String audience;
+  final String authServerHost;
   // resourceGroupCache will contain ACL info about all resource group in ingestion server
   private final Cache<String, String> resourceGroupCache =
       CacheBuilder.newBuilder().maximumSize(1000)
@@ -58,6 +60,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;
+    authServerHost=config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
     catWebClient = WebClient.create(vertx, options);
@@ -74,17 +77,23 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
 
+    boolean isAdminIngestionEndpoint =
+        endPoint != null && endPoint.equals(Api.INGESTION.getApiEndpoint());
+
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
       result.jwtData = decodeHandler;
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
+      if (isAdminIngestionEndpoint) {
+        return isValidAdminTokenForIngestion(result.jwtData);
+      } else {
 
-      return isValidId(result.jwtData, id);
-      // uncomment above line once you get a valid JWT token. and delete below line
+        return isValidId(result.jwtData, id);
+      }
+    }).compose(validIdHandler ->
 
-      // return Future.succeededFuture(true);
-    }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
+    validateAccess(result.jwtData, authenticationInfo))
         .onComplete(completeHandler -> {
           if (completeHandler.succeeded()) {
             LOGGER.debug("Completion handler");
@@ -125,13 +134,14 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Method method = Method.valueOf(authInfo.getString(METHOD));
     Api api = Api.fromEndpoint(authInfo.getString(API_ENDPOINT));
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
-    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(jwtData.getRole());
+    IUDXRole role = IUDXRole.fromRole(jwtData.getRole());
+    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role);
     LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
     JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
     if (jwtAuthStrategy.isAuthorized(authRequest, jwtData)) {
       JsonObject jsonResponse = new JsonObject();
-      jsonResponse.put(JSON_IID,jwtId);
+      jsonResponse.put(JSON_IID, jwtId);
       jsonResponse.put(JSON_USERID, jwtData.getSub());
       if (jwtData.getRole().equalsIgnoreCase(JSON_PROVIDER)) {
         jsonResponse.put(JSON_PROVIDER, jwtData.getSub());
@@ -156,6 +166,23 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
       LOGGER.error("Incorrect audience value in jwt");
       promise.fail("Incorrect audience value in jwt");
     }
+    return promise.future();
+  }
+  
+  public Future<Boolean> isValidAdminTokenForIngestion(JwtData jwtData){
+    Promise<Boolean> promise = Promise.promise();
+    if(jwtData.getRole()!=null && jwtData.getRole().equals(IUDXRole.ADMIN.getRole())) {
+      promise.fail("Admin role required for /ingestion");
+    }
+    
+    String jwtId = jwtData.getIid().split(":")[1];
+    String jwtIss=jwtData.getIss();
+    if(audience!=null && audience.equals(jwtId) && jwtIss!=null && authServerHost.equalsIgnoreCase(jwtIss)) {
+      promise.complete(true);
+    }else {
+      promise.fail("not a valid token for admin /ingestion endpoint");
+    }
+    
     return promise.future();
   }
 
