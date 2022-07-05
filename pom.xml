@@ -279,7 +279,7 @@
                         <exclude>**/*PostgresService.class</exclude>
                         <exclude>**/*DataBrokerService.class</exclude>
                         <exclude>**/*DatabaseService.class</exclude>
-                        <exclude>**/*Validator.class</exclude>
+                        <exclude>iudx/data/ingestion/server/apiserver/validation/Validator.class</exclude>
                         <exclude>**/*CacheService.class</exclude>
                         <exclude>**/*JwtDataConverter.class</exclude>
                         <exclude>**/*JwtData.class</exclude>
