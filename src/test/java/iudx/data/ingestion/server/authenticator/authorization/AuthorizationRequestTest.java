@@ -49,4 +49,23 @@ class AuthorizationRequestTest {
         vertxTestContext.completeNow();
     }
 
+    @Test
+    @DisplayName("Get Method")
+
+    public void getMethodTest(VertxTestContext vertxTestContext) {
+        AuthorizationRequest authR1= new AuthorizationRequest(Method.GET, Api.ENTITIES);
+        Object obj= new Object();
+        assertNotNull(authR1.getMethod());
+        vertxTestContext.completeNow();
+    }
+    @Test
+    @DisplayName("Get Api")
+
+    public void getApiTest(VertxTestContext vertxTestContext) {
+        AuthorizationRequest authR1= new AuthorizationRequest(Method.GET, Api.ENTITIES);
+        Object obj= new Object();
+        assertNotNull(authR1.getApi());
+        vertxTestContext.completeNow();
+    }
+
 }
