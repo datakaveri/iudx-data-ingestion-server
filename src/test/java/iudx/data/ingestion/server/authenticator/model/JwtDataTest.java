@@ -17,6 +17,8 @@ JwtData jwtData=new JwtData();
     assertEquals(0,jwtData.getExp());
     assertNull(jwtData.getCons());
     assertEquals(0,jwtData.getIat());
+    assertNotNull(jwtData.toString());
+    assertNotNull(jwtData.toJson());
     vertxTestContext.completeNow();
 }
 }
