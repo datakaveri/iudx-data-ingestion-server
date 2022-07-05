@@ -54,7 +54,7 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> publishMessage(JsonObject request) {
+  /*public Future<JsonObject> publishMessage(JsonObject request) {
     JsonObject metaData = Util.getMetadata(request);
     String exchangeName = metaData.getString(EXCHANGE_NAME);
     String routingKey = metaData.getString(ROUTING_KEY);
@@ -70,7 +70,7 @@ public class RabbitClient {
           }
         });
     return promise.future();
-  }
+  }*/
 
   public Future<Boolean> populateExchangeCache(String vHost, Cache<String, Boolean> exchangeListCache) {
     Promise<Boolean> promise = Promise.promise();
