@@ -31,15 +31,15 @@ public class Util {
     return arr[4];
   }
 
-  private static String getResourceGroupName(String[] arr) {
+  public static String getResourceGroupName(String[] arr) {
     return arr[3];
   }
 
-  private static String getResourceServerName(String[] arr) {
+  public static String getResourceServerName(String[] arr) {
     return arr[2];
   }
 
-  private static String getProviderName(String[] arr) {
+  public static String getProviderName(String[] arr) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < 2; i++) {
       sb.append(arr[i]);
