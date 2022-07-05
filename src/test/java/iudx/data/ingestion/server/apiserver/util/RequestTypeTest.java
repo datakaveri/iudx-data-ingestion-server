@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(VertxExtension.class)
 public class RequestTypeTest {
@@ -14,6 +15,7 @@ public class RequestTypeTest {
     @EnumSource
     public void test(RequestType requestType, VertxTestContext testContext){
         assertNotNull(requestType);
+        assertNotNull(requestType.getFilename());
         testContext.completeNow();
     }
 }
