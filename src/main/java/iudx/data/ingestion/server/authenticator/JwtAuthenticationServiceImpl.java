@@ -60,7 +60,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;
-    authServerHost=config.getString("authServerHost");
+    authServerHost = config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
     catWebClient = WebClient.create(vertx, options);
@@ -85,10 +85,11 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
       result.jwtData = decodeHandler;
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
-      if (isAdminIngestionEndpoint) {
-        return isValidAdminTokenForIngestion(result.jwtData);
+      if (endPoint.equals(Api.INGESTION.getApiEndpoint()) && isValidAdminToken(result.jwtData)) {
+        //admin token + /ingestion POST, skip id check
+        return Future.succeededFuture(true);
       } else {
-
+        //check id in token  
         return isValidId(result.jwtData, id);
       }
     }).compose(validIdHandler ->
@@ -168,22 +169,22 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     }
     return promise.future();
   }
-  
-  public Future<Boolean> isValidAdminTokenForIngestion(JwtData jwtData){
-    Promise<Boolean> promise = Promise.promise();
-    if(jwtData.getRole()!=null && jwtData.getRole().equals(IUDXRole.ADMIN.getRole())) {
-      promise.fail("Admin role required for /ingestion");
+
+  public boolean isValidAdminToken(JwtData jwtData) {
+    LOGGER.debug("jwtdata : "+jwtData);
+    if (jwtData.getRole() != null && !jwtData.getRole().equals(IUDXRole.ADMIN.getRole())) {
+      return false;
     }
-    
+   
     String jwtId = jwtData.getIid().split(":")[1];
-    String jwtIss=jwtData.getIss();
-    if(audience!=null && audience.equals(jwtId) && jwtIss!=null && authServerHost.equalsIgnoreCase(jwtIss)) {
-      promise.complete(true);
-    }else {
-      promise.fail("not a valid token for admin /ingestion endpoint");
+    String jwtIss = jwtData.getIss();
+    if (audience != null && audience.equals(jwtId) && jwtIss != null
+        && authServerHost.equalsIgnoreCase(jwtIss)) {
+      return true;
+    } else {
+      return false;
     }
-    
-    return promise.future();
+
   }
 
   public Future<Boolean> isValidId(JwtData jwtData, String id) {
