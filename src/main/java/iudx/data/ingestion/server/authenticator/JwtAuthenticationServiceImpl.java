@@ -149,7 +149,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
   public Future<Boolean> isValidAudienceValue(JwtData jwtData) {
     Promise<Boolean> promise = Promise.promise();
-
     if (audience != null && audience.equalsIgnoreCase(jwtData.getAud())) {
       promise.complete(true);
     } else {
