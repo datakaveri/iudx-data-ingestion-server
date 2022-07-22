@@ -10,15 +10,15 @@
 			"verticleInstances": 2,
 			"dataBrokerIP": "",
 			"dataBrokerPort": "",
-			"dataBrokerVhost": "IUDX-Test",
+			"dataBrokerVhost": "",
 			"dataBrokerUserName": "",
 			"dataBrokerPassword": "",
 			"dataBrokerManagementPort": "",
-			"connectionTimeout": 6000,
-			"requestedHeartbeat": 60,
-			"handshakeTimeout": 6000,
-			"requestedChannelMax": 5,
-			"networkRecoveryInterval": 500,
+			"connectionTimeout": "6000",
+			"requestedHeartbeat": "60",
+			"handshakeTimeout": "6000",
+			"requestedChannelMax": "5",
+			"networkRecoveryInterval": "500",
 			"automaticRecoveryEnabled": "true"
 		},
 		{
@@ -27,16 +27,14 @@
 			"authServerHost": "localhost.auth",
 			"catServerHost": "localhost.catalogue",
 			"catServerPort": 1234,
-		       	"audience" : "<rs-domain-name>",				
+			"audience": "<rs-domain-name>",
 			"resourceServerId": "<id-of-rs-in-catalogue>",
 			"serverMode": "testing"
 		},
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
-			"ssl": true,
-			"keystore": "configs/keystore.jks",
-			"keystorePassword": "",
-			"httpPort": 8443,
+			"ssl": false,
+			"httpPort" : 8080,
 			"verticleInstances": 2
 		},
 		{
@@ -47,6 +45,7 @@
 			"meteringDatabaseName": "",
 			"meteringDatabaseUserName": "",
 			"meteringDatabasePassword": "",
+			"meteringDatabaseTableName": "",
 			"meteringPoolSize": 25
 		}
 	]
