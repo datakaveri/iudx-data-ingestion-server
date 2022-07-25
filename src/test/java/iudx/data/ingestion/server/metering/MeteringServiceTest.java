@@ -31,6 +31,7 @@ public class MeteringServiceTest {
   private static String databaseName;
   private static String databaseUserName;
   private static String databasePassword;
+  private static String databaseTableName;
   private static int databasePoolSize;
   private static Configuration config;
 
@@ -45,6 +46,7 @@ public class MeteringServiceTest {
     databaseName = dbConfig.getString("meteringDatabaseName");
     databaseUserName = dbConfig.getString("meteringDatabaseUserName");
     databasePassword = dbConfig.getString("meteringDatabasePassword");
+    databaseTableName= dbConfig.getString("meteringDatabaseTableName");
     databasePoolSize = dbConfig.getInteger("meteringPoolSize");
     meteringService = new MeteringServiceImpl(dbConfig, vertxObj);
     userId = UUID.randomUUID().toString();
