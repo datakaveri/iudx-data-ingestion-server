@@ -36,6 +36,7 @@ public class MeteringServiceTest {
   private static String databaseName;
   private static String databaseUserName;
   private static String databasePassword;
+  private static String databaseTableName;
   private static int databasePoolSize;
   private static Configuration config;
 
@@ -48,6 +49,7 @@ public class MeteringServiceTest {
     databaseIP = dbConfig.getString("meteringDatabaseIP");
     databasePort = dbConfig.getInteger("meteringDatabasePort");
     databaseName = dbConfig.getString("meteringDatabaseName");
+    databaseTableName= dbConfig.getString("meteringDatabaseTableName");
     databaseUserName = dbConfig.getString("meteringDatabaseUserName");
     databasePassword = dbConfig.getString("meteringDatabasePassword");
     databasePoolSize = dbConfig.getInteger("meteringPoolSize");
