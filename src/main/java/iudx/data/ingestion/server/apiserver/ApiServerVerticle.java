@@ -10,6 +10,7 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_APPLICATION_JSON;
 import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_TEXT_HTML;
+import static iudx.data.ingestion.server.apiserver.util.Constants.RESPONSE_SIZE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
@@ -227,6 +228,7 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.publishData(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
+            routingContext.data().put(RESPONSE_SIZE,0);
             Future.future(fu -> updateAuditTable(routingContext));
             handleSuccessResponse(response, 201, handler.result().toString());
           } else if (handler.failed()) {
@@ -259,6 +261,7 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.ingestDataPost(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
+            routingContext.data().put(RESPONSE_SIZE,0);
             Future.future(fu -> updateAuditTable(routingContext));
             handleSuccessResponse(response, 201, handler.result().toString());
           } else if (handler.failed()) {
@@ -291,6 +294,7 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.ingestDataDelete(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
+            routingContext.data().put(RESPONSE_SIZE,0);
             Future.future(fu -> updateAuditTable(routingContext));
             handleSuccessResponse(response, 200, handler.result().toString());
           } else if (handler.failed()) {
@@ -342,6 +346,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     request.put(USER_ID, authInfo.getValue(USER_ID));
     request.put(ID, authInfo.getValue(ID));
     request.put(API, authInfo.getValue(API_ENDPOINT));
+    request.put(RESPONSE_SIZE,context.data().get(RESPONSE_SIZE));
     meteringService.executeWriteQuery(
         request,
         handler -> {

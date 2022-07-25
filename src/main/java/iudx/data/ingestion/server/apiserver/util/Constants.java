@@ -53,6 +53,7 @@ public class Constants {
   /** Accept Headers and CORS */
   public static final String MIME_APPLICATION_JSON = "application/json";
   public static final String MIME_TEXT_HTML = "text/html";
+  public static final String RESPONSE_SIZE= "response_size";
 
   // messages (Error, Exception, messages..)
   public static final String MSG_BAD_QUERY = "Bad query";
