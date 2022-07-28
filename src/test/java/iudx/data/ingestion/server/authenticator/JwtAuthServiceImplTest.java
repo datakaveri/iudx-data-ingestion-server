@@ -3,6 +3,7 @@ package iudx.data.ingestion.server.authenticator;
 import static iudx.data.ingestion.server.authenticator.Constants.API_ENDPOINT;
 import static iudx.data.ingestion.server.authenticator.Constants.ID;
 import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.micrometer.core.ipc.http.HttpSender.Method;
@@ -43,6 +44,13 @@ public class JwtAuthServiceImplTest {
   static void init(Vertx vertx, VertxTestContext testContext) {
     config = new Configuration();
     authConfig = config.configLoader(1, vertx);
+    
+    authConfig.put("audience", "rs.iudx.io");
+    authConfig.put("authServerHost", "auth.test.com");
+    authConfig.put("port", 1234);
+    
+    LOGGER.info("config :{} ",authConfig);
+    
 
     JWTAuthOptions jwtAuthOptions = new JWTAuthOptions();
     jwtAuthOptions.addPubSecKey(
@@ -557,5 +565,21 @@ public class JwtAuthServiceImplTest {
 
       }
     });
+  }
+  
+  @Test
+  @DisplayName("success - valid admin token")
+  public void testValidAdminToken(VertxTestContext testContext) {
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setRole("admin");
+    
+    boolean result=jwtAuthenticationService.isValidAdminToken(jwtData);
+    assertTrue(result);
+    testContext.completeNow();
   }
 }

@@ -20,6 +20,7 @@ import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationContextFactory;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationRequest;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationStrategy;
+import iudx.data.ingestion.server.authenticator.authorization.IUDXRole;
 import iudx.data.ingestion.server.authenticator.authorization.JwtAuthorization;
 import iudx.data.ingestion.server.authenticator.authorization.Method;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
@@ -36,6 +37,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final int port;
   final String path;
   final String audience;
+  final String authServerHost;
   // resourceGroupCache will contain ACL info about all resource group in ingestion server
   private final Cache<String, String> resourceGroupCache =
       CacheBuilder.newBuilder().maximumSize(1000)
@@ -48,6 +50,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;
+    authServerHost = config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
     catWebClient = WebClient.create(vertx, options);
@@ -64,43 +67,34 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
 
-    LOGGER.debug("endpoint : " + endPoint);
-    if (endPoint != null && ADMIN_ENDPOINTS.contains(endPoint)) {
-      ResultContainer result = new ResultContainer();
-      jwtDecodeFuture
-      .compose(decodeHandler -> {
-        result.jwtData = decodeHandler;
-        return isValidAudienceValue(result.jwtData);
-      })
-          .compose(roleCheckHandler -> isValidRole(result.jwtData))
-          .onSuccess(successHandler -> handler.handle(Future.succeededFuture(successHandler)))
-          .onFailure(failureHandler -> handler.handle(Future.failedFuture(failureHandler.getMessage())));
+    boolean isAdminIngestionEndpoint =
+        endPoint != null && endPoint.equals(Api.INGESTION.getApiEndpoint());
 
-      return this;
-    } else {
-
-      ResultContainer result = new ResultContainer();
-      jwtDecodeFuture.compose(decodeHandler -> {
-        result.jwtData = decodeHandler;
-        return isValidAudienceValue(result.jwtData);
-      }).compose(audienceHandler -> {
-
+    ResultContainer result = new ResultContainer();
+    jwtDecodeFuture.compose(decodeHandler -> {
+      result.jwtData = decodeHandler;
+      return isValidAudienceValue(result.jwtData);
+    }).compose(audienceHandler -> {
+      if (endPoint.equals(Api.INGESTION.getApiEndpoint()) && isValidAdminToken(result.jwtData)) {
+        //admin token + /ingestion POST, skip id check
+        return Future.succeededFuture(true);
+      } else {
+        //check id in token  
         return isValidId(result.jwtData, id);
-        // uncomment above line once you get a valid JWT token. and delete below line
+      }
+    }).compose(validIdHandler ->
 
-        // return Future.succeededFuture(true);
-      }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
-          .onComplete(completeHandler -> {
-            if (completeHandler.succeeded()) {
-              LOGGER.debug("Completion handler");
-              handler.handle(Future.succeededFuture(completeHandler.result()));
-            } else {
-              LOGGER.debug("Failure handler");
-              LOGGER.error("error : " + completeHandler.cause().getMessage());
-              handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
-            }
-          });
-    }
+    validateAccess(result.jwtData, authenticationInfo))
+        .onComplete(completeHandler -> {
+          if (completeHandler.succeeded()) {
+            LOGGER.debug("Completion handler");
+            handler.handle(Future.succeededFuture(completeHandler.result()));
+          } else {
+            LOGGER.debug("Failure handler");
+            LOGGER.error("error : " + completeHandler.cause().getMessage());
+            handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
+          }
+        });
     return this;
   }
 
@@ -131,7 +125,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Method method = Method.valueOf(authInfo.getString(METHOD));
     Api api = Api.fromEndpoint(authInfo.getString(API_ENDPOINT));
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
-    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(jwtData.getRole());
+    IUDXRole role = IUDXRole.fromRole(jwtData.getRole());
+    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role);
     LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
     JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
@@ -165,18 +160,35 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     return promise.future();
   }
 
+  public boolean isValidAdminToken(JwtData jwtData) {
+    LOGGER.debug("jwtdata : "+jwtData);
+    if (jwtData.getRole() != null && !jwtData.getRole().equals(IUDXRole.ADMIN.getRole())) {
+      return false;
+    }
+   
+    String jwtId = jwtData.getIid().split(":")[1];
+    String jwtIss = jwtData.getIss();
+    if (audience != null && audience.equals(jwtId) && jwtIss != null
+        && authServerHost.equalsIgnoreCase(jwtIss)) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
   public Future<Boolean> isValidId(JwtData jwtData, String id) {
     Promise<Boolean> promise = Promise.promise();
     String jwtId = jwtData.getIid().split(":")[1];
-    LOGGER.info("JWT ID" + jwtId);
-    LOGGER.info("ID " + id);
+    LOGGER.info("jwtId" + jwtId);
+    LOGGER.info("id " + id);
     if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);
     } else if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);
     } else {
-      LOGGER.error("Incorrect id value in jwt");
-      promise.fail("Incorrect id value in jwt");
+      LOGGER.error("Incorrect token : id mismatch");
+      promise.fail("Incorrect token : id mismatch");
     }
     return promise.future();
   }
