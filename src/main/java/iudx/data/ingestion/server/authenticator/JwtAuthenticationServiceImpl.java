@@ -67,7 +67,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
 
-
     boolean isAdminIngestionEndpoint =
         endPoint != null && endPoint.equals(Api.INGESTION.getApiEndpoint());
 
