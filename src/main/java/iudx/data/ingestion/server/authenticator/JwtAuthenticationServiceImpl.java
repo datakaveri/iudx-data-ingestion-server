@@ -1,16 +1,6 @@
 package iudx.data.ingestion.server.authenticator;
 
-import static iudx.data.ingestion.server.authenticator.Constants.API_ENDPOINT;
-import static iudx.data.ingestion.server.authenticator.Constants.CAT_SERVER_HOST;
-import static iudx.data.ingestion.server.authenticator.Constants.CAT_SERVER_PORT;
-import static iudx.data.ingestion.server.authenticator.Constants.DI_AUDIENCE;
-import static iudx.data.ingestion.server.authenticator.Constants.ID;
-import static iudx.data.ingestion.server.authenticator.Constants.JSON_DELEGATE;
-import static iudx.data.ingestion.server.authenticator.Constants.JSON_IID;
-import static iudx.data.ingestion.server.authenticator.Constants.JSON_PROVIDER;
-import static iudx.data.ingestion.server.authenticator.Constants.JSON_USERID;
-import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
-import static iudx.data.ingestion.server.authenticator.Constants.TOKEN;
+import static iudx.data.ingestion.server.authenticator.Constants.*;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,27 +64,43 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
 
-    ResultContainer result = new ResultContainer();
-    jwtDecodeFuture.compose(decodeHandler -> {
-      result.jwtData = decodeHandler;
-      return isValidAudienceValue(result.jwtData);
-    }).compose(audienceHandler -> {
+    LOGGER.debug("endpoint : " + endPoint);
+    if (endPoint != null && ADMIN_ENDPOINTS.contains(endPoint)) {
+      ResultContainer result = new ResultContainer();
+      jwtDecodeFuture
+      .compose(decodeHandler -> {
+        result.jwtData = decodeHandler;
+        return isValidAudienceValue(result.jwtData);
+      })
+          .compose(roleCheckHandler -> isValidRole(result.jwtData))
+          .onSuccess(successHandler -> handler.handle(Future.succeededFuture(successHandler)))
+          .onFailure(failureHandler -> handler.handle(Future.failedFuture(failureHandler.getMessage())));
 
-      return isValidId(result.jwtData, id);
-      // uncomment above line once you get a valid JWT token. and delete below line
+      return this;
+    } else {
 
-      // return Future.succeededFuture(true);
-    }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
-        .onComplete(completeHandler -> {
-          if (completeHandler.succeeded()) {
-            LOGGER.debug("Completion handler");
-            handler.handle(Future.succeededFuture(completeHandler.result()));
-          } else {
-            LOGGER.debug("Failure handler");
-            LOGGER.error("error : " + completeHandler.cause().getMessage());
-            handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
-          }
-        });
+      ResultContainer result = new ResultContainer();
+      jwtDecodeFuture.compose(decodeHandler -> {
+        result.jwtData = decodeHandler;
+        return isValidAudienceValue(result.jwtData);
+      }).compose(audienceHandler -> {
+
+        return isValidId(result.jwtData, id);
+        // uncomment above line once you get a valid JWT token. and delete below line
+
+        // return Future.succeededFuture(true);
+      }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
+          .onComplete(completeHandler -> {
+            if (completeHandler.succeeded()) {
+              LOGGER.debug("Completion handler");
+              handler.handle(Future.succeededFuture(completeHandler.result()));
+            } else {
+              LOGGER.debug("Failure handler");
+              LOGGER.error("error : " + completeHandler.cause().getMessage());
+              handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
+            }
+          });
+    }
     return this;
   }
 
@@ -131,7 +137,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
     if (jwtAuthStrategy.isAuthorized(authRequest, jwtData)) {
       JsonObject jsonResponse = new JsonObject();
-      jsonResponse.put(JSON_IID,jwtId);
+      jsonResponse.put(JSON_IID, jwtId);
       jsonResponse.put(JSON_USERID, jwtData.getSub());
       if (jwtData.getRole().equalsIgnoreCase(JSON_PROVIDER)) {
         jsonResponse.put(JSON_PROVIDER, jwtData.getSub());
@@ -171,6 +177,23 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     } else {
       LOGGER.error("Incorrect id value in jwt");
       promise.fail("Incorrect id value in jwt");
+    }
+    return promise.future();
+  }
+
+  Future<JsonObject> isValidRole(JwtData jwtData) {
+    Promise<JsonObject> promise = Promise.promise();
+    String jwtId = jwtData.getIid().split(":")[1];
+    String role = jwtData.getRole();
+    JsonObject jsonResponse = new JsonObject();
+    if (role.equalsIgnoreCase("admin")) {
+      jsonResponse.put(JSON_USERID, jwtData.getSub());
+      jsonResponse.put(JSON_IID, jwtId);
+      promise.complete(jsonResponse);
+    } else {
+      LOGGER.debug("failed");
+      JsonObject result = new JsonObject().put("401", "Only admin access allowed.");
+      promise.fail(result.toString());
     }
     return promise.future();
   }
