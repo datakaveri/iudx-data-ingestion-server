@@ -181,15 +181,15 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   public Future<Boolean> isValidId(JwtData jwtData, String id) {
     Promise<Boolean> promise = Promise.promise();
     String jwtId = jwtData.getIid().split(":")[1];
-    LOGGER.info("JWT ID" + jwtId);
-    LOGGER.info("ID " + id);
+    LOGGER.info("jwtId" + jwtId);
+    LOGGER.info("id " + id);
     if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);
     } else if (id.equalsIgnoreCase(jwtId)) {
       promise.complete(true);
     } else {
-      LOGGER.error("Incorrect id value in jwt");
-      promise.fail("Incorrect id value in jwt");
+      LOGGER.error("Incorrect token : id mismatch");
+      promise.fail("Incorrect token : id mismatch");
     }
     return promise.future();
   }
