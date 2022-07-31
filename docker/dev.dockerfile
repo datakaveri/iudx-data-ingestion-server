@@ -25,4 +25,4 @@ EXPOSE 8080 8443
 # Creating a non-root user
 RUN useradd -r -u 1001 -g root di-user
 # Setting non-root user to use when container starts
-USER id-user
+USER di-user
