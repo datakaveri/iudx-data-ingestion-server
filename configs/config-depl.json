@@ -27,9 +27,7 @@
       "authServerHost": "localhost.auth",
       "catServerHost": "localhost.catalogue",
       "catServerPort": 1234,
-      "audience": "<rs-domain-name>",
-      "resourceServerId": "<id-of-rs-in-catalogue>",
-      "serverMode": "testing"
+      "audience": "<rs-domain-name>"
     },
     {
       "id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",

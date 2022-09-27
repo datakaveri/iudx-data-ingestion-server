@@ -24,12 +24,11 @@
 		{
 			"id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
 			"verticleInstances": 2,
-			"authServerHost": "localhost.auth",
-			"catServerHost": "localhost.catalogue",
-			"catServerPort": 1234,
-			"audience": "<rs-domain-name>",
-			"resourceServerId": "<id-of-rs-in-catalogue>",
-			"serverMode": "testing"
+			"audience": "",
+			"authServerHost": "",
+			"catServerHost": "",
+			"catServerPort": 443,
+			"jwtIgnoreExpiry": true
 		},
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
