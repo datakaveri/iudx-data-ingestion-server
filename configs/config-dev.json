@@ -7,39 +7,34 @@
 	"modules": [
 		{
 			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
-			"verticleInstances": 1,
+			"verticleInstances": 2,
 			"dataBrokerIP": "",
-			"dataBrokerPort": 2,
+			"dataBrokerPort": "",
 			"dataBrokerVhost": "",
 			"dataBrokerUserName": "",
 			"dataBrokerPassword": "",
-			"dataBrokerManagementPort": 28041,
-			"connectionTimeout": 6000,
-			"requestedHeartbeat": 60,
-			"handshakeTimeout": 6000,
-			"requestedChannelMax": 5,
-			"networkRecoveryInterval": 500,
+			"dataBrokerManagementPort": "",
+			"connectionTimeout": "6000",
+			"requestedHeartbeat": "60",
+			"handshakeTimeout": "6000",
+			"requestedChannelMax": "5",
+			"networkRecoveryInterval": "500",
 			"automaticRecoveryEnabled": "true"
 		},
 		{
 			"id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
 			"verticleInstances": 2,
-			"audience": "",
-			"authServerHost": "",
-			"catServerHost": "",
-			"catServerPort": 443,
-			"resourceServerId": "datakaveri.org/f7e044eee8122b5c87dce6e7ad64f3266afa41dc/rs.iudx.io",
-			"serverMode": "testing",
-			"jwtIgnoreExpiry": true
+			"authServerHost": "localhost.auth",
+			"catServerHost": "localhost.catalogue",
+			"catServerPort": 1234,
+			"audience": "<rs-domain-name>",
+			"resourceServerId": "<id-of-rs-in-catalogue>",
+			"serverMode": "testing"
 		},
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
-			"ssl": true,
-			"httpPort": 8443,
-			"keystore": "configs/keystore.jks",
-			"keystorePassword": "",
-			"catServerHost": "",
-			"catServerPort": 443,
+			"ssl": false,
+			"httpPort" : 8080,
 			"verticleInstances": 2
 		},
 		{
@@ -50,6 +45,7 @@
 			"meteringDatabaseName": "",
 			"meteringDatabaseUserName": "",
 			"meteringDatabasePassword": "",
+			"meteringDatabaseTableName": "",
 			"meteringPoolSize": 25
 		}
 	]

@@ -36,7 +36,7 @@ public class Constants {
   public static final String HEADER_ORIGIN = "Origin";
   public static final String HEADER_REFERER = "Referer";
   public static final String HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-
+  public static final String RESPONSE_SIZE="response_size";
   // request/response params
   public static final String CONTENT_TYPE = "content-type";
   public static final String APPLICATION_JSON = "application/json";
