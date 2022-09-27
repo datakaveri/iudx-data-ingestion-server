@@ -16,6 +16,7 @@ public class MeteringVerticle extends AbstractVerticle {
   private String databaseName;
   private String databaseUserName;
   private String databasePassword;
+  private String databaseTableName;
   private int poolSize;
   private ServiceBinder binder;
   private MessageConsumer<JsonObject> consumer;
@@ -29,6 +30,7 @@ public class MeteringVerticle extends AbstractVerticle {
     databaseName = config().getString("meteringDatabaseName");
     databaseUserName = config().getString("meteringDatabaseUserName");
     databasePassword = config().getString("meteringDatabasePassword");
+    databaseTableName= config().getString("meteringDatabaseTableName");
     poolSize = config().getInteger("meteringPoolSize");
 
     JsonObject propObj = new JsonObject();
@@ -37,6 +39,7 @@ public class MeteringVerticle extends AbstractVerticle {
     propObj.put("meteringDatabaseName", databaseName);
     propObj.put("meteringDatabaseUserName", databaseUserName);
     propObj.put("meteringDatabasePassword", databasePassword);
+    propObj.put("meteringDatabaseTableName", databaseTableName);
     propObj.put("meteringPoolSize", poolSize);
 
     binder = new ServiceBinder(vertx);

@@ -1,5 +1,6 @@
 package iudx.data.ingestion.server.metering;
 
+import static iudx.data.ingestion.server.metering.util.Constants.DATABASE_TABLE_NAME;
 import static iudx.data.ingestion.server.metering.util.Constants.FAILED;
 import static iudx.data.ingestion.server.metering.util.Constants.MESSAGE;
 import static iudx.data.ingestion.server.metering.util.Constants.QUERY_KEY;
@@ -33,6 +34,7 @@ public class MeteringServiceImpl implements MeteringService {
   private String databaseName;
   private String databaseUserName;
   private String databasePassword;
+  private String databaseTableName;
   private int databasePoolSize;
   private ResponseBuilder responseBuilder;
 
@@ -44,6 +46,7 @@ public class MeteringServiceImpl implements MeteringService {
       databaseName = propObj.getString("meteringDatabaseName");
       databaseUserName = propObj.getString("meteringDatabaseUserName");
       databasePassword = propObj.getString("meteringDatabasePassword");
+      databaseTableName = propObj.getString("meteringDatabaseTableName");
       databasePoolSize = propObj.getInteger("meteringPoolSize");
     }
 
@@ -65,7 +68,7 @@ public class MeteringServiceImpl implements MeteringService {
   @Override
   public MeteringService executeWriteQuery(
       JsonObject request, Handler<AsyncResult<JsonObject>> handler) {
-
+    request.put(DATABASE_TABLE_NAME,databaseTableName);
     query = queryBuilder.buildWritingQuery(request);
     Future<JsonObject> result = writeInDatabase(query);
     result.onComplete(

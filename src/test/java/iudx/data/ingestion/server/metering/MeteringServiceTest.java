@@ -2,6 +2,7 @@ package iudx.data.ingestion.server.metering;
 
 import static iudx.data.ingestion.server.metering.util.Constants.API;
 import static iudx.data.ingestion.server.metering.util.Constants.ID;
+import static iudx.data.ingestion.server.metering.util.Constants.RESPONSE_SIZE;
 import static iudx.data.ingestion.server.metering.util.Constants.USER_ID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,6 +32,7 @@ public class MeteringServiceTest {
   private static String databaseName;
   private static String databaseUserName;
   private static String databasePassword;
+  private static String databaseTableName;
   private static int databasePoolSize;
   private static Configuration config;
 
@@ -45,6 +47,7 @@ public class MeteringServiceTest {
     databaseName = dbConfig.getString("meteringDatabaseName");
     databaseUserName = dbConfig.getString("meteringDatabaseUserName");
     databasePassword = dbConfig.getString("meteringDatabasePassword");
+    databaseTableName= dbConfig.getString("meteringDatabaseTableName");
     databasePoolSize = dbConfig.getInteger("meteringPoolSize");
     meteringService = new MeteringServiceImpl(dbConfig, vertxObj);
     userId = UUID.randomUUID().toString();
@@ -65,6 +68,7 @@ public class MeteringServiceTest {
     request.put(USER_ID, "15c7506f-c800-48d6-adeb-0542b03947c6");
     request.put(ID, "15c7506f-c800-48d6-adeb-0542b03947c6/integration-test-alias/");
     request.put(API, "/ngsi-ld/v1/subscription");
+    request.put(RESPONSE_SIZE,0);
     meteringService.executeWriteQuery(
         request,
         vertxTestContext.succeeding(
