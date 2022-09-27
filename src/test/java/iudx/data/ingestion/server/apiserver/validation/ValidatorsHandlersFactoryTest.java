@@ -50,11 +50,11 @@ class ValidatorsHandlersFactoryTest {
     public void getIngestRequestValidationsTest(VertxTestContext vertxTestContext){
         MultiMap params = MultiMap.caseInsensitiveMultiMap();
         MultiMap headers = MultiMap.caseInsensitiveMultiMap();
-        JsonObject jsonObject = mock(JsonObject.class);
+        JsonObject body = new JsonObject().put("queue",true);
 
-        var validator =validatorsHandlersFactory.build(RequestType.INGEST,jsonObject,params);
+        var validator =validatorsHandlersFactory.build(RequestType.INGEST,body,params);
 
-        assertEquals(1,validator.size());
+        assertEquals(2,validator.size());
         vertxTestContext.completeNow();
     }
 
