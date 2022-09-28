@@ -516,7 +516,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8081/ngsi-ld/v1/ingestion",
+							"raw": "http://{{base_url}}/ngsi-ld/v1/ingestion",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -656,7 +656,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8081/ngsi-ld/v1/ingestion",
+							"raw": "http://{{base_url}}/ngsi-ld/v1/ingestion",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -791,7 +791,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token1}}",
+								"value": "{{adminToken}}",
 								"type": "text"
 							}
 						],
@@ -868,7 +868,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token1}}",
+								"value": "{{adminToken}}",
 								"type": "text"
 							}
 						],
@@ -924,7 +924,7 @@
 						"header": [
 							{
 								"key": "token",
-								"value": "{{token1}}",
+								"value": "{{adminToken}}",
 								"type": "text"
 							}
 						],
