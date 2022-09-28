@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "059fee70-40b9-44b3-9e37-3ddde71b83b7",
+		"_postman_id": "6633ae61-f8ba-496d-b83b-5c216a19ae71",
 		"name": "IUDX-Data-Ingestion-Server-APIs-V4.0.0",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3868286"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -587,7 +586,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
@@ -600,7 +599,7 @@
 							"query": [
 								{
 									"key": "id",
-									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055"
+									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information"
 								}
 							]
 						}
@@ -726,7 +725,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
@@ -739,7 +738,7 @@
 							"query": [
 								{
 									"key": "id",
-									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055"
+									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information"
 								}
 							]
 						}
