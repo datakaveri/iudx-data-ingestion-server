@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "059fee70-40b9-44b3-9e37-3ddde71b83b7",
-		"name": "IUDX-Data-Ingestion-Server-APIs-V3.5",
+		"name": "IUDX-Data-Ingestion-Server-APIs-V4.0.0",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3868286"
 	},
@@ -516,12 +516,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{base_url}}/ngsi-ld/v1/ingestion",
-							"protocol": "http",
+							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8081",
 							"path": [
 								"ngsi-ld",
 								"v1",
@@ -656,12 +655,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{base_url}}/ngsi-ld/v1/ingestion",
-							"protocol": "http",
+							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8081",
 							"path": [
 								"ngsi-ld",
 								"v1",
@@ -805,10 +803,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://8081/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
-							"protocol": "http",
+							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"protocol": "https",
 							"host": [
-								"8081"
+								"{{base_url}}"
 							],
 							"path": [
 								"ngsi-ld",
@@ -929,8 +927,8 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{base_url}}/ngsi-ld/v1/ingestion?id=datakaveri.org/facec5182e3bf44cc3ac42b0b611263676d668a2/rs.iudx.org.in/agartala-env-aqm/shyamali-bazar",
-							"protocol": "http",
+							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=datakaveri.org/facec5182e3bf44cc3ac42b0b611263676d668a2/rs.iudx.org.in/agartala-env-aqm/shyamali-bazar",
+							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
