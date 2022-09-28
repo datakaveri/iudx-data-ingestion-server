@@ -1,5 +1,13 @@
 package iudx.data.ingestion.server.databroker;
 
+import static iudx.data.ingestion.server.databroker.util.Constants.PASSWORD;
+import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_DELETE;
+import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_GET;
+import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_POST;
+import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_PUT;
+import static iudx.data.ingestion.server.databroker.util.Constants.USERNAME;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -9,10 +17,6 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 public class RabbitWebClient {
   private static final Logger LOGGER = LogManager.getLogger(RabbitWebClient.class);
