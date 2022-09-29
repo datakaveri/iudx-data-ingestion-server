@@ -582,4 +582,47 @@ public class JwtAuthServiceImplTest {
     assertTrue(result);
     testContext.completeNow();
   }
+
+  @Test
+  @DisplayName("success - valid Role")
+  public void testValidRole(VertxTestContext testContext) {
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setRole("admin");
+
+    jwtAuthenticationService.isValidRole(jwtData).onComplete(
+            handler->{
+              if (handler.succeeded()){
+                testContext.completeNow();
+              }else {
+                testContext.failNow("fsiled");
+              }
+            }
+    );
+  }
+  @Test
+  @DisplayName("fail - valid Role")
+  public void testinValidRole(VertxTestContext testContext) {
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setRole("consumer");
+
+    jwtAuthenticationService.isValidRole(jwtData).onComplete(
+            handler->{
+              if (handler.failed()){
+                testContext.completeNow();
+              }else {
+                testContext.failNow("fsiled");
+              }
+            }
+    );
+  }
 }
