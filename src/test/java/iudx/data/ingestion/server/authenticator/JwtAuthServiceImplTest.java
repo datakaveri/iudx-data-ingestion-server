@@ -1,8 +1,6 @@
 package iudx.data.ingestion.server.authenticator;
 
-import static iudx.data.ingestion.server.authenticator.Constants.API_ENDPOINT;
-import static iudx.data.ingestion.server.authenticator.Constants.ID;
-import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
+import static iudx.data.ingestion.server.authenticator.Constants.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,6 +14,7 @@ import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
 import iudx.data.ingestion.server.configuration.Configuration;
@@ -592,37 +591,20 @@ public class JwtAuthServiceImplTest {
     jwtData.setExp(1627408865L);
     jwtData.setIat(1627408865L);
     jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
     jwtData.setRole("admin");
 
-    jwtAuthenticationService.isValidRole(jwtData).onComplete(
-            handler->{
-              if (handler.succeeded()){
+    jwtAuthenticationService
+        .isValidRole(jwtData)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                assertEquals("rs.iudx.io", handler.result().getString(JSON_IID));
+                assertEquals("844e251b-574b-46e6-9247-f76f1f70a637",handler.result().getString(JSON_USERID));
                 testContext.completeNow();
-              }else {
-                testContext.failNow("fsiled");
+              } else {
+                testContext.failNow("failed");
               }
-            }
-    );
-  }
-  @Test
-  @DisplayName("fail - valid Role")
-  public void testinValidRole(VertxTestContext testContext) {
-    JwtData jwtData = new JwtData();
-    jwtData.setIss("auth.test.com");
-    jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
-    jwtData.setIid("rs:rs.iudx.io");
-    jwtData.setRole("consumer");
-
-    jwtAuthenticationService.isValidRole(jwtData).onComplete(
-            handler->{
-              if (handler.failed()){
-                testContext.completeNow();
-              }else {
-                testContext.failNow("fsiled");
-              }
-            }
-    );
+            });
   }
 }
