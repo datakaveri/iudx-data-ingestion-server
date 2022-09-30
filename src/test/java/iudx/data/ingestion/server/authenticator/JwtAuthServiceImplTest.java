@@ -607,4 +607,26 @@ public class JwtAuthServiceImplTest {
               }
             });
   }
+  @Test
+  @DisplayName("fail - valid Role")
+  public void testInValidRole(VertxTestContext testContext) {
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
+    jwtData.setRole("consumer");
+
+    jwtAuthenticationService
+            .isValidRole(jwtData)
+            .onFailure(
+                    handler -> {
+                     JsonObject jsonObject =new JsonObject(handler.getMessage());
+                      assertTrue(jsonObject.containsKey("401"));
+                      assertEquals("Only admin access allowed.",jsonObject.getString("401"));
+                      testContext.completeNow();
+                    });
+  }
 }
