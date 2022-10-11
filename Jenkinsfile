@@ -63,7 +63,7 @@ pipeline {
 
     stage('Integration Tests & OWASP ZAP pen test'){
       steps{
-        node('master') {
+        node('built-in') {
           script{
             startZap ([host: 'localhost', port: 8090, zapHome: '/var/lib/jenkins/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/OWASP_ZAP/ZAP_2.11.0'])
               sh 'curl http://127.0.0.1:8090/JSON/pscan/action/disableScanners/?ids=10096'
@@ -74,7 +74,7 @@ pipeline {
       }
       post{
         always{
-          node('master') {
+          node('built-in') {
             script{
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '/var/lib/jenkins/iudx/di/Newman/report/', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: '', reportName: 'Integration Test Report'])
               archiveZap failHighAlerts: 1, failMediumAlerts: 1, failLowAlerts: 1
@@ -112,8 +112,8 @@ pipeline {
           steps {
             script {
               docker.withRegistry( registryUri, registryCredential ) {
-                devImage.push("4.0-alpha-${env.GIT_HASH}")
-                deplImage.push("4.0-alpha-${env.GIT_HASH}")
+                devImage.push("4.5.0-alpha-${env.GIT_HASH}")
+                deplImage.push("4.5.0-alpha-${env.GIT_HASH}")
               }
             }
           }
@@ -121,7 +121,7 @@ pipeline {
         stage('Docker Swarm deployment') {
           steps {
             script {
-              sh "ssh azureuser@docker-swarm 'docker service update di_di --image ghcr.io/datakaveri/di-depl:4.0-alpha-${env.GIT_HASH}'"
+              sh "ssh azureuser@docker-swarm 'docker service update di_di --image ghcr.io/datakaveri/di-depl:4.5.0-alpha-${env.GIT_HASH}'"
               sh 'sleep 10'
             }
           }
@@ -131,27 +131,27 @@ pipeline {
             }
           }          
         }
-        // stage('Integration test on swarm deployment') {
-        //   steps {
-        //     node('master') {
-        //       script{
-        //         sh 'newman run /var/lib/jenkins/iudx/di/Newman/IUDX_Data_Ingestion_Server_V3.5.postman_collection.json -e /home/ubuntu/configs/cd/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/cd-report.html --reporter-htmlextra-skipSensitiveData'
-        //       }
-        //     }
-        //   }
-        //   post{
-        //     always{
-        //       node('master') {
-        //         script{
-        //           publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '/var/lib/jenkins/iudx/di/Newman/report/', reportFiles: 'cd-report.html', reportTitles: '', reportName: 'Docker-Swarm Integration Test Report'])
-        //         }
-        //       }
-        //     }
-        //     failure{
-        //       error "Test failure. Stopping pipeline execution!"
-        //     }
-        //   }
-        // }
+        stage('Integration test on swarm deployment') {
+          steps {
+            node('built-in') {
+              script{
+                sh 'newman run /var/lib/jenkins/iudx/di/Newman/IUDX_Data_Ingestion_Server_V3.5.postman_collection.json -e /home/ubuntu/configs/cd/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/cd-report.html --reporter-htmlextra-skipSensitiveData'
+              }
+            }
+          }
+          post{
+            always{
+              node('built-in') {
+                script{
+                  publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '/var/lib/jenkins/iudx/di/Newman/report/', reportFiles: 'cd-report.html', reportTitles: '', reportName: 'Docker-Swarm Integration Test Report'])
+                }
+              }
+            }
+            failure{
+              error "Test failure. Stopping pipeline execution!"
+            }
+          }
+        }
       }
     }
   }
