@@ -135,7 +135,7 @@ pipeline {
           steps {
             node('built-in') {
               script{
-                sh 'newman run /var/lib/jenkins/iudx/di/Newman/IUDX_Data_Ingestion_Server_V3.5.postman_collection.json -e /home/ubuntu/configs/cd/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/cd-report.html --reporter-htmlextra-skipSensitiveData'
+                sh 'newman run /var/lib/jenkins/iudx/di/Newman/IUDX-Data-Ingestion-Server-APIs-V4.0.postman_collection.json -e /home/ubuntu/configs/cd/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/cd-report.html --reporter-htmlextra-skipSensitiveData'
               }
             }
           }
