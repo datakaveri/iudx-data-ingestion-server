@@ -42,10 +42,13 @@ public class RabbitClient {
     String exchangeName = metaData.getString(EXCHANGE_NAME);
     String routingKey = metaData.getString(ROUTING_KEY);
     JsonObject response = new JsonObject();
+    System.out.println(exchangeName+"  "+ routingKey);
     LOGGER.debug("Sending message to exchange: {}, with routing key: {}", exchangeName, routingKey);
     client.basicPublish(exchangeName, routingKey, request.toBuffer(),
         asyncResult -> {
+          System.out.println(exchangeName+"  "+ routingKey);
           if (asyncResult.succeeded()) {
+            System.out.println(exchangeName+"  "+ routingKey);
             promise.complete(response);
           } else {
             promise.fail(asyncResult.cause());
@@ -72,25 +75,58 @@ public class RabbitClient {
     return promise.future();
   }*/
 
+  /*public Future<Boolean> populateExchangeCache(String vHost, Cache<String, Boolean> exchangeListCache) {
+    Promise<Boolean> promise = Promise.promise();
+    String url = "/api/exchanges/" + vHost;
+    System.out.println("Line 86");
+    rabbitWebClient
+        .requestAsync(REQUEST_GET, url)
+        .onSuccess(
+            ar -> {
+              JsonArray response = ar.bodyAsJsonArray();
+              response.forEach(
+                  json -> {
+                    JsonObject exchange = (JsonObject) json;
+                    String exchangeName = exchange.getString(NAME);
+                    if (!exchangeName.isEmpty()) {
+                      LOGGER.debug("Adding {} exchange into cache", exchangeName);
+                      LOGGER.info("Adding {} exchange into cache", exchangeName);
+                      exchangeListCache.put(exchangeName, true);
+                    }
+                  });
+            })
+        *//*.onFailure(
+            ar -> {
+              LOGGER.fatal(ar.getCause());
+            })*//*;
+    promise.complete(true);
+    return promise.future();
+  }*/
+
   public Future<Boolean> populateExchangeCache(String vHost, Cache<String, Boolean> exchangeListCache) {
     Promise<Boolean> promise = Promise.promise();
     String url = "/api/exchanges/" + vHost;
+    System.out.println("url : " + url);
     rabbitWebClient.requestAsync(REQUEST_GET, url)
-        .onSuccess(ar -> {
-          JsonArray response = ar.bodyAsJsonArray();
-          response.forEach(json -> {
-            JsonObject exchange = (JsonObject) json;
-            String exchangeName = exchange.getString(NAME);
-            if (!exchangeName.isEmpty()) {
-              LOGGER.debug("Adding {} exchange into cache", exchangeName);
-              exchangeListCache.put(exchangeName, true);
-            }
-          });
-        })
-        .onFailure(ar -> {
-          LOGGER.fatal(ar.getCause());
-        });
-    promise.complete(true);
+            .onComplete(asyncResult -> {
+              if (asyncResult.succeeded()) {
+                JsonArray response = asyncResult.result().bodyAsJsonArray();
+                response.forEach(json -> {
+                  System.out.println("json : " + json);
+                  JsonObject exchange = (JsonObject) json;
+                  String exchangeName = exchange.getString(NAME);
+                  System.out.println("exchangeName: " + exchangeName);
+                  if (!exchangeName.isEmpty()) {
+                    LOGGER.debug("Adding {} exchange into cache", exchangeName);
+                    exchangeListCache.put(exchangeName, true);
+                    promise.complete(true);
+                  }
+
+                });
+              } else {
+                promise.fail("populateExchangeCache_error" + asyncResult.cause());
+              }
+            });
     return promise.future();
   }
 
@@ -152,6 +188,7 @@ public class RabbitClient {
     String url = "/api/queues/" + vHost + "/" + Util.encodeString(queue);
     rabbitWebClient.requestAsync(REQUEST_GET, url).onComplete(asyncResult -> {
       if (asyncResult.succeeded()) {
+        LOGGER.info("Line 160");
         int status = asyncResult.result().statusCode();
         response.put(TYPE, status);
         if (status == HttpStatus.SC_OK) {
@@ -386,21 +423,23 @@ public class RabbitClient {
     JsonObject result = new JsonObject();
     String exchangeUrl = Util.encodeString(exchangeName);
     String url = "/api/exchanges/" + vHost + "/" + exchangeUrl;
-    rabbitWebClient.requestAsync(REQUEST_GET, url)
-        .onComplete(ar -> {
-          if (ar.succeeded()) {
-            if (ar.result().statusCode() == HttpStatus.SC_OK) {
-              LOGGER.debug("Given exchange exists");
-              result.put(DOES_EXCHANGE_EXIST, true);
-            } else {
-              LOGGER.debug("Given exchange does not exists");
-              result.put(DOES_EXCHANGE_EXIST, false);
-            }
-            promise.complete(result);
-          } else {
-            promise.fail(ar.cause());
-          }
-        });
+    rabbitWebClient
+        .requestAsync(REQUEST_GET, url)
+        .onComplete(
+            ar -> {
+              if (ar.succeeded()) {
+                if (ar.result().statusCode() == HttpStatus.SC_OK) {
+                  LOGGER.debug("Given exchange exists");
+                  result.put(DOES_EXCHANGE_EXIST, true);
+                } else {
+                  LOGGER.debug("Given exchange does not exists");
+                  result.put(DOES_EXCHANGE_EXIST, false);
+                }
+                promise.complete(result);
+              } else {
+                promise.fail(ar.cause());
+              }
+            });
     return promise.future();
   }
 }

@@ -281,7 +281,6 @@
                         <exclude>**/Constants.class</exclude>
                         <exclude>**/*AuthenticationService.class</exclude>
                         <exclude>**/*VertxProxyHandler.class</exclude>
-                        <exclude>**/*DataBrokerServiceImpl.class</exclude>
                         <exclude>**/*PostgresService.class</exclude>
                         <exclude>**/*DataBrokerService.class</exclude>
                         <exclude>**/*DatabaseService.class</exclude>
