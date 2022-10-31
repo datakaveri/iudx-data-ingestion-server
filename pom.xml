@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>datakaveri.org</groupId>
     <artifactId>iudx.data.ingestion.server</artifactId>
@@ -8,24 +6,25 @@
     <name>iudx-data-ingestion-server</name>
 
     <properties>
-        <vertx.version>4.0.3</vertx.version>
+        <vertx.version>4.3.2</vertx.version>
         <openjdk.version>11</openjdk.version>
         <hazelcast.version>4.0.2</hazelcast.version>
-        <micrometer.version>1.7.2</micrometer.version>
-        <curator.version>5.1.0</curator.version>
+        <micrometer.version>1.9.2</micrometer.version>
+        <curator.version>5.3.0</curator.version>
         <apache-commons-lang3.version>3.12.0</apache-commons-lang3.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <apache-log4j2.version>2.17.1</apache-log4j2.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
-        <checkstyle.version>8.42</checkstyle.version>
-        <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
-        <maven-pmd-plugin.version>3.14.0</maven-pmd-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+        <checkstyle.version>10.3.1</checkstyle.version>
+        <maven-shade-plugin.version>3.3.0</maven-shade-plugin.version>
+        <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-pmd-plugin.version>3.17.0</maven-pmd-plugin.version>
         <maven-checkstyle-plugin-google.version>3.1.2</maven-checkstyle-plugin-google.version>
-        <maven-surefire-report-plugin.version>3.0.0-M5</maven-surefire-report-plugin.version>
+        <maven-surefire-report-plugin.version>3.0.0-M7</maven-surefire-report-plugin.version>
         <junit-jupiter.params>5.7.2</junit-jupiter.params>
-        <slf4j.version>1.7.32</slf4j.version>
+        <junit-jupiter.version>5.7.2</junit-jupiter.version>
         <lmax-disruptor.version>3.4.4</lmax-disruptor.version>
         <jackson-core.version>2.12.3</jackson-core.version>
         <maven.compiler.source>11</maven.compiler.source>
@@ -53,7 +52,7 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-        </dependencies>	
+        </dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -129,6 +128,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-unit</artifactId>
             <scope>test</scope>
@@ -136,17 +142,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-core.version}</version>
+
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson-core.version}</version>
+
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson-core.version}</version>
+
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -172,14 +178,13 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-pg-client</artifactId>
-            <version>4.0.3</version>
         </dependency>
         <!-- Packages for Vertx metrics through micrometer  -->
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-micrometer-metrics</artifactId>
         </dependency>
-       <!-- micrometer core package  -->
+        <!-- micrometer core package  -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
@@ -192,7 +197,7 @@
             <version>${micrometer.version}</version>
         </dependency>
         <!-- Packages for Vertx Hazelcast cluster manager  -->
-         <dependency>
+        <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-hazelcast</artifactId>
         </dependency>
@@ -228,13 +233,13 @@
             <artifactId>disruptor</artifactId>
             <version>${lmax-disruptor.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.ongres.scram</groupId>
             <artifactId>client</artifactId>
             <version>2.1</version>
         </dependency>
-	</dependencies>
+    </dependencies>
 
     <build>
         <plugins>
@@ -313,7 +318,7 @@
                     <encoding>UTF-8</encoding>
                     <configLocation>google_checks.xml</configLocation>
                     <module name="LineLength">
-                        <property name="max" value="120"/>
+                        <property name="max" value="120" />
                     </module>
                 </configuration>
             </plugin>
@@ -341,14 +346,12 @@
                                 </filter>
                             </filters>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Main-Class>${exec.mainClassDev}</Main-Class>
                                     </manifestEntries>
                                 </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/io.vertx.core.spi.VerticleFactory
                                     </resource>
                                     <resource>META-INF/services/io.vertx.core.spi.VertxServiceProvider
@@ -379,14 +382,12 @@
                                 </filter>
                             </filters>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Main-Class>${exec.mainClass}</Main-Class>
                                     </manifestEntries>
                                 </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/io.vertx.core.spi.VerticleFactory
                                     </resource>
                                     <resource>META-INF/services/io.vertx.core.spi.VertxServiceProvider
@@ -407,7 +408,6 @@
                 <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <source>11</source>
-                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -438,6 +438,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -456,7 +457,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${maven-pmd-plugin.version}</version>
                 <configuration>
-                    <targetJdk>13</targetJdk>
+                    <targetJdk>11</targetJdk>
                     <rulesets>
                         <ruleset>/rulesets/java/braces.xml</ruleset>
                         <ruleset>/rulesets/java/naming.xml</ruleset>
