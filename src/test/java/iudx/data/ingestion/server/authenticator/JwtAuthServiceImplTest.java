@@ -3,7 +3,12 @@ package iudx.data.ingestion.server.authenticator;
 import static iudx.data.ingestion.server.authenticator.Constants.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import io.micrometer.core.ipc.http.HttpSender.Method;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -18,13 +23,6 @@ import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
 import iudx.data.ingestion.server.configuration.Configuration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(VertxExtension.class)
 public class JwtAuthServiceImplTest {
@@ -379,7 +377,6 @@ public class JwtAuthServiceImplTest {
     jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
       if (handler.succeeded()) {
         testContext.completeNow();
-        testContext.failNow("invalid access provided");
       } else {
         LOGGER.debug("failed access ");
         testContext.failNow("invalid access provided");
