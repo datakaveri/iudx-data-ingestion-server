@@ -43,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-@Disabled
 @ExtendWith({VertxExtension.class, MockitoExtension.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DataBrokerServiceTest {
@@ -331,12 +330,6 @@ public class DataBrokerServiceTest {
     });
   }*/
 
-
-
-
-
-    private final Cache<String, Boolean> exchangeListCache = CacheBuilder.newBuilder().maximumSize(1000)
-            .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
    /* private final Cache<String, Boolean> exchangeListCache1 = new Cache<String, Boolean>() {
         @Override
         public @Nullable Boolean getIfPresent(Object o) {
