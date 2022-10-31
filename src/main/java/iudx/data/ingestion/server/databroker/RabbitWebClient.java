@@ -42,13 +42,10 @@ public class RabbitWebClient {
     Promise<HttpResponse<Buffer>> promise = Promise.promise();
     HttpRequest<Buffer> webRequest = createRequest(requestType, url);
     webRequest.sendJsonObject(requestJson, ar -> {
-      LOGGER.info("line at 41"+ requestJson);
       if (ar.succeeded()) {
-        LOGGER.info("line at 42"+requestType+ url+ requestJson);
         HttpResponse<Buffer> response = ar.result();
         promise.complete(response);
       } else {
-        LOGGER.info("line at 466 "+requestType+ url+ requestJson);
         promise.fail(ar.cause());
       }
     });
@@ -80,9 +77,7 @@ public class RabbitWebClient {
         webRequest = webClient.post(url).basicAuthentication(username, password);
         break;
       case REQUEST_PUT:
-        LOGGER.info(REQUEST_PUT + " Line 76 " + username);
         webRequest = webClient.put(url).basicAuthentication(username, password);
-        LOGGER.info(" Line 81 " + password);
         break;
       case REQUEST_DELETE:
         webRequest = webClient.delete(url).basicAuthentication(username, password);

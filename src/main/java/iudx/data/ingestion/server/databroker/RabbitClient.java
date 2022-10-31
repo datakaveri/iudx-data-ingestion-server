@@ -188,7 +188,6 @@ public class RabbitClient {
     String url = "/api/queues/" + vHost + "/" + Util.encodeString(queue);
     rabbitWebClient.requestAsync(REQUEST_GET, url).onComplete(asyncResult -> {
       if (asyncResult.succeeded()) {
-        LOGGER.info("Line 160");
         int status = asyncResult.result().statusCode();
         response.put(TYPE, status);
         if (status == HttpStatus.SC_OK) {
