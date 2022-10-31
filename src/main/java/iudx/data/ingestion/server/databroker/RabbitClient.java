@@ -76,21 +76,23 @@ public class RabbitClient {
     Promise<Boolean> promise = Promise.promise();
     String url = "/api/exchanges/" + vHost;
     rabbitWebClient.requestAsync(REQUEST_GET, url)
-        .onSuccess(ar -> {
-          JsonArray response = ar.bodyAsJsonArray();
-          response.forEach(json -> {
-            JsonObject exchange = (JsonObject) json;
-            String exchangeName = exchange.getString(NAME);
-            if (!exchangeName.isEmpty()) {
-              LOGGER.debug("Adding {} exchange into cache", exchangeName);
-              exchangeListCache.put(exchangeName, true);
-            }
-          });
-        })
-        .onFailure(ar -> {
-          LOGGER.fatal(ar.getCause());
-        });
-    promise.complete(true);
+            .onComplete(asyncResult -> {
+              if (asyncResult.succeeded()) {
+                JsonArray response = asyncResult.result().bodyAsJsonArray();
+                response.forEach(json -> {
+                  JsonObject exchange = (JsonObject) json;
+                  String exchangeName = exchange.getString(NAME);
+                  if (!exchangeName.isEmpty()) {
+                    LOGGER.debug("Adding {} exchange into cache", exchangeName);
+                    exchangeListCache.put(exchangeName, true);
+                    promise.complete(true);
+                  }
+
+                });
+              } else {
+                promise.fail("populateExchangeCache_error" + asyncResult.cause());
+              }
+            });
     return promise.future();
   }
 
