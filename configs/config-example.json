@@ -4,7 +4,6 @@
     "zookeeper"
   ],
   "clusterId": "iudx-di-cluster",
-  "host": "rs.iudx.io",
   "modules": [
     {
       "id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
