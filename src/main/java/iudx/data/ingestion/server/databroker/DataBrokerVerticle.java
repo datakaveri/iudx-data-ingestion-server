@@ -7,6 +7,7 @@ import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import io.vertx.serviceproxy.ServiceBinder;
+import iudx.data.ingestion.server.databroker.util.VHosts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,29 +54,18 @@ public class DataBrokerVerticle extends AbstractVerticle {
 
     /* Configure the RabbitMQ Data Broker client with input from config files. */
 
-    config = new RabbitMQOptions()
-        .setUser(dataBrokerUserName)
-        .setPassword(dataBrokerPassword)
-        .setHost(dataBrokerIP)
-        .setPort(dataBrokerPort)
-        .setVirtualHost(dataBrokerVhost)
-        .setConnectionTimeout(connectionTimeout)
-        .setRequestedHeartbeat(requestedHeartbeat)
-        .setHandshakeTimeout(handshakeTimeout)
-        .setRequestedChannelMax(requestedChannelMax)
-        .setNetworkRecoveryInterval(networkRecoveryInterval)
-        .setAutomaticRecoveryEnabled(true);
+    config = new RabbitMQOptions().setUser(dataBrokerUserName).setPassword(dataBrokerPassword)
+        .setHost(dataBrokerIP).setPort(dataBrokerPort).setVirtualHost(dataBrokerVhost)
+        .setConnectionTimeout(connectionTimeout).setRequestedHeartbeat(requestedHeartbeat)
+        .setHandshakeTimeout(handshakeTimeout).setRequestedChannelMax(requestedChannelMax)
+        .setNetworkRecoveryInterval(networkRecoveryInterval).setAutomaticRecoveryEnabled(true);
 
-    webConfig = new WebClientOptions()
-        .setKeepAlive(true)
-        .setConnectTimeout(86400000)
-        .setDefaultHost(dataBrokerIP)
-        .setDefaultPort(dataBrokerManagementPort)
+    webConfig = new WebClientOptions().setKeepAlive(true).setConnectTimeout(86400000)
+        .setDefaultHost(dataBrokerIP).setDefaultPort(dataBrokerManagementPort)
         .setKeepAliveTimeout(86400000);
 
-    JsonObject webClientProperties = new JsonObject()
-        .put(USERNAME, dataBrokerUserName)
-        .put(PASSWORD, dataBrokerPassword);
+    JsonObject webClientProperties =
+        new JsonObject().put(USERNAME, dataBrokerUserName).put(PASSWORD, dataBrokerPassword);
     /*
      * Create a RabbitMQ Client with the configuration and vertx cluster instance.
      */
@@ -85,11 +75,12 @@ public class DataBrokerVerticle extends AbstractVerticle {
     rabbitWebClient = new RabbitWebClient(vertx, webConfig, webClientProperties);
 
     binder = new ServiceBinder(vertx);
-    databroker = new DataBrokerServiceImpl(client, rabbitWebClient, dataBrokerVhost);
+    databroker = new DataBrokerServiceImpl(vertx, client, rabbitWebClient, dataBrokerVhost, config,
+        config().getString(VHosts.IUDX_INTERNAL.value));
 
     /* Publish the Data Broker service with the Event Bus against an address. */
-
-    consumer = binder.setAddress(BROKER_SERVICE_ADDRESS).register(DataBrokerService.class, databroker);
+    consumer =
+        binder.setAddress(BROKER_SERVICE_ADDRESS).register(DataBrokerService.class, databroker);
   }
 
   @Override

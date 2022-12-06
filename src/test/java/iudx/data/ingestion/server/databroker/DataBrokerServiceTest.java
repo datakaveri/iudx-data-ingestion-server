@@ -10,6 +10,7 @@ import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import iudx.data.ingestion.server.configuration.Configuration;
 import iudx.data.ingestion.server.databroker.util.Util;
+import iudx.data.ingestion.server.databroker.util.VHosts;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -121,7 +122,8 @@ public class DataBrokerServiceTest {
     /* Call the databroker constructor with the RabbitMQ client. */
     RabbitWebClient rabbitWebClient = new RabbitWebClient(vertx, webConfig, propObj);
     rabbitClient = new RabbitClient(client, rabbitWebClient);
-    databroker = new DataBrokerServiceImpl(client, rabbitWebClient, dataBrokerVhost);
+    databroker = new DataBrokerServiceImpl(vertx,client, rabbitWebClient, dataBrokerVhost,
+        config,brokerConfig.getString(VHosts.IUDX_INTERNAL.value));
 
     testContext.completeNow();
   }

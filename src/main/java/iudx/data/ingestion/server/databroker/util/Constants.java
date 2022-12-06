@@ -5,6 +5,7 @@ public class Constants {
   public static final String REQUEST_POST = "POST";
   public static final String REQUEST_PUT = "PUT";
   public static final String REQUEST_DELETE = "DELETE";
+  public static final String BROKER_SERVICE_ADDRESS = "iudx.data.ingestion.broker.service";
 
   public static final String TYPE = "type";
   public static final String FAILURE = "failure";
@@ -58,7 +59,6 @@ public class Constants {
   public static final String TOPIC_PERMISSION_SET_SUCCESS = "topic permission set";
   public static final String TOPIC_PERMISSION_ALREADY_SET = "topic permission already set";
   public static final String TOPIC_PERMISSION_SET_ERROR = "Error in setting Topic permissions";
-  public static final String TAGS = "tags";
 
   public static final String QUEUE = "queue";
   public static final String QUEUE_FOUND = "Queue Found";
