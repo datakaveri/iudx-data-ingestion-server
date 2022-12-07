@@ -50,7 +50,7 @@ public interface DataBrokerService {
   DataBrokerService ingestDataDelete(JsonObject request, Handler<AsyncResult<JsonObject>> handler);
 
   /**
-   * The publishData implements the publish data functionality with the data
+   * The publishData implements the publishing data functionality with the data
    * broker.
    *
    * @param request which is a JsonObject
@@ -59,6 +59,11 @@ public interface DataBrokerService {
    **/
   @Fluent
   DataBrokerService publishData(JsonObject request, Handler<AsyncResult<JsonObject>> handler);
+
+  @Fluent
+  DataBrokerService publishMessage(JsonObject body, String toExchange,
+                                   String routingKey,
+                                   Handler<AsyncResult<JsonObject>> handler);
 
   @GenIgnore
   static DataBrokerService createProxy(Vertx vertx, String address) {

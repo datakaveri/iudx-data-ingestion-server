@@ -4,18 +4,30 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.API;
 import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
 import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
 import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.EPOCH_TIME;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ISO_TIME;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_APPLICATION_JSON;
 import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_TEXT_HTML;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ORIGIN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ORIGIN_SERVER;
 import static iudx.data.ingestion.server.apiserver.util.Constants.RESPONSE_SIZE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
+import static iudx.data.ingestion.server.metering.util.Constants.PRIMARY_KEY;
+import static iudx.data.ingestion.server.metering.util.Constants.PROVIDER_ID;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.AbstractVerticle;
@@ -342,19 +354,37 @@ public class ApiServerVerticle extends AbstractVerticle {
     Promise<Void> promise = Promise.promise();
     JsonObject authInfo = (JsonObject) context.data().get("authInfo");
 
+    ZonedDateTime zst = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+    long time = zst.toInstant().toEpochMilli();
+    String isoTime =
+        LocalDateTime.now()
+            .atZone(ZoneId.of("Asia/Kolkata"))
+            .truncatedTo(ChronoUnit.SECONDS)
+            .toString();
+
     JsonObject request = new JsonObject();
+    String resourceId = authInfo.getString(ID);
+    String primaryKey = UUID.randomUUID().toString().replace("-", "");
+    String providerID =
+        resourceId.substring(0, resourceId.indexOf('/', resourceId.indexOf('/') + 1));
+
+    request.put(PRIMARY_KEY, primaryKey);
+    request.put(PROVIDER_ID, providerID);
+    request.put(EPOCH_TIME, time);
+    request.put(ISO_TIME, isoTime);
     request.put(USER_ID, authInfo.getValue(USER_ID));
-    request.put(ID, authInfo.getValue(ID));
+    request.put(ID, resourceId);
     request.put(API, authInfo.getValue(API_ENDPOINT));
+    request.put(ORIGIN,ORIGIN_SERVER);
     request.put(RESPONSE_SIZE,context.data().get(RESPONSE_SIZE));
-    meteringService.executeWriteQuery(
+    meteringService.insertMeteringValuesInRMQ(
         request,
         handler -> {
           if (handler.succeeded()) {
-            LOGGER.info("audit table updated");
+            LOGGER.info("message published into rmq.");
             promise.complete();
           } else {
-            LOGGER.error("failed to update audit table");
+            LOGGER.error("failed to publish msg into rmq.");
             promise.complete();
           }
         });

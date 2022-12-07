@@ -23,7 +23,10 @@ public class Constants {
   public static final String NGSILD_QUERY_ID = "id";
   public static final String QUEUE = "queue";
   public static final String USER_ID = "userid";
-  public static final String EXPIRY = "expiry";
+  public static final String EPOCH_TIME = "epochTime";
+  public static final String ISO_TIME = "isoTime";
+public static final String ORIGIN= "origin";
+public static final String ORIGIN_SERVER ="data-ingestion";
   public static final String IID = "iid";
   public static final String API = "api";
 
