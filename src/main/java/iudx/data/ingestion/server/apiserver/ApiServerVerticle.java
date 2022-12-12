@@ -93,7 +93,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private CatalogueService catalogueService;
   private AuthenticationService authenticationService;
   private MeteringService meteringService;
-
+  private String basePath;
 
   @Override
   public void start() throws Exception {
@@ -113,6 +113,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     allowedMethods.add(HttpMethod.OPTIONS);
     /* Define the APIs, methods, endpoints and associated methods. */
 
+    basePath = config().getString("basePath");
+
     router = Router.router(vertx);
     router.route().handler(
         CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
@@ -131,9 +133,9 @@ public class ApiServerVerticle extends AbstractVerticle {
     ValidationHandler postEntitiesValidationHandler =
         new ValidationHandler(vertx, RequestType.ENTITY);
 
-    router.post(Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
+    router.post(basePath + Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
         .handler(postEntitiesValidationHandler)
-        .handler(AuthHandler.create(vertx))
+        .handler(AuthHandler.create(vertx,config()))
         .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
 
     ValidationHandler postIngestionValidationHandler =
@@ -142,14 +144,14 @@ public class ApiServerVerticle extends AbstractVerticle {
     ValidationHandler deleteIngestionValidationHandler =
         new ValidationHandler(vertx, RequestType.INGEST_DELETE);
 
-    router.post(Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+    router.post(basePath + Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
         .handler(postIngestionValidationHandler)
-        .handler(AuthHandler.create(vertx))
+        .handler(AuthHandler.create(vertx,config()))
         .handler(this::handleIngestPostQuery).handler(validationsFailureHandler);
 
-    router.delete(Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+    router.delete(basePath + Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
         .handler(deleteIngestionValidationHandler)
-        .handler(AuthHandler.create(vertx))
+        .handler(AuthHandler.create(vertx,config()))
         .handler(this::handleIngestDeleteQuery)
         .handler(validationsFailureHandler);
 

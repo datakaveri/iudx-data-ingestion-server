@@ -208,7 +208,7 @@ public class AuthHandlerTest {
     @Test
     @DisplayName("Test static method: create")
     public void testCreate(VertxTestContext vertxTestContext) {
-        AuthHandler res = AuthHandler.create(Vertx.vertx());
+        AuthHandler res = AuthHandler.create(Vertx.vertx(),jsonObject);
         assertNotNull(res);
         vertxTestContext.completeNow();
     }
