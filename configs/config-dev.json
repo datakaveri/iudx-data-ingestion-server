@@ -43,7 +43,8 @@
 			"keystorePassword": "",
 			"catServerHost": "",
 			"catServerPort": 443,
-			"verticleInstances": 2
+			"verticleInstances": 2,
+			"basePath": "/ngsi-ld/v1"
 		},
 		{
 			"id": "iudx.data.ingestion.server.metering.MeteringVerticle",
