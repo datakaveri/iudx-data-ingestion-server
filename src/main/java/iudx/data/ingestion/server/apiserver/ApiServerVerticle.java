@@ -93,7 +93,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private CatalogueService catalogueService;
   private AuthenticationService authenticationService;
   private MeteringService meteringService;
-
+  public static String ngsildBasePath;
 
   @Override
   public void start() throws Exception {
@@ -112,6 +112,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     allowedMethods.add(HttpMethod.POST);
     allowedMethods.add(HttpMethod.OPTIONS);
     /* Define the APIs, methods, endpoints and associated methods. */
+
+    ngsildBasePath = config().getString("ngsildBasePath");
 
     router = Router.router(vertx);
     router.route().handler(

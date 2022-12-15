@@ -22,7 +22,8 @@
 			"automaticRecoveryEnabled": "true",
 			"prodVhost": "",
 			"internalVhost": "",
-			"externalVhost": ""
+			"externalVhost": "",
+			"ngsildBasePath": "/ngsi-ld/v1"
 		},
 		{
 			"id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
@@ -33,7 +34,8 @@
 			"resourceServerId": "",
 			"serverMode": "testing",
 			"jwtIgnoreExpiry": true,
-			"audience" : ""
+			"audience" : "",
+			"ngsildBasePath": "/ngsi-ld/v1"
 		},
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
@@ -44,11 +46,12 @@
 			"catServerHost": "",
 			"catServerPort": 443,
 			"verticleInstances": 2,
-			"basePath": "/ngsi-ld/v1"
+			"ngsildBasePath": "/ngsi-ld/v1"
 		},
 		{
 			"id": "iudx.data.ingestion.server.metering.MeteringVerticle",
-			"verticleInstances": 1
+			"verticleInstances": 1,
+			"ngsildBasePath": "/ngsi-ld/v1"
 		}
 	]
 }
