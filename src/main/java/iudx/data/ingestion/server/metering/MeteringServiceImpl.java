@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 public class MeteringServiceImpl implements MeteringService {
 
   private static final Logger LOGGER = LogManager.getLogger(MeteringServiceImpl.class);
-  private final DataBrokerService dataBrokerService;
+  public static DataBrokerService dataBrokerService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
 
