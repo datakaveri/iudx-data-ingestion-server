@@ -135,16 +135,6 @@ public class AuthHandler implements Handler<RoutingContext> {
    * @return path without id.
    */
   private String getNormalizedPath(String url) {
-    LOGGER.info("jsonConfig : " + jsonConfig);
-    if (jsonConfig != null)
-    {
-      basePath = jsonConfig.getString("ngsildBasePath");
-    }
-    if (basePath == null || basePath.isEmpty())
-    {
-      LOGGER.error("base path is null or empty");
-    }
-    LOGGER.info("base path : " + basePath);
     LOGGER.debug("URL : " + url);
     String path = null;
     if (url.matches(ENTITIES_URL_REGEX)) {
