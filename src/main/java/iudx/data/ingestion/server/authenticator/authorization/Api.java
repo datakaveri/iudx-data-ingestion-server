@@ -1,10 +1,13 @@
 package iudx.data.ingestion.server.authenticator.authorization;
 
+import iudx.data.ingestion.server.apiserver.util.Configuration;
+
 import java.util.stream.Stream;
 
 public enum  Api {
-  ENTITIES("/ngsi-ld/v1/entities"),
-  INGESTION("/ngsi-ld/v1/ingestion");
+  ENTITIES( Configuration.getBasePath() + "/entities"),
+  INGESTION( Configuration.getBasePath() + "/ingestion");
+
 
   private final String endpoint;
 
