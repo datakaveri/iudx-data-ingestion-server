@@ -44,7 +44,7 @@
       "catServerHost": "",
       "catServerPort": 443,
       "verticleInstances": 2,
-      "ngsildBasePath": "/ngsi-ld/v1"
+      "basePath": "/ngsi-ld/v1"
     },
     {
       "id": "iudx.data.ingestion.server.metering.MeteringVerticle",
