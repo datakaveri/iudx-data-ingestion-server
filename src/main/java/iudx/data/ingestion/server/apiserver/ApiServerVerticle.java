@@ -93,8 +93,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private CatalogueService catalogueService;
   private AuthenticationService authenticationService;
   private MeteringService meteringService;
-  private String basePath;
-
+  public static String ngsildBasePath;
 
   @Override
   public void start() throws Exception {
@@ -114,17 +113,17 @@ public class ApiServerVerticle extends AbstractVerticle {
     allowedMethods.add(HttpMethod.OPTIONS);
     /* Define the APIs, methods, endpoints and associated methods. */
 
-    basePath = config().getString("ngsildBasePath");
+    ngsildBasePath = config().getString("ngsildBasePath");
 
     router = Router.router(vertx);
     router.route().handler(
-            CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
+        CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
 
     router.route().handler(requestHandler -> {
       requestHandler.response()
-              .putHeader("Cache-Control", "no-cache, no-store,  must-revalidate,max-age=0")
-              .putHeader("Pragma", "no-cache").putHeader("Expires", "0")
-              .putHeader("X-Content-Type-Options", "nosniff");
+          .putHeader("Cache-Control", "no-cache, no-store,  must-revalidate,max-age=0")
+          .putHeader("Pragma", "no-cache").putHeader("Expires", "0")
+          .putHeader("X-Content-Type-Options", "nosniff");
       requestHandler.next();
     });
 
@@ -132,29 +131,29 @@ public class ApiServerVerticle extends AbstractVerticle {
 
     FailureHandler validationsFailureHandler = new FailureHandler();
     ValidationHandler postEntitiesValidationHandler =
-            new ValidationHandler(vertx, RequestType.ENTITY);
+        new ValidationHandler(vertx, RequestType.ENTITY);
 
-    router.post(basePath + Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
-            .handler(postEntitiesValidationHandler)
-            .handler(AuthHandler.create(vertx))
-            .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
+    router.post(Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
+        .handler(postEntitiesValidationHandler)
+        .handler(AuthHandler.create(vertx))
+        .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
 
     ValidationHandler postIngestionValidationHandler =
-            new ValidationHandler(vertx, RequestType.INGEST);
+        new ValidationHandler(vertx, RequestType.INGEST);
 
     ValidationHandler deleteIngestionValidationHandler =
-            new ValidationHandler(vertx, RequestType.INGEST_DELETE);
+        new ValidationHandler(vertx, RequestType.INGEST_DELETE);
 
-    router.post(basePath + Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
-            .handler(postIngestionValidationHandler)
-            .handler(AuthHandler.create(vertx))
-            .handler(this::handleIngestPostQuery).handler(validationsFailureHandler);
+    router.post(Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+        .handler(postIngestionValidationHandler)
+        .handler(AuthHandler.create(vertx))
+        .handler(this::handleIngestPostQuery).handler(validationsFailureHandler);
 
-    router.delete(basePath + Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
-            .handler(deleteIngestionValidationHandler)
-            .handler(AuthHandler.create(vertx))
-            .handler(this::handleIngestDeleteQuery)
-            .handler(validationsFailureHandler);
+    router.delete(Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+        .handler(deleteIngestionValidationHandler)
+        .handler(AuthHandler.create(vertx))
+        .handler(this::handleIngestDeleteQuery)
+        .handler(validationsFailureHandler);
 
     /**
      * Documentation routes
@@ -190,12 +189,12 @@ public class ApiServerVerticle extends AbstractVerticle {
        * Default port when ssl is enabled is 8443. If set through config, then that value is taken
        */
       port = config().getInteger("httpPort") == null ? 8443
-              : config().getInteger("httpPort");
+          : config().getInteger("httpPort");
 
       /* Setup the HTTPs server properties, APIs and port. */
 
       serverOptions.setSsl(true)
-              .setKeyStoreOptions(new JksOptions().setPath(keystore).setPassword(keystorePassword));
+          .setKeyStoreOptions(new JksOptions().setPath(keystore).setPassword(keystorePassword));
 
     } else {
       LOGGER.debug("Info: Starting HTTP server");
@@ -207,7 +206,7 @@ public class ApiServerVerticle extends AbstractVerticle {
        * Default port when ssl is disabled is 8080. If set through config, then that value is taken
        */
       port = config().getInteger("httpPort") == null ? 8080
-              : config().getInteger("httpPort");
+          : config().getInteger("httpPort");
     }
     serverOptions.setCompressionSupported(true).setCompressionLevel(5);
     server = vertx.createHttpServer(serverOptions);
@@ -335,22 +334,22 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
     JsonObject res = new JsonObject();
     res.put(JSON_TYPE, ResponseUrn.SUCCESS.getUrn())
-            .put(JSON_TITLE, ResponseUrn.SUCCESS.getMessage())
-            .put(JSON_DETAIL, ResponseUrn.SUCCESS.getMessage());
+        .put(JSON_TITLE, ResponseUrn.SUCCESS.getMessage())
+        .put(JSON_DETAIL, ResponseUrn.SUCCESS.getMessage());
     response.putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON).setStatusCode(statusCode)
-            .end(res.toString());
+        .end(res.toString());
   }
 
   private void handleFailedResponse(HttpServerResponse response, int statusCode,
                                     ResponseUrn failureType) {
     HttpStatusCode status = HttpStatusCode.getByValue(statusCode);
     response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(status.getValue())
-            .end(generateResponse(failureType, status).toString());
+        .end(generateResponse(failureType, status).toString());
   }
 
   private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {
     return new JsonObject().put(JSON_TYPE, urn.getUrn()).put(JSON_DETAIL,
-            statusCode.getDescription());
+        statusCode.getDescription());
   }
 
   private Future<Void> updateAuditTable(RoutingContext context) {
@@ -360,16 +359,16 @@ public class ApiServerVerticle extends AbstractVerticle {
     ZonedDateTime zst = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
     long time = zst.toInstant().toEpochMilli();
     String isoTime =
-            LocalDateTime.now()
-                    .atZone(ZoneId.of("Asia/Kolkata"))
-                    .truncatedTo(ChronoUnit.SECONDS)
-                    .toString();
+        LocalDateTime.now()
+            .atZone(ZoneId.of("Asia/Kolkata"))
+            .truncatedTo(ChronoUnit.SECONDS)
+            .toString();
 
     JsonObject request = new JsonObject();
     String resourceId = authInfo.getString(ID);
     String primaryKey = UUID.randomUUID().toString().replace("-", "");
     String providerID =
-            resourceId.substring(0, resourceId.indexOf('/', resourceId.indexOf('/') + 1));
+        resourceId.substring(0, resourceId.indexOf('/', resourceId.indexOf('/') + 1));
 
     request.put(PRIMARY_KEY, primaryKey);
     request.put(PROVIDER_ID, providerID);
@@ -381,16 +380,16 @@ public class ApiServerVerticle extends AbstractVerticle {
     request.put(ORIGIN,ORIGIN_SERVER);
     request.put(RESPONSE_SIZE,context.data().get(RESPONSE_SIZE));
     meteringService.insertMeteringValuesInRMQ(
-            request,
-            handler -> {
-              if (handler.succeeded()) {
-                LOGGER.info("message published into rmq.");
-                promise.complete();
-              } else {
-                LOGGER.error("failed to publish msg into rmq.");
-                promise.complete();
-              }
-            });
+        request,
+        handler -> {
+          if (handler.succeeded()) {
+            LOGGER.info("message published into rmq.");
+            promise.complete();
+          } else {
+            LOGGER.error("failed to publish msg into rmq.");
+            promise.complete();
+          }
+        });
 
     return promise.future();
   }

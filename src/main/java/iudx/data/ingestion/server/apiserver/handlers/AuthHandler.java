@@ -24,7 +24,6 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
-import iudx.data.ingestion.server.apiserver.util.Configuration;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -40,21 +39,9 @@ public class AuthHandler implements Handler<RoutingContext> {
   static AuthenticationService authenticator;
   private final String AUTH_INFO = "authInfo";
   private HttpServerRequest request;
-  private static JsonObject jsonConfig;
-  private static String basePath;
 
   public static AuthHandler create(Vertx vertx) {
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
-    jsonConfig = Configuration.getConfiguration();
-    LOGGER.info("jsonConfig : " + jsonConfig);
-    if (jsonConfig != null)
-    {
-      basePath = jsonConfig.getString("ngsildBasePath");
-    }
-    if (basePath == null || basePath.isEmpty())
-    {
-      LOGGER.error("base path is null or empty");
-    }
     return new AuthHandler();
   }
 
@@ -87,8 +74,8 @@ public class AuthHandler implements Handler<RoutingContext> {
     LOGGER.info("id : " + id);
 
     JsonObject authInfo =
-            new JsonObject().put(API_ENDPOINT, path).put(HEADER_TOKEN, token).put(API_METHOD, method)
-                    .put(ID, id);
+        new JsonObject().put(API_ENDPOINT, path).put(HEADER_TOKEN, token).put(API_METHOD, method)
+            .put(ID, id);
 
     authenticator.tokenIntrospect(requestJson, authInfo, authHandler -> {
 
@@ -116,24 +103,24 @@ public class AuthHandler implements Handler<RoutingContext> {
       LOGGER.error("Error : Item Not Found");
       HttpStatusCode statusCode = HttpStatusCode.getByValue(404);
       ctx.response()
-              .putHeader(CONTENT_TYPE, APPLICATION_JSON)
-              .setStatusCode(statusCode.getValue())
-              .end(generateResponse(RESOURCE_NOT_FOUND, statusCode).toString());
+          .putHeader(CONTENT_TYPE, APPLICATION_JSON)
+          .setStatusCode(statusCode.getValue())
+          .end(generateResponse(RESOURCE_NOT_FOUND, statusCode).toString());
     } else {
       LOGGER.error("Error : Authentication Failure");
       HttpStatusCode statusCode = HttpStatusCode.getByValue(401);
       ctx.response()
-              .putHeader(CONTENT_TYPE, APPLICATION_JSON)
-              .setStatusCode(statusCode.getValue())
-              .end(generateResponse(INVALID_TOKEN, statusCode).toString());
+          .putHeader(CONTENT_TYPE, APPLICATION_JSON)
+          .setStatusCode(statusCode.getValue())
+          .end(generateResponse(INVALID_TOKEN, statusCode).toString());
     }
   }
 
   private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {
     return new JsonObject()
-            .put(JSON_TYPE, urn.getUrn())
-            .put(JSON_TITLE, statusCode.getDescription())
-            .put(JSON_DETAIL, statusCode.getDescription());
+        .put(JSON_TYPE, urn.getUrn())
+        .put(JSON_TITLE, statusCode.getDescription())
+        .put(JSON_DETAIL, statusCode.getDescription());
   }
 
   private String getIdFromBody(RoutingContext context) {
@@ -160,10 +147,10 @@ public class AuthHandler implements Handler<RoutingContext> {
     LOGGER.info("base path : " + basePath);
     LOGGER.debug("URL : " + url);
     String path = null;
-    if (url.matches(basePath + ENTITIES_URL_REGEX)) {
-      path = basePath + NGSILD_ENTITIES_URL;
-    } else if (url.matches(basePath + INGESTION_URL_REGEX)) {
-      path = basePath + NGSILD_INGESTION_URL;
+    if (url.matches(ENTITIES_URL_REGEX)) {
+      path = NGSILD_ENTITIES_URL;
+    } else if (url.matches(INGESTION_URL_REGEX)) {
+      path = NGSILD_INGESTION_URL;
     }
     return path;
   }
