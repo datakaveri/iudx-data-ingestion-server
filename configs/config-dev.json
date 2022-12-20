@@ -4,6 +4,9 @@
 		"zookeeper"
 	],
 	"clusterId": "iudx-di-cluster",
+	"apiConfiguration" : {
+		"ngsildBasePath" : "/ngsi-ld/v1"
+	},
 	"modules": [
 		{
 			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
