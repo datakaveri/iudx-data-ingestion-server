@@ -34,8 +34,9 @@ public class Configuration {
 
     if (file.exists()) {
       Buffer buff = fileSystem.readFileBlocking(CONFIG_PATH);
+      JsonObject commonConfigs=buff.toJsonObject().getJsonObject("commonConfig");
       JsonArray conf = buff.toJsonObject().getJsonArray("modules");
-      moduleConf = conf.getJsonObject(moduleIndex);
+      moduleConf = conf.getJsonObject(moduleIndex).mergeIn(commonConfigs);
       moduleConf.put("host", buff.toJsonObject().getString("host"));
 
     } else {

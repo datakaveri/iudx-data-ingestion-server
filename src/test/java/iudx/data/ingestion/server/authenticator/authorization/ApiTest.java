@@ -20,7 +20,7 @@ class ApiTest {
 
     @Test
     public void staticFromEndPointTest(VertxTestContext vertxTestContext){
-        Api.fromEndpoint("/ngsi-ld/v1/entities");
+        Api.fromEndpoint("/ngsi-ld/v1","/entities");
         assertEquals("/ngsi-ld/v1/entities","/ngsi-ld/v1/entities");
         vertxTestContext.completeNow();
     }
