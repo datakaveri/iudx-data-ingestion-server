@@ -124,6 +124,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     basePath = jsonConfiguration.getString(Configuration.NGSILD_BASEPATH);
 
 
+
     router = Router.router(vertx);
     router.route().handler(
         CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
