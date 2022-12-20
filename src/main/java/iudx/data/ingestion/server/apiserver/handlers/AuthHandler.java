@@ -42,11 +42,12 @@ public class AuthHandler implements Handler<RoutingContext> {
   private HttpServerRequest request;
 
   private  JsonObject jsonConfig;
-  private  String basePath;
+  private static String basePath;
 
 
-  public static AuthHandler create(Vertx vertx) {
+  public static AuthHandler create(Vertx vertx,String baseApiPath) {
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
+    basePath=baseApiPath;
     return new AuthHandler();
   }
 
@@ -140,24 +141,12 @@ public class AuthHandler implements Handler<RoutingContext> {
    * @return path without id.
    */
   private String getNormalizedPath(String url) {
-
-    jsonConfig = Configuration.getConfiguration();
-    LOGGER.info("jsonConfig : " + jsonConfig);
-    System.out.println("config : " + jsonConfig);
-    if (jsonConfig != null)
-    {
-      basePath = jsonConfig.getString("ngsildBasePath");
-    }
-    if (basePath == null || basePath.isEmpty())
-    {
-      LOGGER.error("base path is null or empty");
-    }
     LOGGER.info("base path : " + basePath);
     LOGGER.debug("URL : " + url);
     String path = null;
-    if (url.matches(ENTITIES_URL_REGEX)) {
+    if (url.matches(basePath+ENTITIES_URL_REGEX)) {
       path = NGSILD_ENTITIES_URL;
-    } else if (url.matches(INGESTION_URL_REGEX)) {
+    } else if (url.matches(basePath+INGESTION_URL_REGEX)) {
       path = NGSILD_INGESTION_URL;
     }
     return path;

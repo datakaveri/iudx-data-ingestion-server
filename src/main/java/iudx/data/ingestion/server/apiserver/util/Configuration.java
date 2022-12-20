@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 
 public class Configuration {
-    public static final String NGSILD_BASEPATH = "ngsildBasePath";
+    public static final String NGSILD_BASEPATH = "basePath";
     private static final Logger LOG = LogManager.getLogger(Configuration.class);
     private static FileSystem fileSystem;
     private static final String CONFIG_PATH = "./configs/config-dev.json";

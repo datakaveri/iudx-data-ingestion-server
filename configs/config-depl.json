@@ -4,6 +4,10 @@
     "zookeeper"
   ],
   "clusterId": "iudx-di-cluster",
+  "commonConfig" : {
+		"dxApiBasePath" : "/ngsi-ld/v1",
+		"iudxApiBasePath" : "/iudx/v1"
+  },
   "modules": [
     {
       "id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
@@ -43,8 +47,7 @@
       "keystorePassword": "",
       "catServerHost": "",
       "catServerPort": 443,
-      "verticleInstances": 2,
-      "basePath": "/ngsi-ld/v1"
+      "verticleInstances": 2
     },
     {
       "id": "iudx.data.ingestion.server.metering.MeteringVerticle",

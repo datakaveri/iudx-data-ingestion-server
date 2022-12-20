@@ -4,11 +4,12 @@
 		"zookeeper"
 	],
 	"clusterId": "iudx-di-cluster",
-	"apiConfiguration" : {
-		"ngsildBasePath" : "/ngsi-ld/v1"
+	"commonConfig" : {
+		"dxApiBasePath" : "/ngsi-ld/v1",
+		"iudxApiBasePath" : "/iudx/v1"
 	},
 	"modules": [
-		{
+		 {
 			"id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
 			"verticleInstances": 1,
 			"dataBrokerIP": "",
@@ -25,8 +26,7 @@
 			"automaticRecoveryEnabled": "true",
 			"prodVhost": "",
 			"internalVhost": "",
-			"externalVhost": "",
-			"ngsildBasePath": "/ngsi-ld/v1"
+			"externalVhost": ""
 		},
 		{
 			"id": "iudx.data.ingestion.server.authenticator.AuthenticationVerticle",
@@ -37,8 +37,7 @@
 			"resourceServerId": "",
 			"serverMode": "testing",
 			"jwtIgnoreExpiry": true,
-			"audience" : "",
-			"ngsildBasePath": "/ngsi-ld/v1"
+			"audience" : ""
 		},
 		{
 			"id": "iudx.data.ingestion.server.apiserver.ApiServerVerticle",
@@ -48,13 +47,11 @@
 			"keystorePassword": "",
 			"catServerHost": "",
 			"catServerPort": 443,
-			"verticleInstances": 2,
-			"ngsildBasePath": "/ngsi-ld/v1"
+			"verticleInstances": 2
 		},
 		{
 			"id": "iudx.data.ingestion.server.metering.MeteringVerticle",
-			"verticleInstances": 1,
-			"ngsildBasePath": "/ngsi-ld/v1"
+			"verticleInstances": 1
 		}
 	]
 }

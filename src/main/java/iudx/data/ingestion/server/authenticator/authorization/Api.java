@@ -1,13 +1,11 @@
 package iudx.data.ingestion.server.authenticator.authorization;
 
-import iudx.data.ingestion.server.apiserver.util.Configuration;
-
 import java.util.stream.Stream;
 
 public enum  Api {
 
-  ENTITIES( Configuration.getBasePath() + "/entities"),
-  INGESTION(Configuration.getBasePath() + "/ingestion");
+  ENTITIES( "/entities"),
+  INGESTION("/ingestion");
 
 
   private final String endpoint;
@@ -16,9 +14,9 @@ public enum  Api {
     this.endpoint = endpoint;
   }
 
-  public static Api fromEndpoint(final String endpoint) {
+  public static Api fromEndpoint(final String basePath,final String endpoint) {
     return Stream.of(values())
-        .filter(v -> v.endpoint.equalsIgnoreCase(endpoint))
+        .filter(v -> (basePath+v.endpoint).equalsIgnoreCase(endpoint))
         .findAny()
         .orElse(null);
   }

@@ -21,23 +21,32 @@ import io.vertx.core.json.JsonObject;
 public class DeployerDev {
 	private static final Logger LOGGER = LogManager.getLogger(DeployerDev.class);
 
-	public static void recursiveDeploy(Vertx vertx, JsonObject configs, int i) {
-		if (i >= configs.getJsonArray("modules").size()) {
-			LOGGER.info("Deployed all");
-			return;
-		}
-		JsonObject config = configs.getJsonArray("modules").getJsonObject(i);
-		String moduleName = config.getString("id");
-		int numInstances = config.getInteger("verticleInstances");
-		vertx.deployVerticle(moduleName, new DeploymentOptions().setInstances(numInstances).setConfig(config), ar -> {
-			if (ar.succeeded()) {
-				LOGGER.info("Deployed " + moduleName);
-				recursiveDeploy(vertx, configs, i + 1);
-			} else {
-				LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
-			}
-		});
-	}
+    public static void recursiveDeploy(Vertx vertx, JsonObject configs, int i) {
+      if (i >= configs.getJsonArray("modules").size()) {
+        LOGGER.info("Deployed all");
+        return;
+      }
+      JsonObject moduleConfigurations = getConfigForModule(i, configs);
+      String moduleName = moduleConfigurations.getString("id");
+      int numInstances = moduleConfigurations.getInteger("verticleInstances");
+      vertx
+          .deployVerticle(moduleName,
+              new DeploymentOptions().setInstances(numInstances).setConfig(moduleConfigurations),
+              ar -> {
+                if (ar.succeeded()) {
+                  LOGGER.info("Deployed " + moduleName);
+                  recursiveDeploy(vertx, configs, i + 1);
+                } else {
+                  LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
+                }
+              });
+    }
+	
+	 private static JsonObject getConfigForModule(int moduleIndex,JsonObject configurations) {
+       JsonObject commonConfigs=configurations.getJsonObject("commonConfig");
+       JsonObject config = configurations.getJsonArray("modules").getJsonObject(moduleIndex);
+       return config.mergeIn(commonConfigs, true);
+     }
 
 	public static void deploy(String configPath) {
 		EventBusOptions ebOptions = new EventBusOptions();

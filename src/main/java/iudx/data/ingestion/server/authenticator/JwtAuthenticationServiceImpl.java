@@ -38,6 +38,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final String path;
   final String audience;
   final String authServerHost;
+  final String dxApiBasePath;
   // resourceGroupCache will contain ACL info about all resource group in ingestion server
   private final Cache<String, String> resourceGroupCache =
       CacheBuilder.newBuilder().maximumSize(1000)
@@ -50,6 +51,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;
+    dxApiBasePath=config.getString("dxApiBasePath");
     authServerHost = config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
@@ -68,30 +70,30 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     // stop moving forward if jwtDecode is a failure.
 
     boolean isAdminIngestionEndpoint =
-        endPoint != null && endPoint.equals(Api.INGESTION.getApiEndpoint());
+        endPoint != null && endPoint.equals(dxApiBasePath+Api.INGESTION.getApiEndpoint());
 
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
       result.jwtData = decodeHandler;
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
-      if (endPoint.equals(Api.INGESTION.getApiEndpoint()) && isValidAdminToken(result.jwtData)) {
+      LOGGER.debug("audience is valid "+dxApiBasePath+Api.INGESTION.getApiEndpoint());
+      LOGGER.debug("endpoint :"+endPoint);
+      if ((dxApiBasePath+endPoint).equals(dxApiBasePath+Api.INGESTION.getApiEndpoint()) && isValidAdminToken(result.jwtData)) {
         //admin token + /ingestion POST, skip id check
         return Future.succeededFuture(true);
       } else {
         //check id in token  
         return isValidId(result.jwtData, id);
       }
-    }).compose(validIdHandler ->
-
-    validateAccess(result.jwtData, authenticationInfo))
+    }).compose(validIdHandler ->validateAccess(result.jwtData, authenticationInfo))
         .onComplete(completeHandler -> {
           if (completeHandler.succeeded()) {
             LOGGER.debug("Completion handler");
             handler.handle(Future.succeededFuture(completeHandler.result()));
           } else {
             LOGGER.debug("Failure handler");
-            LOGGER.error("error : " + completeHandler.cause().getMessage());
+            LOGGER.error("error : " + completeHandler.cause());
             handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
           }
         });
@@ -123,7 +125,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     String jwtId = jwtData.getIid().split(":")[1];
 
     Method method = Method.valueOf(authInfo.getString(METHOD));
-    Api api = Api.fromEndpoint(authInfo.getString(API_ENDPOINT));
+    Api api = Api.fromEndpoint(dxApiBasePath,authInfo.getString(API_ENDPOINT));
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
     IUDXRole role = IUDXRole.fromRole(jwtData.getRole());
     AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role);
