@@ -119,6 +119,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     allowedMethods.add(HttpMethod.OPTIONS);
     /* Define the APIs, methods, endpoints and associated methods. */
 
+
     jsonConfiguration = Configuration.getConfiguration();
     basePath = jsonConfiguration.getString(Configuration.NGSILD_BASEPATH);
 
@@ -140,6 +141,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     FailureHandler validationsFailureHandler = new FailureHandler();
     ValidationHandler postEntitiesValidationHandler =
         new ValidationHandler(vertx, RequestType.ENTITY);
+
 
     router.post(basePath + Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
         .handler(postEntitiesValidationHandler)

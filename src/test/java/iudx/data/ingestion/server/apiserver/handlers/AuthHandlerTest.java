@@ -52,9 +52,11 @@ public class AuthHandlerTest {
     Throwable throwable;
     @Mock
     Future<Void> voidFuture;
+
     private JsonObject jsonConfig;
     private String basePath;
     private static final Logger LOGGER = LogManager.getLogger(AuthHandlerTest.class);
+
 
     @BeforeEach
     public void setup(VertxTestContext vertxTestContext, Vertx vertx){
@@ -66,6 +68,7 @@ public class AuthHandlerTest {
         jsonObject.put("EXPIRY", "Dummy EXPIRY");
         //lenient().doReturn(httpServerRequest).when(routingContextMock).request();
         //lenient().doReturn(httpServerResponse).when(routingContextMock).response();
+
         jsonConfig = Configuration.getConfiguration();
         if (jsonConfig != null)
         {
@@ -75,6 +78,7 @@ public class AuthHandlerTest {
         {
             LOGGER.error("base path is null or empty");
         }
+
         lenient().when(httpServerRequest.method()).thenReturn(httpMethodMock);
         lenient().when(httpMethodMock.toString()).thenReturn("GET");
         lenient().when(routingContextMock.request()).thenReturn(httpServerRequest);
@@ -85,7 +89,7 @@ public class AuthHandlerTest {
     @DisplayName("Handle Success Test")
     public void testHandleSuccess(VertxTestContext vertxTestContext){
         when(routingContextMock.getBodyAsJson()).thenReturn(jsonObject);
-        when(httpServerRequest.path()).thenReturn(basePath + ENTITIES_URL_REGEX);
+        when(httpServerRequest.path()).thenReturn(ENTITIES_URL_REGEX);
         //doReturn(NGSILD_ENTITIES_URL).when(httpServerRequest).path();
 
         AuthHandler.authenticator = mock(AuthenticationService.class);
@@ -126,7 +130,7 @@ public class AuthHandlerTest {
     @DisplayName("Failed Success Test")
     public void failedHandleSuccess(VertxTestContext vertxTestContext){
         authHandler = new AuthHandler();
-        String str = basePath + ENTITIES_URL_REGEX;
+        String str = ENTITIES_URL_REGEX;
         JsonObject jsonObject = new JsonObject();
         jsonObject.put("Dummy Key", "Dummy Value");
 
