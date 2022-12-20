@@ -24,6 +24,7 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
+import iudx.data.ingestion.server.apiserver.util.Configuration;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,9 @@ public class AuthHandler implements Handler<RoutingContext> {
   static AuthenticationService authenticator;
   private final String AUTH_INFO = "authInfo";
   private HttpServerRequest request;
+  private  JsonObject jsonConfig;
+  private  String basePath;
+
 
   public static AuthHandler create(Vertx vertx) {
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
@@ -135,12 +139,25 @@ public class AuthHandler implements Handler<RoutingContext> {
    * @return path without id.
    */
   private String getNormalizedPath(String url) {
+
+    jsonConfig = Configuration.getConfiguration();
+    LOGGER.info("jsonConfig : " + jsonConfig);
+    System.out.println("config : " + jsonConfig);
+    if (jsonConfig != null)
+    {
+      basePath = jsonConfig.getString("ngsildBasePath");
+    }
+    if (basePath == null || basePath.isEmpty())
+    {
+      LOGGER.error("base path is null or empty");
+    }
+    LOGGER.info("base path : " + basePath);
     LOGGER.debug("URL : " + url);
     String path = null;
-    if (url.matches(ENTITIES_URL_REGEX)) {
-      path = NGSILD_ENTITIES_URL;
-    } else if (url.matches(INGESTION_URL_REGEX)) {
-      path = NGSILD_INGESTION_URL;
+    if (url.matches(basePath + ENTITIES_URL_REGEX)) {
+      path = basePath + NGSILD_ENTITIES_URL;
+    } else if (url.matches(basePath + INGESTION_URL_REGEX)) {
+      path = basePath + NGSILD_INGESTION_URL;
     }
     return path;
   }
