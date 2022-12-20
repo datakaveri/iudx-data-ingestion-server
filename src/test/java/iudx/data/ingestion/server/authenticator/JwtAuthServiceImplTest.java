@@ -1,16 +1,5 @@
 package iudx.data.ingestion.server.authenticator;
 
-import static iudx.data.ingestion.server.authenticator.Constants.API_ENDPOINT;
-import static iudx.data.ingestion.server.authenticator.Constants.ID;
-import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import io.micrometer.core.ipc.http.HttpSender.Method;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -24,6 +13,16 @@ import io.vertx.junit5.VertxTestContext;
 import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
 import iudx.data.ingestion.server.configuration.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static iudx.data.ingestion.server.authenticator.Constants.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(VertxExtension.class)
 public class JwtAuthServiceImplTest {
@@ -36,38 +35,39 @@ public class JwtAuthServiceImplTest {
   private static String closeId;
   private static String invalidId;
 
-
   @BeforeAll
   @DisplayName("Initialize Vertx and deploy Auth Verticle")
   static void init(Vertx vertx, VertxTestContext testContext) {
     config = new Configuration();
     authConfig = config.configLoader(1, vertx);
-    
+
     authConfig.put("audience", "rs.iudx.io");
     authConfig.put("authServerHost", "auth.test.com");
     authConfig.put("port", 1234);
-    
-    LOGGER.info("config :{} ",authConfig);
-    
+
+    LOGGER.info("config :{} ", authConfig);
 
     JWTAuthOptions jwtAuthOptions = new JWTAuthOptions();
     jwtAuthOptions.addPubSecKey(
         new PubSecKeyOptions()
             .setAlgorithm("ES256")
-            .setBuffer("-----BEGIN PUBLIC KEY-----\n" +
-                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8BKf2HZ3wt6wNf30SIsbyjYPkkTS\n" +
-                "GGyyM2/MGF/zYTZV9Z28hHwvZgSfnbsrF36BBKnWszlOYW0AieyAUKaKdg==\n" +
-                "-----END PUBLIC KEY-----\n" +
-                ""));
-    jwtAuthOptions.getJWTOptions()
-        .setIgnoreExpiration(true);// ignore token expiration only for test
+            .setBuffer(
+                "-----BEGIN PUBLIC KEY-----\n"
+                    + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8BKf2HZ3wt6wNf30SIsbyjYPkkTS\n"
+                    + "GGyyM2/MGF/zYTZV9Z28hHwvZgSfnbsrF36BBKnWszlOYW0AieyAUKaKdg==\n"
+                    + "-----END PUBLIC KEY-----\n"
+                    + ""));
+    jwtAuthOptions
+        .getJWTOptions()
+        .setIgnoreExpiration(true); // ignore token expiration only for test
     JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
     WebClient webClient = AuthenticationVerticle.createWebClient(vertx, authConfig, true);
     jwtAuthenticationService =
         new JwtAuthenticationServiceImpl(vertx, jwtAuth, webClient, authConfig);
 
-    // since test token doesn't contain valid id's, so forcibly put some dummy id in the cache for test.
+    // since test token doesn't contain valid id's, so forcibly put some dummy id in the cache for
+    // test.
     openId = "foobar.iudx.io";
     closeId = "example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group";
 
@@ -81,14 +81,12 @@ public class JwtAuthServiceImplTest {
     testContext.completeNow();
   }
 
-
   @Test
   @DisplayName("Testing setup")
   public void shouldSucceed(VertxTestContext testContext) {
     LOGGER.info("Default test is passing");
     testContext.completeNow();
   }
-
 
   @Test
   @DisplayName("success - allow access to all open ingestion endpoints")
@@ -108,13 +106,16 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
 
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow("invalid access");
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                testContext.failNow("invalid access");
+              }
+            });
   }
 
   @Test
@@ -135,13 +136,16 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
 
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow("invalid access");
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                testContext.failNow("invalid access");
+              }
+            });
   }
 
   @Test
@@ -155,13 +159,16 @@ public class JwtAuthServiceImplTest {
 
     JsonObject request = new JsonObject();
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow("invalid access");
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.completeNow();
+          } else {
+            testContext.failNow("invalid access");
+          }
+        });
   }
 
   @Test
@@ -175,20 +182,23 @@ public class JwtAuthServiceImplTest {
 
     JsonObject request = new JsonObject();
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow("invalid access");
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.completeNow();
+          } else {
+            testContext.failNow("invalid access");
+          }
+        });
   }
 
   @Test
   @DisplayName("success - disallow access to closed endpoint for different id")
   public void disallow4ClosedEndpoint(VertxTestContext testContext) {
 
-    //failing because IsValidId commented in JwtAuthenticationServiceImpl line number 91.
+    // failing because IsValidId commented in JwtAuthenticationServiceImpl line number 91.
     JsonObject authInfo = new JsonObject();
 
     authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
@@ -197,15 +207,17 @@ public class JwtAuthServiceImplTest {
     authInfo.put("method", Method.POST);
     JsonObject request = new JsonObject();
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.failNow("invalid access");
-      } else {
-        testContext.completeNow();
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.failNow("invalid access");
+          } else {
+            testContext.completeNow();
+          }
+        });
   }
-
 
   @Test
   @DisplayName("success - allow delegate access to /entities endpoint")
@@ -214,19 +226,21 @@ public class JwtAuthServiceImplTest {
     JsonObject request = new JsonObject();
     JsonObject authInfo = new JsonObject();
 
-
     authInfo.put("token", JwtTokenHelper.closedDelegateApiToken);
     authInfo.put("id", closeId);
     authInfo.put("apiEndpoint", Api.ENTITIES.getApiEndpoint());
     authInfo.put("method", Method.POST);
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow(handler.cause());
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.completeNow();
+          } else {
+            testContext.failNow(handler.cause());
+          }
+        });
   }
 
   @Test
@@ -236,47 +250,53 @@ public class JwtAuthServiceImplTest {
     JsonObject request = new JsonObject();
     JsonObject authInfo = new JsonObject();
 
-
     authInfo.put("token", JwtTokenHelper.closedDelegateIngestionToken);
     authInfo.put("id", closeId);
     authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
     authInfo.put("method", Method.POST);
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow(handler.cause());
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.completeNow();
+          } else {
+            testContext.failNow(handler.cause());
+          }
+        });
   }
 
   @Test
   @DisplayName("decode valid jwt")
   public void decodeJwtProviderSuccess(VertxTestContext testContext) {
-    jwtAuthenticationService.decodeJwt(JwtTokenHelper.closedProviderApiToken)
-        .onComplete(handler -> {
-          if (handler.succeeded()) {
-            assertEquals("provider", handler.result().getRole());
-            testContext.completeNow();
-          } else {
-            testContext.failNow(handler.cause());
-          }
-        });
+    jwtAuthenticationService
+        .decodeJwt(JwtTokenHelper.closedProviderApiToken)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                assertEquals("provider", handler.result().getRole());
+                testContext.completeNow();
+              } else {
+                testContext.failNow(handler.cause());
+              }
+            });
   }
 
   @Test
   @DisplayName("decode valid jwt - delegate")
   public void decodeJwtDelegateSuccess(VertxTestContext testContext) {
-    jwtAuthenticationService.decodeJwt(JwtTokenHelper.closedDelegateApiToken)
-        .onComplete(handler -> {
-          if (handler.succeeded()) {
-            assertEquals("delegate", handler.result().getRole());
-            testContext.completeNow();
-          } else {
-            testContext.failNow(handler.cause());
-          }
-        });
+    jwtAuthenticationService
+        .decodeJwt(JwtTokenHelper.closedDelegateApiToken)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                assertEquals("delegate", handler.result().getRole());
+                testContext.completeNow();
+              } else {
+                testContext.failNow(handler.cause());
+              }
+            });
   }
 
   @Test
@@ -284,14 +304,16 @@ public class JwtAuthServiceImplTest {
   public void decodeJwtFailure(VertxTestContext testContext) {
     String jwt =
         "eyJ0eXAiOiJKV1QiLCJbGciOiJFUzI1NiJ9.eyJzdWIiOiJhM2U3ZTM0Yy00NGJmLTQxZmYtYWQ4Ni0yZWUwNGE5NTQ0MTgiLCJpc3MiOiJhdXRoLnRlc3QuY29tIiwiYXVkIjoiZm9vYmFyLml1ZHguaW8iLCJleHAiOjE2Mjc2ODk5NDAsImlhdCI6MTYyNzY0Njc0MCwiaWlkIjoicmc6ZXhhbXBsZS5jb20vNzllN2JmYTYyZmFkNmM3NjViYWM2OTE1NGMyZjI0Yzk0Yzk1MjIwYS9yZXNvdXJjZS1ncm91cCIsInJvbGUiOiJkZWxlZ2F0ZSIsImNvbnMiOnt9fQ.eJjCUvWuGD3L3Dn2fKj8Ydl1byGoyRS59VfL6ZJcdKR3_eIhm6SOY-CW3p5XDSYVhRTlWvlPLjfXYo9t_PxgnA";
-    jwtAuthenticationService.decodeJwt(jwt).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.failNow(handler.cause());
-      } else {
-        testContext.completeNow();
-
-      }
-    });
+    jwtAuthenticationService
+        .decodeJwt(jwt)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.failNow(handler.cause());
+              } else {
+                testContext.completeNow();
+              }
+            });
   }
 
   @Test
@@ -313,16 +335,17 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
 
-
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        LOGGER.debug("failed access ");
-        testContext.failNow("failed for provider");
-
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                LOGGER.debug("failed access ");
+                testContext.failNow("failed for provider");
+              }
+            });
   }
 
   @Test
@@ -344,15 +367,17 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
 
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        LOGGER.debug("failed access ");
-        testContext.failNow("failed for provider");
-
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                LOGGER.debug("failed access ");
+                testContext.failNow("failed for provider");
+              }
+            });
   }
 
   @Test
@@ -375,16 +400,18 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
 
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        LOGGER.debug("failed access ");
-        testContext.failNow("invalid access provided");
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                LOGGER.debug("failed access ");
+                testContext.failNow("invalid access provided");
+              }
+            });
   }
-
 
   @Test
   @DisplayName("success - provider access to /ingestion endpoint for access [api]")
@@ -405,16 +432,17 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
 
-
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        LOGGER.debug("failed access ");
-        testContext.failNow("failed for provider");
-
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                LOGGER.debug("failed access ");
+                testContext.failNow("failed for provider");
+              }
+            });
   }
 
   @Test
@@ -436,15 +464,17 @@ public class JwtAuthServiceImplTest {
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
 
-
-    jwtAuthenticationService.validateAccess(jwtData, authInfo).onComplete(handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        LOGGER.debug("failed access ");
-        testContext.failNow("failed for provider");
-      }
-    });
+    jwtAuthenticationService
+        .validateAccess(jwtData, authInfo)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                LOGGER.debug("failed access ");
+                testContext.failNow("failed for provider");
+              }
+            });
   }
 
   @Test
@@ -459,15 +489,17 @@ public class JwtAuthServiceImplTest {
     authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
     authInfo.put("method", Method.POST);
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow(handler.cause());
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.completeNow();
+          } else {
+            testContext.failNow(handler.cause());
+          }
+        });
   }
-
 
   @Test
   @DisplayName("success - allow provider access to /ingestion endpoint")
@@ -481,15 +513,17 @@ public class JwtAuthServiceImplTest {
     authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
     authInfo.put("method", Method.POST);
 
-    jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
-      if (handler.succeeded()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow(handler.cause());
-      }
-    });
+    jwtAuthenticationService.tokenIntrospect(
+        request,
+        authInfo,
+        handler -> {
+          if (handler.succeeded()) {
+            testContext.completeNow();
+          } else {
+            testContext.failNow(handler.cause());
+          }
+        });
   }
-
 
   @Test
   @DisplayName("success - validId check")
@@ -505,17 +539,18 @@ public class JwtAuthServiceImplTest {
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingest")));
 
     jwtAuthenticationService
-        .isValidId(jwtData,
+        .isValidId(
+            jwtData,
             "datakaveri.org/04a15c9960ffda227e9546f3f46e629e1fe4132b/rs.iudx.io/pune-env-flood/FWR053")
-        .onComplete(handler -> {
-          if (handler.succeeded()) {
-            testContext.completeNow();
-          } else {
-            testContext.failNow("fail");
-          }
-        });
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.completeNow();
+              } else {
+                testContext.failNow("fail");
+              }
+            });
   }
-
 
   @Test
   @DisplayName("failure - invalid validId check")
@@ -531,15 +566,17 @@ public class JwtAuthServiceImplTest {
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingest")));
 
     jwtAuthenticationService
-        .isValidId(jwtData,
+        .isValidId(
+            jwtData,
             "datakaveri.org/04a15c9960ffda227e9546f3f46e629e1fe4132b/rs.iudx.io/pune-env-flood/FWR055")
-        .onComplete(handler -> {
-          if (handler.succeeded()) {
-            testContext.failNow("fail");
-          } else {
-            testContext.completeNow();
-          }
-        });
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                testContext.failNow("fail");
+              } else {
+                testContext.completeNow();
+              }
+            });
   }
 
   @Test
@@ -554,16 +591,18 @@ public class JwtAuthServiceImplTest {
         "rg:datakaveri.org/04a15c9960ffda227e9546f3f46e629e1fe4132b/rs.iudx.io/pune-env-flood/FWR053");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingest")));
-    jwtAuthenticationService.isValidAudienceValue(jwtData).onComplete(handler -> {
-      if (handler.failed()) {
-        testContext.completeNow();
-      } else {
-        testContext.failNow("fail");
-
-      }
-    });
+    jwtAuthenticationService
+        .isValidAudienceValue(jwtData)
+        .onComplete(
+            handler -> {
+              if (handler.failed()) {
+                testContext.completeNow();
+              } else {
+                testContext.failNow("fail");
+              }
+            });
   }
-  
+
   @Test
   @DisplayName("success - valid admin token")
   public void testValidAdminToken(VertxTestContext testContext) {
@@ -574,8 +613,8 @@ public class JwtAuthServiceImplTest {
     jwtData.setIat(1627408865L);
     jwtData.setIid("rs:rs.iudx.io");
     jwtData.setRole("admin");
-    
-    boolean result=jwtAuthenticationService.isValidAdminToken(jwtData);
+
+    boolean result = jwtAuthenticationService.isValidAdminToken(jwtData);
     assertTrue(result);
     testContext.completeNow();
   }
@@ -589,18 +628,25 @@ public class JwtAuthServiceImplTest {
     jwtData.setExp(1627408865L);
     jwtData.setIat(1627408865L);
     jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
     jwtData.setRole("admin");
 
-    jwtAuthenticationService.isValidRole(jwtData).onComplete(
-            handler->{
-              if (handler.succeeded()){
+    jwtAuthenticationService
+        .isValidRole(jwtData)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                assertEquals("rs.iudx.io", handler.result().getString(JSON_IID));
+                assertEquals(
+                    "844e251b-574b-46e6-9247-f76f1f70a637",
+                    handler.result().getString(JSON_USERID));
                 testContext.completeNow();
-              }else {
-                testContext.failNow("fsiled");
+              } else {
+                testContext.failNow("failed");
               }
-            }
-    );
+            });
   }
+
   @Test
   @DisplayName("fail - valid Role")
   public void testinValidRole(VertxTestContext testContext) {
@@ -610,16 +656,17 @@ public class JwtAuthServiceImplTest {
     jwtData.setExp(1627408865L);
     jwtData.setIat(1627408865L);
     jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
     jwtData.setRole("consumer");
 
-    jwtAuthenticationService.isValidRole(jwtData).onComplete(
-            handler->{
-              if (handler.failed()){
-                testContext.completeNow();
-              }else {
-                testContext.failNow("fsiled");
-              }
-            }
-    );
+    jwtAuthenticationService
+        .isValidRole(jwtData)
+        .onFailure(
+            handler -> {
+              JsonObject jsonObject = new JsonObject(handler.getMessage());
+              assertTrue(jsonObject.containsKey("401"));
+              assertEquals("Only admin access allowed.", jsonObject.getString("401"));
+              testContext.completeNow();
+            });
   }
 }
