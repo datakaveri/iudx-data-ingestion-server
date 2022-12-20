@@ -5,8 +5,10 @@ import iudx.data.ingestion.server.apiserver.util.Configuration;
 import java.util.stream.Stream;
 
 public enum  Api {
+
   ENTITIES( Configuration.getBasePath() + "/entities"),
   INGESTION(Configuration.getBasePath() + "/ingestion");
+
 
   private final String endpoint;
 

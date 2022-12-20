@@ -22,6 +22,7 @@ public class Constants {
   // path regex
   public static final String ENTITIES_URL_REGEX = NGSILD_ENTITIES_URL + "(.*)";
   public static final String NGSILD_INGESTION_URL = "/ingestion";
+
   public static final String INGESTION_URL_REGEX = NGSILD_INGESTION_URL + "(.*)";
 
   // ngsi-ld/IUDX query parameters

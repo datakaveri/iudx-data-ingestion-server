@@ -58,6 +58,7 @@ public class AuthHandlerTest {
     private static final Logger LOGGER = LogManager.getLogger(AuthHandlerTest.class);
 
 
+
     @BeforeEach
     public void setup(VertxTestContext vertxTestContext, Vertx vertx){
         authHandler = new AuthHandler();
@@ -78,6 +79,7 @@ public class AuthHandlerTest {
         {
             LOGGER.error("base path is null or empty");
         }
+
 
         lenient().when(httpServerRequest.method()).thenReturn(httpMethodMock);
         lenient().when(httpMethodMock.toString()).thenReturn("GET");
