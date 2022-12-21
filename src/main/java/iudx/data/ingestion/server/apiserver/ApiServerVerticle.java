@@ -20,7 +20,6 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_S
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
 import static iudx.data.ingestion.server.metering.util.Constants.PRIMARY_KEY;
 import static iudx.data.ingestion.server.metering.util.Constants.PROVIDER_ID;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -39,6 +38,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -52,6 +52,7 @@ import iudx.data.ingestion.server.apiserver.util.Constants;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
+import iudx.data.ingestion.server.common.Api;
 import iudx.data.ingestion.server.databroker.DataBrokerService;
 import iudx.data.ingestion.server.metering.MeteringService;
 
@@ -94,6 +95,11 @@ public class ApiServerVerticle extends AbstractVerticle {
   private AuthenticationService authenticationService;
   private MeteringService meteringService;
 
+  private String dxApiBasePath;
+  private String iudxApiBasePath; 
+  private JsonObject jsonConfiguration;
+
+
 
   @Override
   public void start() throws Exception {
@@ -113,6 +119,15 @@ public class ApiServerVerticle extends AbstractVerticle {
     allowedMethods.add(HttpMethod.OPTIONS);
     /* Define the APIs, methods, endpoints and associated methods. */
 
+
+//    jsonConfiguration = Configuration.getConfiguration();
+//    basePath = jsonConfiguration.getString(Configuration.NGSILD_BASEPATH);
+    
+    //LOGGER.debug(config());
+    dxApiBasePath=config().getString("dxApiBasePath");
+    iudxApiBasePath=config().getString("iudxApiBasePath");
+    Api apis=new Api(dxApiBasePath, iudxApiBasePath);
+
     router = Router.router(vertx);
     router.route().handler(
         CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
@@ -131,9 +146,10 @@ public class ApiServerVerticle extends AbstractVerticle {
     ValidationHandler postEntitiesValidationHandler =
         new ValidationHandler(vertx, RequestType.ENTITY);
 
-    router.post(Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
+
+    router.post(apis.getEntitiesEndpoint()).consumes(Constants.APPLICATION_JSON)
         .handler(postEntitiesValidationHandler)
-        .handler(AuthHandler.create(vertx))
+        .handler(AuthHandler.create(vertx,apis))
         .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
 
     ValidationHandler postIngestionValidationHandler =
@@ -142,14 +158,14 @@ public class ApiServerVerticle extends AbstractVerticle {
     ValidationHandler deleteIngestionValidationHandler =
         new ValidationHandler(vertx, RequestType.INGEST_DELETE);
 
-    router.post(Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+    router.post(apis.getIngestionEndpoint()).consumes(APPLICATION_JSON)
         .handler(postIngestionValidationHandler)
-        .handler(AuthHandler.create(vertx))
+        .handler(AuthHandler.create(vertx,apis))
         .handler(this::handleIngestPostQuery).handler(validationsFailureHandler);
 
-    router.delete(Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+    router.delete(apis.getIngestionEndpoint()).consumes(APPLICATION_JSON)
         .handler(deleteIngestionValidationHandler)
-        .handler(AuthHandler.create(vertx))
+        .handler(AuthHandler.create(vertx,apis))
         .handler(this::handleIngestDeleteQuery)
         .handler(validationsFailureHandler);
 
@@ -214,6 +230,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     authenticationService = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
     meteringService=MeteringService.createProxy(vertx,METERING_SERVICE_ADDRESS);
     catalogueService = new CatalogueService(vertx, config());
+    printDeployedEndpoints(router);
+    
   }
 
   /**
@@ -390,6 +408,14 @@ public class ApiServerVerticle extends AbstractVerticle {
         });
 
     return promise.future();
+  }
+  
+  private void printDeployedEndpoints(Router router) {
+    for(Route route:router.getRoutes()) {
+      if(route.getPath()!=null) {
+        LOGGER.info("API Endpoints deployed :"+ route.methods() +":"+ route.getPath());
+      }
+    }
   }
 
 }

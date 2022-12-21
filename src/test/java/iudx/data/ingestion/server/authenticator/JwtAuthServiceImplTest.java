@@ -21,8 +21,8 @@ import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
+import iudx.data.ingestion.server.common.Api;
 import iudx.data.ingestion.server.configuration.Configuration;
 
 @ExtendWith(VertxExtension.class)
@@ -35,6 +35,8 @@ public class JwtAuthServiceImplTest {
   private static String openId;
   private static String closeId;
   private static String invalidId;
+  
+  private static Api apis;
 
 
   @BeforeAll
@@ -46,10 +48,9 @@ public class JwtAuthServiceImplTest {
     authConfig.put("audience", "rs.iudx.io");
     authConfig.put("authServerHost", "auth.test.com");
     authConfig.put("port", 1234);
+    authConfig.put("dxApiBasePath","/ngsi-ld/v1");
+    authConfig.put("iudxApiBasePath", "/iudx/v1");
     
-    LOGGER.info("config :{} ",authConfig);
-    
-
     JWTAuthOptions jwtAuthOptions = new JWTAuthOptions();
     jwtAuthOptions.addPubSecKey(
         new PubSecKeyOptions()
@@ -63,9 +64,13 @@ public class JwtAuthServiceImplTest {
         .setIgnoreExpiration(true);// ignore token expiration only for test
     JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
+    String dxApiBasePath=authConfig.getString("dxApiBasePath");
+    String iudxApiBasePath=authConfig.getString("iudxApiBasePath");
+    apis=new Api(dxApiBasePath, iudxApiBasePath);
+    
     WebClient webClient = AuthenticationVerticle.createWebClient(vertx, authConfig, true);
     jwtAuthenticationService =
-        new JwtAuthenticationServiceImpl(vertx, jwtAuth, webClient, authConfig);
+        new JwtAuthenticationServiceImpl(vertx, jwtAuth, webClient, authConfig,apis);
 
     // since test token doesn't contain valid id's, so forcibly put some dummy id in the cache for test.
     openId = "foobar.iudx.io";
@@ -96,7 +101,7 @@ public class JwtAuthServiceImplTest {
     JsonObject authInfo = new JsonObject();
 
     authInfo.put(ID, openId);
-    authInfo.put(API_ENDPOINT, Api.INGESTION.getApiEndpoint());
+    authInfo.put(API_ENDPOINT, apis.getIngestionEndpoint());
     authInfo.put(METHOD, Method.POST);
 
     JwtData jwtData = new JwtData();
@@ -123,7 +128,7 @@ public class JwtAuthServiceImplTest {
     JsonObject authInfo = new JsonObject();
 
     authInfo.put(ID, openId);
-    authInfo.put(API_ENDPOINT, Api.ENTITIES.getApiEndpoint());
+    authInfo.put(API_ENDPOINT, apis.getEntitiesEndpoint());
     authInfo.put(METHOD, Method.POST);
 
     JwtData jwtData = new JwtData();
@@ -150,7 +155,7 @@ public class JwtAuthServiceImplTest {
     JsonObject authInfo = new JsonObject();
     authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
     authInfo.put("id", closeId);
-    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getIngestionEndpoint());
     authInfo.put("method", Method.POST);
 
     JsonObject request = new JsonObject();
@@ -170,7 +175,7 @@ public class JwtAuthServiceImplTest {
     JsonObject authInfo = new JsonObject();
     authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
     authInfo.put("id", closeId);
-    authInfo.put("apiEndpoint", Api.ENTITIES.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getEntitiesEndpoint());
     authInfo.put("method", Method.POST);
 
     JsonObject request = new JsonObject();
@@ -193,7 +198,7 @@ public class JwtAuthServiceImplTest {
 
     authInfo.put("token", JwtTokenHelper.closedProviderApiToken);
     authInfo.put("id", invalidId);
-    authInfo.put("apiEndpoint", Api.ENTITIES.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getEntitiesEndpoint());
     authInfo.put("method", Method.POST);
     JsonObject request = new JsonObject();
 
@@ -217,7 +222,7 @@ public class JwtAuthServiceImplTest {
 
     authInfo.put("token", JwtTokenHelper.closedDelegateApiToken);
     authInfo.put("id", closeId);
-    authInfo.put("apiEndpoint", Api.ENTITIES.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getEntitiesEndpoint());
     authInfo.put("method", Method.POST);
 
     jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
@@ -239,7 +244,7 @@ public class JwtAuthServiceImplTest {
 
     authInfo.put("token", JwtTokenHelper.closedDelegateIngestionToken);
     authInfo.put("id", closeId);
-    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getEntitiesEndpoint());
     authInfo.put("method", Method.POST);
 
     jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
@@ -456,7 +461,7 @@ public class JwtAuthServiceImplTest {
 
     authInfo.put("token", JwtTokenHelper.closedDelegateIngestionToken);
     authInfo.put("id", closeId);
-    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getIngestionEndpoint());
     authInfo.put("method", Method.POST);
 
     jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {
@@ -478,7 +483,7 @@ public class JwtAuthServiceImplTest {
 
     authInfo.put("token", JwtTokenHelper.closedProviderIngestionToken);
     authInfo.put("id", closeId);
-    authInfo.put("apiEndpoint", Api.INGESTION.getApiEndpoint());
+    authInfo.put("apiEndpoint", apis.getIngestionEndpoint());
     authInfo.put("method", Method.POST);
 
     jwtAuthenticationService.tokenIntrospect(request, authInfo, handler -> {

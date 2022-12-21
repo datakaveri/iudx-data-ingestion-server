@@ -74,13 +74,13 @@ public class Deployer {
 	      LOGGER.info("Deployed all");
 	      return;
 	    }
-	    JsonObject config = configs.getJsonArray("modules").getJsonObject(i);
-	    String moduleName = config.getString("id");
-	    int numInstances = config.getInteger("verticleInstances");
+	    JsonObject moduleConfigurations=getConfigForModule(i, configs);
+	    String moduleName = moduleConfigurations.getString("id");
+	    int numInstances = moduleConfigurations.getInteger("verticleInstances");
 	    vertx.deployVerticle(moduleName,
 	                           new DeploymentOptions()
 	                                  .setInstances(numInstances)
-	                                  .setConfig(config),
+	                                  .setConfig(moduleConfigurations),
 	                          ar -> {
 	      if (ar.succeeded()) {
 	        LOGGER.info("Deployed " + moduleName);
@@ -89,6 +89,12 @@ public class Deployer {
 	        LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
 	      }
 	    });
+	  }
+	  
+	  private static JsonObject getConfigForModule(int moduleIndex,JsonObject configurations) {
+	    JsonObject commonConfigs=configurations.getJsonObject("commonConfig");
+        JsonObject config = configurations.getJsonArray("modules").getJsonObject(moduleIndex);
+        return config.mergeIn(commonConfigs, true);
 	  }
 
       /**
