@@ -5,11 +5,13 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.data.ingestion.server.apiserver.util.Configuration;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
+import iudx.data.ingestion.server.common.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,18 +71,6 @@ public class AuthHandlerTest {
         jsonObject.put("EXPIRY", "Dummy EXPIRY");
         //lenient().doReturn(httpServerRequest).when(routingContextMock).request();
         //lenient().doReturn(httpServerResponse).when(routingContextMock).response();
-
-        jsonConfig = Configuration.getConfiguration();
-        if (jsonConfig != null)
-        {
-            basePath = jsonConfig.getString("ngsildBasePath");
-        }
-        if (basePath == null || basePath.isEmpty())
-        {
-            LOGGER.error("base path is null or empty");
-        }
-
-
         lenient().when(httpServerRequest.method()).thenReturn(httpMethodMock);
         lenient().when(httpMethodMock.toString()).thenReturn("GET");
         lenient().when(routingContextMock.request()).thenReturn(httpServerRequest);
@@ -90,11 +80,14 @@ public class AuthHandlerTest {
     @Test
     @DisplayName("Handle Success Test")
     public void testHandleSuccess(VertxTestContext vertxTestContext){
-        when(routingContextMock.getBodyAsJson()).thenReturn(jsonObject);
+        RequestBody reqBody=mock(RequestBody.class);
+        when(routingContextMock.body()).thenReturn(reqBody);
+        when(reqBody.asJsonObject()).thenReturn(jsonObject);
         when(httpServerRequest.path()).thenReturn(ENTITIES_URL_REGEX);
         //doReturn(NGSILD_ENTITIES_URL).when(httpServerRequest).path();
 
         AuthHandler.authenticator = mock(AuthenticationService.class);
+        AuthHandler.apis=mock(Api.class);
 
         when(httpServerRequest.headers()).thenReturn(map);
         //when(multiMapMock.get(HEADER_TOKEN)).thenReturn("asd.asd.sad.sad");
@@ -110,6 +103,8 @@ public class AuthHandlerTest {
         //AsyncResult<JsonObject> asyncResult = mock(AsyncResult.class);
         when(asyncResult.succeeded()).thenReturn(true);
         when(asyncResult.result()).thenReturn(jsonObject);
+        when(AuthHandler.apis.getEntitiesEndpoint()).thenReturn("/ngsi-ld/v1/entities");
+        when(AuthHandler.apis.getEntitiesEndpoint()).thenReturn("/ngsi-ld/v1/ingestion");
 
 
         doAnswer(new Answer<AsyncResult<JsonObject>>() {
@@ -123,7 +118,7 @@ public class AuthHandlerTest {
         authHandler.handle(routingContextMock);
         // verify(routingContextMock, times(1)).next();
         verify(AuthHandler.authenticator, times(1)).tokenIntrospect(any(), any(), any());
-        verify(routingContextMock, times(2)).getBodyAsJson();
+        verify(routingContextMock, times(2)).body();
 
         vertxTestContext.completeNow();
     }
@@ -141,10 +136,12 @@ public class AuthHandlerTest {
         //Map map = new HashMap<String, Object>();
         //AuthenticationService authenticationServiceMock = mock(AuthenticationService.class);
         //AsyncResult<JsonObject> asyncResult = mock(AsyncResult.class);
-
-        when(routingContextMock.getBodyAsJson()).thenReturn(jsonObject);
+        RequestBody reqBody=mock(RequestBody.class);
+        when(routingContextMock.body()).thenReturn(reqBody);
+        when(reqBody.asJsonObject()).thenReturn(jsonObject);
         when(httpServerRequest.path()).thenReturn(str);
         AuthHandler.authenticator = mock(AuthenticationService.class);
+        AuthHandler.apis=mock(Api.class);
 
         //when(routingContextMock.request()).thenReturn(httpServerRequest);
         //when(routingContextMock.getBodyAsJson()).thenReturn(jsonObjectMock);
@@ -168,6 +165,8 @@ public class AuthHandlerTest {
         when(asyncResult.succeeded()).thenReturn(false);
         //lenient().when(asyncResult.succeeded()).thenReturn(false);
         //lenient().when(asyncResult.cause()).thenReturn(new Throwable("fail"));
+        when(AuthHandler.apis.getEntitiesEndpoint()).thenReturn("/ngsi-ld/v1/entities");
+        when(AuthHandler.apis.getEntitiesEndpoint()).thenReturn("/ngsi-ld/v1/ingestion");
 
         doAnswer((Answer<AsyncResult<JsonObject>>) arg0 -> {
             ((Handler<AsyncResult<JsonObject>>) arg0.getArgument(2)).handle(asyncResult);
@@ -182,7 +181,7 @@ public class AuthHandlerTest {
         verify(httpServerResponse, times(1)).setStatusCode(anyInt());
         verify(httpServerResponse, times(1)).putHeader(anyString(), anyString());
         verify(httpServerResponse, times(1)).end(anyString());
-        verify(routingContextMock, times(2)).getBodyAsJson();
+        verify(routingContextMock, times(2)).body();
 
         vertxTestContext.completeNow();
     }
@@ -228,7 +227,7 @@ public class AuthHandlerTest {
     @Test
     @DisplayName("Test static method: create")
     public void testCreate(VertxTestContext vertxTestContext) {
-        AuthHandler res = AuthHandler.create(Vertx.vertx(),"dummyBasepath");
+        AuthHandler res = AuthHandler.create(Vertx.vertx(),new Api("dummypath", "dummyPath"));
         assertNotNull(res);
         vertxTestContext.completeNow();
     }

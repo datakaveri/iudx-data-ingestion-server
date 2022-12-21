@@ -11,24 +11,23 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.IID;
 import static iudx.data.ingestion.server.apiserver.util.Constants.INGESTION_URL_REGEX;
-import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_INGESTION_URL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_INGESTION_URL;
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
-import iudx.data.ingestion.server.apiserver.util.Configuration;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import iudx.data.ingestion.server.common.Api;
 
 /**
  * IUDX Authentication handler to authenticate token passed in HEADER
@@ -42,19 +41,19 @@ public class AuthHandler implements Handler<RoutingContext> {
   private HttpServerRequest request;
 
   private  JsonObject jsonConfig;
-  private static String basePath;
+  static Api apis;
 
 
-  public static AuthHandler create(Vertx vertx,String baseApiPath) {
+  public static AuthHandler create(Vertx vertx,Api apisEndpoint) {
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
-    basePath=baseApiPath;
+    apis=apisEndpoint;
     return new AuthHandler();
   }
 
   @Override
   public void handle(RoutingContext context) {
     request = context.request();
-    JsonObject requestJson = context.getBodyAsJson();
+    JsonObject requestJson = context.body().asJsonObject();
 
     if (requestJson == null) {
       requestJson = new JsonObject();
@@ -130,7 +129,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   }
 
   private String getIdFromBody(RoutingContext context) {
-    JsonObject body = context.getBodyAsJson();
+    JsonObject body = context.body().asJsonObject();
     return body.getString(ID);
   }
 
@@ -141,14 +140,17 @@ public class AuthHandler implements Handler<RoutingContext> {
    * @return path without id.
    */
   private String getNormalizedPath(String url) {
-    LOGGER.info("base path : " + basePath);
     LOGGER.debug("URL : " + url);
     String path = null;
-    if (url.matches(basePath+ENTITIES_URL_REGEX)) {
-      path = NGSILD_ENTITIES_URL;
-    } else if (url.matches(basePath+INGESTION_URL_REGEX)) {
-      path = NGSILD_INGESTION_URL;
+    if (url.matches(getpathRegex(apis.getEntitiesEndpoint()))) {
+      path = apis.getEntitiesEndpoint();
+    } else if (url.matches(getpathRegex(apis.getIngestionEndpoint()))) {
+      path = apis.getIngestionEndpoint();
     }
     return path;
+  }
+  
+  private String getpathRegex(String path) {
+    return path+"(.*)";
   }
 }

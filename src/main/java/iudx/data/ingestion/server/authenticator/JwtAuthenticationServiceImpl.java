@@ -16,7 +16,6 @@ import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-import iudx.data.ingestion.server.authenticator.authorization.Api;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationContextFactory;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationRequest;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationStrategy;
@@ -24,6 +23,7 @@ import iudx.data.ingestion.server.authenticator.authorization.IUDXRole;
 import iudx.data.ingestion.server.authenticator.authorization.JwtAuthorization;
 import iudx.data.ingestion.server.authenticator.authorization.Method;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
+import iudx.data.ingestion.server.common.Api;
 
 public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
@@ -37,21 +37,21 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final int port;
   final String path;
   final String audience;
+  final Api apis;
   final String authServerHost;
-  final String dxApiBasePath;
   // resourceGroupCache will contain ACL info about all resource group in ingestion server
   private final Cache<String, String> resourceGroupCache =
       CacheBuilder.newBuilder().maximumSize(1000)
           .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
 
   public JwtAuthenticationServiceImpl(Vertx vertx, final JWTAuth jwtAuth, final WebClient webClient,
-      final JsonObject config) {
+      final JsonObject config,Api apis) {
     this.jwtAuth = jwtAuth;
     this.audience = config.getString(DI_AUDIENCE);
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     path = Constants.CAT_RSG_PATH;
-    dxApiBasePath=config.getString("dxApiBasePath");
+    this.apis=apis;
     authServerHost = config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
@@ -69,17 +69,16 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
 
-    boolean isAdminIngestionEndpoint =
-        endPoint != null && endPoint.equals(dxApiBasePath+Api.INGESTION.getApiEndpoint());
+    boolean isAdminIngestionEndpoint =endPoint != null && endPoint.equals(apis.getIngestionEndpoint());
 
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
       result.jwtData = decodeHandler;
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
-      LOGGER.debug("audience is valid "+dxApiBasePath+Api.INGESTION.getApiEndpoint());
+      LOGGER.debug("audience is valid "+apis.getIngestionEndpoint());
       LOGGER.debug("endpoint :"+endPoint);
-      if ((dxApiBasePath+endPoint).equals(dxApiBasePath+Api.INGESTION.getApiEndpoint()) && isValidAdminToken(result.jwtData)) {
+      if (endPoint.equals(apis.getIngestionEndpoint()) && isValidAdminToken(result.jwtData)) {
         //admin token + /ingestion POST, skip id check
         return Future.succeededFuture(true);
       } else {
@@ -125,10 +124,10 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     String jwtId = jwtData.getIid().split(":")[1];
 
     Method method = Method.valueOf(authInfo.getString(METHOD));
-    Api api = Api.fromEndpoint(dxApiBasePath,authInfo.getString(API_ENDPOINT));
+    String api = authInfo.getString(API_ENDPOINT);
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
     IUDXRole role = IUDXRole.fromRole(jwtData.getRole());
-    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role);
+    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role,apis);
     LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
     JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));

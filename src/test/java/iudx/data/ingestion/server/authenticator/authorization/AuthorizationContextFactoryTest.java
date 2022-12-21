@@ -6,18 +6,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import iudx.data.ingestion.server.common.Api;
 
 @ExtendWith(VertxExtension.class)
 class AuthorizationContextFactoryTest {
   @Test
   public void test(VertxTestContext vertxTestContext) {
+    Api apis=new Api("abc", "abc");
     AuthorizationStrategy delegateAuthStrategy =
-        AuthorizationContextFactory.create(IUDXRole.PROVIDER);
+        AuthorizationContextFactory.create(IUDXRole.PROVIDER,apis);
     assertTrue(delegateAuthStrategy instanceof ProviderAuthStrategy);
     AuthorizationStrategy providerAuthStrategy =
-        AuthorizationContextFactory.create(IUDXRole.DELEGATE);
+        AuthorizationContextFactory.create(IUDXRole.DELEGATE,apis);
     assertTrue(providerAuthStrategy instanceof DelegateAuthStrategy);
-    AuthorizationStrategy adminAuthStrategy = AuthorizationContextFactory.create(IUDXRole.ADMIN);
+    AuthorizationStrategy adminAuthStrategy = AuthorizationContextFactory.create(IUDXRole.ADMIN,apis);
     assertTrue(adminAuthStrategy instanceof AdminAuthStrategy);
     vertxTestContext.completeNow();
   }
@@ -25,7 +27,8 @@ class AuthorizationContextFactoryTest {
   
   @Test
   public void testFailure(VertxTestContext testContext) {
-    assertThrows(IllegalArgumentException.class,  ()->AuthorizationContextFactory.create(null));
+    Api apis=new Api("abc", "abc");
+    assertThrows(IllegalArgumentException.class,  ()->AuthorizationContextFactory.create(null,apis));
     testContext.completeNow();
   }
 }

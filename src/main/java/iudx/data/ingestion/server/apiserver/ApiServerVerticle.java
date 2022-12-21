@@ -20,7 +20,6 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_S
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
 import static iudx.data.ingestion.server.metering.util.Constants.PRIMARY_KEY;
 import static iudx.data.ingestion.server.metering.util.Constants.PROVIDER_ID;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -28,8 +27,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import iudx.data.ingestion.server.apiserver.util.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.AbstractVerticle;
@@ -54,6 +51,7 @@ import iudx.data.ingestion.server.apiserver.util.Constants;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.apiserver.util.RequestType;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
+import iudx.data.ingestion.server.common.Api;
 import iudx.data.ingestion.server.databroker.DataBrokerService;
 import iudx.data.ingestion.server.metering.MeteringService;
 
@@ -124,9 +122,10 @@ public class ApiServerVerticle extends AbstractVerticle {
 //    jsonConfiguration = Configuration.getConfiguration();
 //    basePath = jsonConfiguration.getString(Configuration.NGSILD_BASEPATH);
     
-    LOGGER.debug(config());
+    //LOGGER.debug(config());
     dxApiBasePath=config().getString("dxApiBasePath");
     iudxApiBasePath=config().getString("iudxApiBasePath");
+    Api apis=new Api(dxApiBasePath, iudxApiBasePath);
 
     router = Router.router(vertx);
     router.route().handler(
@@ -147,9 +146,9 @@ public class ApiServerVerticle extends AbstractVerticle {
         new ValidationHandler(vertx, RequestType.ENTITY);
 
 
-    router.post(dxApiBasePath + Constants.NGSILD_ENTITIES_URL).consumes(Constants.APPLICATION_JSON)
+    router.post(apis.getEntitiesEndpoint()).consumes(Constants.APPLICATION_JSON)
         .handler(postEntitiesValidationHandler)
-        .handler(AuthHandler.create(vertx,dxApiBasePath))
+        .handler(AuthHandler.create(vertx,apis))
         .handler(this::handleEntitiesPostQuery).failureHandler(validationsFailureHandler);
 
     ValidationHandler postIngestionValidationHandler =
@@ -158,14 +157,14 @@ public class ApiServerVerticle extends AbstractVerticle {
     ValidationHandler deleteIngestionValidationHandler =
         new ValidationHandler(vertx, RequestType.INGEST_DELETE);
 
-    router.post(dxApiBasePath + Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+    router.post(apis.getIngestionEndpoint()).consumes(APPLICATION_JSON)
         .handler(postIngestionValidationHandler)
-        .handler(AuthHandler.create(vertx,dxApiBasePath))
+        .handler(AuthHandler.create(vertx,apis))
         .handler(this::handleIngestPostQuery).handler(validationsFailureHandler);
 
-    router.delete(dxApiBasePath + Constants.NGSILD_INGESTION_URL).consumes(APPLICATION_JSON)
+    router.delete(apis.getIngestionEndpoint()).consumes(APPLICATION_JSON)
         .handler(deleteIngestionValidationHandler)
-        .handler(AuthHandler.create(vertx,dxApiBasePath))
+        .handler(AuthHandler.create(vertx,apis))
         .handler(this::handleIngestDeleteQuery)
         .handler(validationsFailureHandler);
 
