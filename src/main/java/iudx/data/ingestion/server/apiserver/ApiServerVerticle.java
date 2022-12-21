@@ -38,6 +38,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.JksOptions;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -229,6 +230,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     authenticationService = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
     meteringService=MeteringService.createProxy(vertx,METERING_SERVICE_ADDRESS);
     catalogueService = new CatalogueService(vertx, config());
+    printDeployedEndpoints(router);
+    
   }
 
   /**
@@ -405,6 +408,14 @@ public class ApiServerVerticle extends AbstractVerticle {
         });
 
     return promise.future();
+  }
+  
+  private void printDeployedEndpoints(Router router) {
+    for(Route route:router.getRoutes()) {
+      if(route.getPath()!=null) {
+        LOGGER.info("API Endpoints deployed :"+ route.methods() +":"+ route.getPath());
+      }
+    }
   }
 
 }
