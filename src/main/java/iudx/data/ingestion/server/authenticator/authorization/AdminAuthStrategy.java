@@ -16,10 +16,24 @@ public class AdminAuthStrategy implements AuthorizationStrategy {
 
   static Map<String, List<AuthorizationRequest>> AdminAuthorizationRules = new HashMap<>();
   private final Api apis;
-  public AdminAuthStrategy(Api apis) {
+  private static volatile AdminAuthStrategy instance;
+  private AdminAuthStrategy(Api apis) {
     this.apis=apis;
   }
-
+  public static AdminAuthStrategy getInstance(Api apis)
+  {
+    if(instance == null)
+    {
+      synchronized (AdminAuthStrategy.class)
+      {
+        if(instance == null)
+        {
+          instance = new AdminAuthStrategy(apis);
+        }
+      }
+    }
+    return instance;
+  }
   @Override
   public boolean isAuthorized(AuthorizationRequest authRequest, JwtData jwtData) {
     return true;

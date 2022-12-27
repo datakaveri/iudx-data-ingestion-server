@@ -15,13 +15,28 @@ public class ProviderAuthStrategy implements AuthorizationStrategy {
 
   private static final Logger LOGGER = LogManager.getLogger(ProviderAuthStrategy.class);
   private final Api apis;
+  private static volatile ProviderAuthStrategy instance;
+
   Map<String, List<AuthorizationRequest>> providerAuthorizationRules = new HashMap<>();
   
-  public ProviderAuthStrategy(Api apis) {
+  private ProviderAuthStrategy(Api apis) {
     this.apis=apis;
     buildPermissions(apis);
   }
-
+  public static ProviderAuthStrategy getInstance(Api apis)
+  {
+    if(instance == null)
+    {
+      synchronized (ProviderAuthStrategy.class)
+      {
+        if(instance == null)
+        {
+          instance = new ProviderAuthStrategy(apis);
+        }
+      }
+    }
+    return instance;
+  }
 
   private void buildPermissions(Api apis){
     // api access list/rules
