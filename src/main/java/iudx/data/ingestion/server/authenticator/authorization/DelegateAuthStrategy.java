@@ -18,11 +18,25 @@ public class DelegateAuthStrategy implements AuthorizationStrategy {
 
   Map<String, List<AuthorizationRequest>> delegateAuthorizationRules = new HashMap<>();
   private final Api apis;
-  public DelegateAuthStrategy(Api apis) {
+  private static volatile DelegateAuthStrategy instance;
+  private DelegateAuthStrategy(Api apis) {
     this.apis=apis;
     buildPermissions(apis);
   }
-  
+  public static DelegateAuthStrategy getInstance(Api apis)
+  {
+    if(instance == null)
+    {
+      synchronized (DelegateAuthStrategy.class)
+      {
+        if(instance == null)
+        {
+          instance = new DelegateAuthStrategy(apis);
+        }
+      }
+    }
+    return instance;
+  }
   private void buildPermissions(Api apis) {
     List<AuthorizationRequest> apiAccessList = new ArrayList<>();
     apiAccessList.add(new AuthorizationRequest(POST, apis.getEntitiesEndpoint()));

@@ -6,13 +6,28 @@ public class Api {
   
   private final String dxApiBasePath;
   private final String iudxApiBasePath;
+  private static volatile Api apiInstance;
   
-  public Api(String dxApiBasePath,String iudxApiBasePath) {
+  private Api(String dxApiBasePath,String iudxApiBasePath) {
     this.dxApiBasePath=dxApiBasePath;
     this.iudxApiBasePath=iudxApiBasePath;
     buildEndpoints();
   }
-  
+
+  public static Api getInstance(String dxApiBasePath,String iudxApiBasePath)
+  {
+    if (apiInstance == null)
+    {
+      synchronized (Api.class)
+      {
+        if (apiInstance == null)
+        {
+          apiInstance = new Api(dxApiBasePath,iudxApiBasePath);
+        }
+      }
+    }
+    return apiInstance;
+  }
   private StringBuilder entitiesEndpoint;
   private StringBuilder ingestionEndpoint;
   

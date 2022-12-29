@@ -66,7 +66,7 @@ public class JwtAuthServiceImplTest {
 
     String dxApiBasePath=authConfig.getString("dxApiBasePath");
     String iudxApiBasePath=authConfig.getString("iudxApiBasePath");
-    apis=new Api(dxApiBasePath, iudxApiBasePath);
+    apis=Api.getInstance(dxApiBasePath, iudxApiBasePath);
     
     WebClient webClient = AuthenticationVerticle.createWebClient(vertx, authConfig, true);
     jwtAuthenticationService =
