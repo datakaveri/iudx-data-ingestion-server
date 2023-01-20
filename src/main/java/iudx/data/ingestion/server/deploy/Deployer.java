@@ -122,7 +122,12 @@ public class Deployer {
           return;
         }
 
-        int numInstances = config.getInteger("verticleInstances");
+		  //get common configs and add this to config object
+		  JsonObject commonConfigs=configs.getJsonObject("commonConfig");
+		  config.mergeIn(commonConfigs, true);
+
+
+		  int numInstances = config.getInteger("verticleInstances");
         vertx.deployVerticle(moduleName,
             new DeploymentOptions().setInstances(numInstances).setConfig(config), ar -> {
               if (ar.succeeded()) {
