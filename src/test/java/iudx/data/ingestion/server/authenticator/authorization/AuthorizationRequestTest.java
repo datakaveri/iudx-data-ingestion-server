@@ -19,7 +19,7 @@ class AuthorizationRequestTest {
   
   @BeforeAll
   static void init(Vertx vertx, VertxTestContext testContext) {
-    apis=Api.getInstance("/ngsi-ld/v1", "/iudx/v1");
+    apis=Api.getInstance("/ngsi-ld/v1");
     testContext.completeNow();
   }
   

@@ -39,7 +39,6 @@ public class AuthenticationVerticle extends AbstractVerticle {
   private WebClient webClient;
   
   private String dxApiBasePath;
-  private String iudxApiBasePath; 
 
   static WebClient createWebClient(Vertx vertx, JsonObject config) {
     return createWebClient(vertx, config, false);
@@ -83,8 +82,7 @@ public class AuthenticationVerticle extends AbstractVerticle {
       JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
       dxApiBasePath=config().getString("dxApiBasePath");
-      iudxApiBasePath=config().getString("iudxApiBasePath");
-      Api apis=Api.getInstance(dxApiBasePath, iudxApiBasePath);
+      Api apis=Api.getInstance(dxApiBasePath);
       
       jwtAuthenticationService = new JwtAuthenticationServiceImpl(vertx, jwtAuth,
           createWebClient(vertx, config()), config(),apis);

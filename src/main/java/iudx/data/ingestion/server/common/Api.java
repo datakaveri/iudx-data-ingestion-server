@@ -5,16 +5,14 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.*;
 public class Api {
   
   private final String dxApiBasePath;
-  private final String iudxApiBasePath;
   private static volatile Api apiInstance;
   
-  private Api(String dxApiBasePath,String iudxApiBasePath) {
+  private Api(String dxApiBasePath) {
     this.dxApiBasePath=dxApiBasePath;
-    this.iudxApiBasePath=iudxApiBasePath;
     buildEndpoints();
   }
 
-  public static Api getInstance(String dxApiBasePath,String iudxApiBasePath)
+  public static Api getInstance(String dxApiBasePath)
   {
     if (apiInstance == null)
     {
@@ -22,7 +20,7 @@ public class Api {
       {
         if (apiInstance == null)
         {
-          apiInstance = new Api(dxApiBasePath,iudxApiBasePath);
+          apiInstance = new Api(dxApiBasePath);
         }
       }
     }
