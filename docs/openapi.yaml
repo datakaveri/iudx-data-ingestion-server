@@ -18,10 +18,6 @@ consumes:
 info:
   title: Data Exchange Data Ingestion Server APIs
   version: 4.0.0
-  x-logo:
-    url: "https://iudx.org.in/wp-content/uploads/2020/12/iudx-ideal.png"
-    backgroundColor: "#FFFFFF"
-    altText: "IUDX logo"
   description: >
     # Introduction
 
@@ -368,8 +364,10 @@ components:
         title:
           type: string
         results:
-          type: object
-          description: array of fields
+          description: An array of objects
+          type: array
+          items:
+            type: object
       example:
         type: urn:dx:rs:success
         title: success
