@@ -268,14 +268,13 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/entities",
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
 								"entities"
 							]
 						}
@@ -333,14 +332,13 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/entities",
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
 								"entities"
 							]
 						}
@@ -387,14 +385,13 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/entities",
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
 								"entities"
 							]
 						}
@@ -448,14 +445,13 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/entities",
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
 								"entities"
 							]
 						}
@@ -515,14 +511,73 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
+								"ingestion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Admin Creating ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "abcd",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
 								"ingestion"
 							]
 						}
@@ -586,14 +641,88 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Admin Deleting ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
 								"ingestion"
 							],
 							"query": [
@@ -654,14 +783,73 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
+								"ingestion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Delegate Creating ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
 								"ingestion"
 							]
 						}
@@ -725,14 +913,88 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Delegate Deleting ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
 								"ingestion"
 							],
 							"query": [
@@ -802,14 +1064,88 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Delegate Creating ResourceId and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055\",\n    \"queue\": \"flood/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
 								"ingestion"
 							],
 							"query": [
@@ -879,14 +1215,88 @@
 							}
 						},
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized)  Delegate Deleting ResourceId and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055\",\n    \"queue\": \"ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
 								"ingestion"
 							],
 							"query": [
@@ -926,14 +1336,13 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{base_url}}/ngsi-ld/v1/ingestion?id=datakaveri.org/facec5182e3bf44cc3ac42b0b611263676d668a2/rs.iudx.org.in/agartala-env-aqm/shyamali-bazar",
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=datakaveri.org/facec5182e3bf44cc3ac42b0b611263676d668a2/rs.iudx.org.in/agartala-env-aqm/shyamali-bazar",
 							"protocol": "https",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
+								"{{basePath}}",
 								"ingestion"
 							],
 							"query": [

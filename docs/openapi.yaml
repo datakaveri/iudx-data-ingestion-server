@@ -16,18 +16,46 @@ consumes:
 
 
 info:
-  title: IUDX Data Ingestion Server APIs
+  title: Data Exchange Data Ingestion Server APIs
   version: 4.0.0
+  x-logo:
+    url: "https://iudx.org.in/wp-content/uploads/2020/12/iudx-ideal.png"
+    backgroundColor: "#FFFFFF"
+    altText: "IUDX logo"
   description: >
     # Introduction
 
-    The <b>Data Ingestion Server</b> is the <b> IUDX's "Firewall"</b> which allows publication of
+    The <b>Data Ingestion Server</b> is the <b> DXs'(Data Exchange) "Firewall"</b> which allows publication of
     data.
     It enables *Providers* and *Delegate* of datasources to publish data as
-    per the IUDX data descriptor.
+    per the DX(Data Exchange) data descriptor.
 
     For publication, it allows users to use <b>HTTP protocol over TLS (HTTPs)</b>.
 
+    # Configurations
+
+    -  <b>Server</b>: 
+          - In the doc, we display the server url to be https://example-di.com with the hostname as example-di.com
+          - This could be configured according to the deployment
+    - **Base path**:
+        - Base path is the path on which API is served, relative to the host
+        - It is the initial part of the API
+        - The base path value could be configured according to the deployment
+        - Currently, the following APIs have `/ngsi-ld/v1` base path
+            -  /entities
+            -  /ingestion
+          <br>
+    - **Request Samples**:
+        - The `<tokeValue>` in the header of request sample could be replaced with respective token value [Also refer Tokens section [here](#section/Tokens)]
+        - The `<payload>` in the request sample could be replaced with the payload given adjacent to the request sample
+
+
+
+    # Tokens
+    
+    All the API calls to the data ingestion server should contain a valid DX auth token presented in the header. These tokens could be obtained from DX Auth Server.
+    
+    
     # API HTTP Responses
 
     Apart from the response codes specified in each API, the API server may
@@ -36,10 +64,7 @@ info:
 
     The application should address them accordingly.
     
-    # Tokens
-    
-    All the <b>*APIs*</b>  calls to the data ingestion server should contain a valid IUDX auth token presented in the header.
-    
+
   contact:
     name: For support contact IUDX Team at
     email: support@iudx.org.in
@@ -48,17 +73,22 @@ tags:
 - name: Data Ingestion
   x-displayName: "Data Ingestion Stream"
   description: |
-    Register or delete data ingestion streams using HTTPs APIs. Once registered, the user can publish data through publish(`/entities`) API as per the IUDX data descriptor.
-    These apis are intended to be used by IUDX *Administrator*.
+    Register or delete data ingestion streams using HTTPs APIs. Once registered, the user can publish data through publish(`/entities`) API as per the DX data descriptor.
+    These apis are intended to be used by DX *Administrator*.
     
 - name: Publish Resource Data 
   x-displayName: "Publish Resource Data"
   description: |
     Publish Resource data to the created ingestion stream. A provider can use these API to publish resource data periodically over time or as according the resource. User is strictly required to follow the mandatory attribute and values defined in the DX catalogue while publishing data.
-    These apis are intended to be used by IUDX *Providers*.
+    These apis are intended to be used by DX *Providers*.
+
+servers:
+  - url: 'https://example-di.com/ngsi-ld/v1'
+    description: 'Development Server URL'
+
 
 paths:
-  /ngsi-ld/v1/ingestion:
+  /ingestion:
     post:
       tags:
         - Data Ingestion 
@@ -67,8 +97,8 @@ paths:
         - name: token
           in: header
           required: true
-          description: >-
-            A <b> valid IUDX Auth token </b> to process the request for the <b>
+          description: >
+            A <b> valid DX Auth token </b> to process the request for the <b>
             protected API </b> . <br/> This field is <b> mandatory </b> for
             accessing a <b> protected API </b> .  <br/> If not provided
             with a valid token, user will be responded with <b> 401 Unauthorized
@@ -77,9 +107,21 @@ paths:
             type: string
             maxLength: 512
             pattern: ^[a-zA-Z0-9\/\@\.]*$
+
+
+      x-codeSamples:
+        - lang: 'cURL'
+          label: 'register data ingestion stream'
+          source: |
+            curl --location --request POST 'https://example-di.com/ngsi-ld/v1/ingestion' \
+            --header 'token: <tokenValue>' \
+            --header 'Content-Type: application/json' \
+            --data-raw '<payload>'
+
+
       requestBody:
-        description: >-
-          A <b> valid IUDX ID </b> of the resource is mandatory. <b>Queue</b> is
+        description: >
+          A <b> valid DX ID </b> of the resource is mandatory. <b>Queue</b> is
           optional
         required: true
         content:
@@ -109,11 +151,10 @@ paths:
           description: Unauthorized
       deprecated: false
       description: >
-        The `/ingestion` end point allows an IUDX Admin to register ingestion
-        stream for one or more data resources. All the queries requires a <b> valid IUDX </b> `id` of
+        The `/ingestion` end point allows an DX Admin to register ingestion
+        stream for one or more data resources. All the queries requires a <b> valid DX </b> `id` of
         the resource.
 
-  /ngsi-ld/v1/ingestion/{id}:
     delete:
       tags:
         - Data Ingestion 
@@ -122,8 +163,8 @@ paths:
         - name: token
           in: header
           required: true
-          description: >-
-            A <b> valid IUDX Auth token </b> to process the request for the <b>
+          description: >
+            A <b> valid DX Auth token </b> to process the request for the <b>
             protected API </b> . <br/> This field is <b> mandatory </b> for
             accessing a <b> protected API </b> .  <br/> If not provided
             with a valid token, user will be responded with <b> 401 Unauthorized
@@ -133,16 +174,27 @@ paths:
             maxLength: 512
             pattern: ^[a-zA-Z0-9\/\@\.]*$
         - name: id
-          in: path
-          description: >-
-            A <b> valid IUDX ID </b> of the resource.
+          in: query
+          description: >
+            A <b> valid DX ID </b> of the resource.
           required: true
           schema:
             type: string
             maxLength: 512
+
+
+      x-codeSamples:
+        - lang: 'cURL'
+          label: 'delete data ingestion stream'
+          source: |
+            curl --location --request DELETE 'https://example-di.com/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information' \
+            --header 'token: <tokenValue>' \
+            --header 'Content-Type: application/json' \
+            --data-raw '<payload>'
+
       requestBody:
-        description: >-
-          A <b> valid IUDX ID </b> of the resource. Mandatory attributes and
+        description: >
+          A <b> valid DX ID </b> of the resource. Mandatory attributes and
           values as per the data descriptor in the DX Catalogue
         content:
           application/json:
@@ -176,11 +228,11 @@ paths:
           description: Resource not found
       deprecated: false
       description: >
-        The `/ingestion` end point allows an IUDX Admin to delete ingestion
-        stream for one or more data resources. All the queries requires a <b> valid IUDX </b> `id` of
-        the resource. These apis are intended to be used by IUDX *Administrator*.
+        The `/ingestion` end point allows an DX Admin to delete ingestion
+        stream for one or more data resources. All the queries requires a <b> valid DX </b> `id` of
+        the resource. These apis are intended to be used by DX *Administrator*.
         
-  /ngsi-ld/v1/entities:
+  /entities:
     post:
       tags:
         - Publish Resource Data
@@ -189,7 +241,7 @@ paths:
         - name: token
           in: header
           description:
-            A <b> valid IUDX Auth token </b> to process the request for a <b>
+            A <b> valid DX Auth token </b> to process the request for a <b>
             resource </b> . <br/> This field is <b> mandatory </b> for
             publishing a <b> protected resource </b> .  <br/> If not provided
             with a valid token, user will be responded with <b> 401 Unauthorized
@@ -199,9 +251,19 @@ paths:
             type: string
             maxLength: 512
             pattern: ^[a-zA-Z0-9\/\@\.]*$
+
+      x-codeSamples:
+        - lang: 'cURL'
+          label: 'publish data'
+          source: |
+            curl --location --request POST 'https://example-di.com/ngsi-ld/v1/entities' \
+            --header 'token: <tokenValue>' \
+            --header 'Content-Type: application/json' \
+            --data-raw '<payload>'
+
       requestBody:
-        description: >-
-          A <b> valid IUDX ID </b> of the resource is always required in the body of the message. Mandatory attributes and
+        description: >
+          A <b> valid DX ID </b> of the resource is always required in the body of the message. Mandatory attributes and
           values as per the data descriptor in the DX Catalogue. 
           A Sample is shown below for some resource according to their data descriptor defined in DX catalogue server.
         required: true
@@ -230,7 +292,7 @@ paths:
           description: Unauthorized
       deprecated: false
     description: >
-      A Post Entity API is used by <b>IUDX Data *Providers* and *Delegate*</b> to publish data into the DX platform. <br/> As the POST method of the <b>/entities</b> endpoint is a protected endpoint a<b> valid IUDX Auth token </b> is <b> mandatory </b>  in the header parameter of the request.<br/> The request body for this API shall contain the data to be published in JSON format as per the data-descriptor available in <b>IUDX catalogue server
+      A Post Entity API is used by <b>DX Data *Providers* and *Delegate*</b> to publish data into the DX platform. <br/> As the POST method of the <b>/entities</b> endpoint is a protected endpoint a<b> valid DX Auth token </b> is <b> mandatory </b>  in the header parameter of the request.<br/> The request body for this API shall contain the data to be published in JSON format as per the data-descriptor available in <b>DX catalogue server
 
 
 components:
@@ -269,14 +331,16 @@ components:
 
           maxLength: 50
       example:
-        currentLevel: 1.16
-        referenceLevel: 15.9
-        measuredDistance: 14.74
-        id: >-
-          suratmunicipal.org/6db486cb4f720e8585ba1f45a931c63c25dbbbda/rs.iudx.org.in/surat-itms-realtime-info/surat-itms-live-eta
-        observationDateTime: '2021-09-23T11:56:24+05:30'
-        deivceInfo:
-          deviceId: FWR055
+        {
+          "currentLevel": 100.16,
+          "referenceLevel": 15.9,
+          "measuredDistance": 14.74,
+          "id": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information/surat-itms-live-eta",
+          "observationDateTime": "2020-09-20T18:30:00+05:30",
+          "deviceInfo": {
+            "deviceID": "FWR055"
+          }
+        }
     postingestionrequest:
       title: postingestionrequest
       required:
@@ -291,27 +355,21 @@ components:
           type: string
           maxLength: 50
       example:
-        id: 'iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055'
-        queue: 'ingestion/testing'
+        {
+          "id": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
+          "queue": "test/ingestion/testing"
+        }
     entityresponse:
       title: entityresponse
       type: object
       properties:
         type:
-          type: integer
+          type: string
         title:
           type: string
         results:
           type: object
-          properties:
-            id:
-              type: string
-            observationDateTime:
-              type: string
-            trip_id:
-              type: string
-            route_id:
-              type: string
+          description: array of fields
       example:
         type: urn:dx:rs:success
         title: success

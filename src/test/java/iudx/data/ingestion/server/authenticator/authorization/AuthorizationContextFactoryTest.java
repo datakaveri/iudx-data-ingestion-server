@@ -12,7 +12,7 @@ import iudx.data.ingestion.server.common.Api;
 class AuthorizationContextFactoryTest {
   @Test
   public void test(VertxTestContext vertxTestContext) {
-    Api apis=Api.getInstance("abc", "abc");
+    Api apis=Api.getInstance("abc");
     AuthorizationStrategy delegateAuthStrategy =
         AuthorizationContextFactory.create(IUDXRole.PROVIDER,apis);
     assertTrue(delegateAuthStrategy instanceof ProviderAuthStrategy);
@@ -27,7 +27,7 @@ class AuthorizationContextFactoryTest {
   
   @Test
   public void testFailure(VertxTestContext testContext) {
-    Api apis=Api.getInstance("abc", "abc");
+    Api apis=Api.getInstance("abc");
     assertThrows(IllegalArgumentException.class,  ()->AuthorizationContextFactory.create(null,apis));
     testContext.completeNow();
   }

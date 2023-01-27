@@ -96,7 +96,6 @@ public class ApiServerVerticle extends AbstractVerticle {
   private MeteringService meteringService;
 
   private String dxApiBasePath;
-  private String iudxApiBasePath; 
   private JsonObject jsonConfiguration;
 
 
@@ -125,8 +124,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     
     //LOGGER.debug(config());
     dxApiBasePath=config().getString("dxApiBasePath");
-    iudxApiBasePath=config().getString("iudxApiBasePath");
-    Api apis=Api.getInstance(dxApiBasePath, iudxApiBasePath);
+    Api apis=Api.getInstance(dxApiBasePath);
 
     router = Router.router(vertx);
     router.route().handler(

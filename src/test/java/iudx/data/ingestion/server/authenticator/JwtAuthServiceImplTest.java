@@ -49,8 +49,7 @@ public class JwtAuthServiceImplTest {
     authConfig.put("authServerHost", "auth.test.com");
     authConfig.put("port", 1234);
     authConfig.put("dxApiBasePath","/ngsi-ld/v1");
-    authConfig.put("iudxApiBasePath", "/iudx/v1");
-    
+
     JWTAuthOptions jwtAuthOptions = new JWTAuthOptions();
     jwtAuthOptions.addPubSecKey(
         new PubSecKeyOptions()
@@ -65,8 +64,7 @@ public class JwtAuthServiceImplTest {
     JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
     String dxApiBasePath=authConfig.getString("dxApiBasePath");
-    String iudxApiBasePath=authConfig.getString("iudxApiBasePath");
-    apis=Api.getInstance(dxApiBasePath, iudxApiBasePath);
+    apis=Api.getInstance(dxApiBasePath);
     
     WebClient webClient = AuthenticationVerticle.createWebClient(vertx, authConfig, true);
     jwtAuthenticationService =
