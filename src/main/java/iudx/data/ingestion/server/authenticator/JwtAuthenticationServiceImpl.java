@@ -38,6 +38,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final String path;
   final String audience;
   final Api apis;
+  final String catBasePath;
   final String authServerHost;
   // resourceGroupCache will contain ACL info about all resource group in ingestion server
   private final Cache<String, String> resourceGroupCache =
@@ -50,7 +51,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     this.audience = config.getString(DI_AUDIENCE);
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
-    path = Constants.CAT_RSG_PATH;
+    this.catBasePath = config.getString("dxCatalogueBasePath");
+    this.path = catBasePath + CAT_SEARCH_PATH;
     this.apis=apis;
     authServerHost = config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();

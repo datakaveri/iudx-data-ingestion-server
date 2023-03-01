@@ -49,6 +49,8 @@ public class JwtAuthServiceImplTest {
     authConfig.put("authServerHost", "auth.test.com");
     authConfig.put("port", 1234);
     authConfig.put("dxApiBasePath","/ngsi-ld/v1");
+    authConfig.put("dxCatalogueBasePath", "/iudx/cat/v1");
+    authConfig.put("dxAuthBasePath", "/auth/v1");
 
     JWTAuthOptions jwtAuthOptions = new JWTAuthOptions();
     jwtAuthOptions.addPubSecKey(

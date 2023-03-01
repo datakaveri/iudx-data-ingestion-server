@@ -1,6 +1,8 @@
 package iudx.data.ingestion.server.apiserver.service;
 
 import static iudx.data.ingestion.server.apiserver.util.Util.toList;
+import static iudx.data.ingestion.server.authenticator.Constants.CAT_ITEM_PATH;
+import static iudx.data.ingestion.server.authenticator.Constants.CAT_SEARCH_PATH;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -36,13 +38,15 @@ public class CatalogueService {
   public static WebClient catWebClient;
   private long cacheTimerid;
   private Vertx vertx;
+  private String catBasePath;
 
   public CatalogueService(Vertx vertx, JsonObject config) {
     this.vertx = vertx;
     catHost = config.getString("catServerHost");
     catPort = config.getInteger("catServerPort");
-    catSearchPath = Constants.CAT_RSG_PATH;
-    catItemPath = Constants.CAT_ITEM_PATH;
+    catBasePath = config.getString("dxCatalogueBasePath");
+    catItemPath = catBasePath + CAT_ITEM_PATH;
+    catSearchPath = catBasePath + CAT_SEARCH_PATH;
 
     WebClientOptions options =
         new WebClientOptions().setTrustAll(true).setVerifyHost(false).setSsl(true);

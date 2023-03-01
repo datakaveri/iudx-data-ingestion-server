@@ -10,8 +10,10 @@ public class Constants {
   public static final String KEYSTORE_PATH = "keystore";
   public static final String KEYSTORE_PASSWORD = "keystorePassword";
   public static final long CACHE_TIMEOUT_AMOUNT = 30;
-  public static final String CAT_RSG_PATH = "/iudx/cat/v1/search";
-  public static final String CAT_ITEM_PATH = "/iudx/cat/v1/item";
+  public static final String CAT_SEARCH_PATH = "/search";
+  public static final String AUTH_CERTIFICATE_PATH = "/cert";
+
+  public static final String CAT_ITEM_PATH = "/item";
   public static final String DI_AUDIENCE = "audience";
   public static final String CAT_SERVER_HOST = "catServerHost";
   public static final String CAT_SERVER_PORT = "catServerPort";
