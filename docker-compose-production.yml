@@ -14,7 +14,7 @@ services:
       - LOG_LEVEL=INFO
       - DI_JAVA_OPTS=-Xmx4096m
     volumes:
-      - ./configs/config-depl.json:/usr/share/app/configs/config.json
+      - ./configs/config-dev.json:/usr/share/app/configs/config.json
       - ./configs/keystore.jks:/usr/share/app/configs/keystore.jks
     depends_on:
       - "zookeeper"
