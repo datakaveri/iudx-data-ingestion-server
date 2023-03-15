@@ -54,7 +54,7 @@ pipeline {
     stage('Start Data-Ingestion Server for Integration testing'){
       steps{
         script{
-            sh 'scp src/test/resources/IUDX-Data-Ingestion-Server-APIs-V4.0.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/di/Newman/'
+            sh 'scp src/test/resources/IUDX-Data-Ingestion-Server-APIs-V4.5.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/di/Newman/'
             sh 'docker-compose -f docker-compose.test.yml up -d integTest'
             sh 'sleep 45'
         }
@@ -67,7 +67,7 @@ pipeline {
           script{
             startZap ([host: 'localhost', port: 8090, zapHome: '/var/lib/jenkins/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/OWASP_ZAP/ZAP_2.11.0'])
               sh 'curl http://127.0.0.1:8090/JSON/pscan/action/disableScanners/?ids=10096'
-              sh 'HTTP_PROXY=\'127.0.0.1:8090\' newman run /var/lib/jenkins/iudx/di/Newman/IUDX-Data-Ingestion-Server-APIs-V4.0.postman_collection.json -e /home/ubuntu/configs/di-postman-env.json -n 2 --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/report.html --reporter-htmlextra-skipSensitiveData'
+              sh 'HTTP_PROXY=\'127.0.0.1:8090\' newman run /var/lib/jenkins/iudx/di/Newman/IUDX-Data-Ingestion-Server-APIs-V4.5.postman_collection.json -e /home/ubuntu/configs/di-postman-env.json -n 2 --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/report.html --reporter-htmlextra-skipSensitiveData'
             runZapAttack()
           }
         }
@@ -135,7 +135,7 @@ pipeline {
           steps {
             node('built-in') {
               script{
-                sh 'newman run /var/lib/jenkins/iudx/di/Newman/IUDX-Data-Ingestion-Server-APIs-V4.0.postman_collection.json -e /home/ubuntu/configs/cd/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/cd-report.html --reporter-htmlextra-skipSensitiveData'
+                sh 'newman run /var/lib/jenkins/iudx/di/Newman/IUDX-Data-Ingestion-Server-APIs-V4.5.postman_collection.json -e /home/ubuntu/configs/cd/di-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/di/Newman/report/cd-report.html --reporter-htmlextra-skipSensitiveData'
               }
             }
           }
