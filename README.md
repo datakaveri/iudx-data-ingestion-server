@@ -30,9 +30,9 @@ The api docs can be found [here] *need to add the link here*.
 
 ### External dependencies installation
 
-The Data ingestion pipeline connects to various external dependencies namely
+The Data ingestion pipeline connects to external dependencies namely
  - RabbitMQ
- - ImmuDB
+
 
 Find the installations of the above along with the configurations to modify the database url, port and associated credentials in the appropriate sections [here](SETUP.md)
 

@@ -1,5 +1,6 @@
 package iudx.data.ingestion.server.apiserver;
 
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.SUCCESS;
 import static iudx.data.ingestion.server.apiserver.util.Constants.API;
 import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
 import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
@@ -18,8 +19,8 @@ import static iudx.data.ingestion.server.apiserver.util.Constants.RESPONSE_SIZE;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
 import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
-import static iudx.data.ingestion.server.metering.util.Constants.PRIMARY_KEY;
-import static iudx.data.ingestion.server.metering.util.Constants.PROVIDER_ID;
+import static iudx.data.ingestion.server.metering.util.Constants.*;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -27,6 +28,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import io.vertx.core.json.JsonArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.AbstractVerticle;
@@ -259,7 +262,11 @@ public class ApiServerVerticle extends AbstractVerticle {
             LOGGER.info("Success: Ingestion Success");
             routingContext.data().put(RESPONSE_SIZE,0);
             Future.future(fu -> updateAuditTable(routingContext));
-            handleSuccessResponse(response, 201, handler.result().toString());
+            JsonObject responseJson = new JsonObject()
+                    .put(JSON_TYPE, SUCCESS.getUrn())
+                    .put(JSON_TITLE, SUCCESS.getMessage())
+                    .put(RESULTS, new JsonArray().add(new JsonObject().put("detail", "message published successfully,ingestion success")));
+            handleSuccessResponse(response, 201, responseJson.toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
             handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
@@ -290,9 +297,13 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.ingestDataPost(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
-            routingContext.data().put(RESPONSE_SIZE,0);
+            routingContext.data().put(RESPONSE_SIZE, 0);
             Future.future(fu -> updateAuditTable(routingContext));
-            handleSuccessResponse(response, 201, handler.result().toString());
+            JsonObject responseJson = new JsonObject()
+                    .put(JSON_TYPE, SUCCESS.getUrn())
+                    .put(JSON_TITLE, SUCCESS.getMessage())
+                    .put(RESULTS, new JsonArray().add(new JsonObject().put("detail", "Creation of resource group and queue successful,Ingest data operation successful")));
+            handleSuccessResponse(response, 201, responseJson.toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
             handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
@@ -323,9 +334,13 @@ public class ApiServerVerticle extends AbstractVerticle {
         databroker.ingestDataDelete(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
-            routingContext.data().put(RESPONSE_SIZE,0);
+            routingContext.data().put(RESPONSE_SIZE, 0);
             Future.future(fu -> updateAuditTable(routingContext));
-            handleSuccessResponse(response, 200, handler.result().toString());
+            JsonObject responseJson = new JsonObject()
+                    .put(JSON_TYPE, SUCCESS.getUrn())
+                    .put(JSON_TITLE, SUCCESS.getMessage())
+                    .put(RESULTS, new JsonArray().add(new JsonObject().put("detail", "Deletion of resource group and queue successful")));
+            handleSuccessResponse(response, 200, responseJson.toString());
           } else if (handler.failed()) {
             LOGGER.error("Fail: Ingestion Fail");
             handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
@@ -347,12 +362,13 @@ public class ApiServerVerticle extends AbstractVerticle {
    */
 
   private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
-    JsonObject res = new JsonObject();
-    res.put(JSON_TYPE, ResponseUrn.SUCCESS.getUrn())
-        .put(JSON_TITLE, ResponseUrn.SUCCESS.getMessage())
-        .put(JSON_DETAIL, ResponseUrn.SUCCESS.getMessage());
+    LOGGER.debug("result350: "+result);
+    /*JsonObject res = new JsonObject();
+    res.put(JSON_TYPE, SUCCESS.getUrn())
+        .put(JSON_TITLE, SUCCESS.getMessage())
+        .put("results", SUCCESS.getMessage());*/
     response.putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON).setStatusCode(statusCode)
-        .end(res.toString());
+        .end(result);
   }
 
   private void handleFailedResponse(HttpServerResponse response, int statusCode,
