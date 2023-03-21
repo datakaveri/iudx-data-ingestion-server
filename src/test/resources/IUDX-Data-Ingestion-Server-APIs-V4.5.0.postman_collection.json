@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6633ae61-f8ba-496d-b83b-5c216a19ae71",
+		"_postman_id": "5ac3a068-c60b-4e94-ba7f-5596fe88e21d",
 		"name": "IUDX-Data-Ingestion-Server-APIs-V4.5.0",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -234,8 +234,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],
@@ -480,8 +481,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],
@@ -610,8 +612,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"      pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],
@@ -752,8 +755,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],
@@ -882,8 +886,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],
@@ -1033,8 +1038,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],
@@ -1184,8 +1190,9 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"    pm.expect(body).to.have.property(\"title\", \"success\");",
-									"    pm.expect(body).to.have.property(\"detail\", \"success\");",
+									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
 									"   ",
 									"});"
 								],

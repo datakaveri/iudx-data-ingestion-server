@@ -11,7 +11,6 @@ This document contains the installation and configuration processes of the exter
 Data Ingestion Pipeline server connects with various external dependencies namely :
 
  - `RabbitMQ` : used to publish and subscribe different types of messages or events.
- - `ImmuDB` : used to store metering related information.
  
  
 ## Setting up RabbitMQ
@@ -41,40 +40,24 @@ In order to connect to the appropriate RabbitMQ instance, required information s
     "requestedChannelMax": <time-in-milliseconds>,
     "networkRecoveryInterval": <time-in-milliseconds>,
     "automaticRecoveryEnabled": "true"
+    "prodVhost": "<prodVhost-name>",
+    "internalVhost": "<internalVhost-name>",
+    "externalVhost": "<externalVhost-name>",
+    
 }
 ```
 
-## Setting up ImmuDB
-
-- Refer to the docker files available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/immudb) to setup > ImmuDB.
-- Refer [this](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/immudb/docker/immudb-config-generator/immudb-config-generator.py) to create table/user.
-- In order to connect to the appropriate ImmuDB database, required information such as meteringDatabaseIP,meteringDatabasePort etc. should be updated in the MeteringVerticle module available in [config-example.json](configs/config-example.json).
-
+## Setting up Auditing(Metering)
 ```
 {
-    "id": "iudx.data.ingestion.server.databroker.DataBrokerVerticle",
+    "id": "iudx.data.ingestion.server.metering.MeteringVerticle",
     "verticleInstances": <num-of-verticle-instances>,
-    "meteringDatabaseIP": "localhost",
-    "meteringDatabasePort": <port-number>,
-    "meteringDatabaseName": <database-name>,
-    "meteringDatabaseUserName": <username-for-immudb>,
-    "meteringDatabasePassword": <password-for-immudb>,
-    "meteringDatabaseTableName": <table-name-for-immudb>,
-    "meteringPoolSize": <pool-size>
 }
 ```
 
-**Metering Table Schema**
-
-```sql
-CREATE TABLE IF NOT EXISTS rsaudit (
-    id VARCHAR[128] NOT NULL, 
-    api VARCHAR[128], 
-    userid VARCHAR[128],
-    epochtime INTEGER,
-    resourceid VARCHAR[200],
-    isotime VARCHAR[128],
-    providerid VARCHAR[128],
-    PRIMARY KEY id
-);
+**Metering Data Process**
 ```
+In order to store metering data it needs to be published into RMQ and make sure 
+"auditing_rs" table must exist in respective database schema.
+```
+

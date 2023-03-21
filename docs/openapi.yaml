@@ -61,24 +61,24 @@ info:
     Gateway behaviours.
 
     The application should address them accordingly.
-    
+  
 
   contact:
     name: For support contact IUDX Team at
     email: support@iudx.org.in
 
 tags:
-- name: Data Ingestion
-  x-displayName: "Data Ingestion Stream"
-  description: |
-    Register or delete data ingestion streams using HTTPs APIs. Once registered, the user can publish data through publish(`/entities`) API as per the DX data descriptor.
-    These apis are intended to be used by DX *Administrator*.
-    
-- name: Publish Resource Data 
-  x-displayName: "Publish Resource Data"
-  description: |
-    Publish Resource data to the created ingestion stream. A provider can use these API to publish resource data periodically over time or as according the resource. User is strictly required to follow the mandatory attribute and values defined in the DX catalogue while publishing data.
-    These apis are intended to be used by DX *Providers*.
+  - name: Data Ingestion
+    x-displayName: "Data Ingestion Stream"
+    description: |
+      Register or delete data ingestion streams using HTTPs APIs. Once registered, the user can publish data through publish(`/entities`) API as per the DX data descriptor.
+      These apis are intended to be used by DX *Administrator*.
+
+  - name: Publish Resource Data
+    x-displayName: "Publish Resource Data"
+    description: |
+      Publish Resource data to the created ingestion stream. A provider can use these API to publish resource data periodically over time or as according the resource. User is strictly required to follow the mandatory attribute and values defined in the DX catalogue while publishing data.
+      These apis are intended to be used by DX *Providers*.
 
 servers:
   - url: 'https://example-di.com/ngsi-ld/v1'
@@ -89,7 +89,7 @@ paths:
   /ingestion:
     post:
       tags:
-        - Data Ingestion 
+        - Data Ingestion
       operationId: Register data ingestion stream
       parameters:
         - name: token
@@ -132,7 +132,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entityresponse'
+                $ref: '#/components/schemas/standardCreateSuccessResponse'
         '204':
           description: Empty Response
         '400':
@@ -155,7 +155,7 @@ paths:
 
     delete:
       tags:
-        - Data Ingestion 
+        - Data Ingestion
       operationId: Delete data ingestion stream
       parameters:
         - name: token
@@ -205,7 +205,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entityresponse'
+                $ref: '#/components/schemas/standardDeleteSuccessResponse'
         '400':
           content:
             application/json:
@@ -229,7 +229,7 @@ paths:
         The `/ingestion` end point allows an DX Admin to delete ingestion
         stream for one or more data resources. All the queries requires a <b> valid DX </b> `id` of
         the resource. These apis are intended to be used by DX *Administrator*.
-        
+
   /entities:
     post:
       tags:
@@ -357,8 +357,8 @@ components:
           "id": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
           "queue": "test/ingestion/testing"
         }
-    entityresponse:
-      title: entityresponse
+    standardCreateSuccessResponse:
+      tile: standardCreateSuccessResponse
       type: object
       properties:
         type:
@@ -373,7 +373,50 @@ components:
       example:
         type: urn:dx:rs:success
         title: success
-        detail: success
+        results: [
+          {
+            "detail":"Creation of resource group and queue successful,Ingest data operation successful"
+          }]
+    standardDeleteSuccessResponse:
+      tile: standardDeleteSuccessResponse
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        results:
+          description: An array of objects
+          type: array
+          items:
+            type: object
+      example:
+        type: urn:dx:rs:success
+        title: success
+        results: [
+          {
+            "detail":"Deletion of resource group and queue successful"
+          }]
+    entityresponse:
+      title: entityresponse
+      ttype: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        results:
+          description: An array of objects
+          type: array
+          items:
+            type: object
+      example:
+        type: urn:dx:rs:success
+        title: success
+        results: [
+          {
+            "detail": "message published successfully,ingestion success"
+          }]
     standardBadRequestErrorResponse:
       title: standardBadRequestErrorResponse
       properties:
