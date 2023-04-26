@@ -34,7 +34,7 @@ public class CatalogueService {
   private static String catItemPath;
   private final Cache<String, List<String>> applicableFilterCache =
       CacheBuilder.newBuilder().maximumSize(1000)
-          .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
+          .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
   private final String catBasePath;
 
   public CatalogueService(Vertx vertx, JsonObject config) {
