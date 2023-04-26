@@ -5,14 +5,14 @@ package iudx.data.ingestion.server.databroker.util;
  * verticle.
  *
  */
-public enum VHosts {
+public enum VirtualHosts {
 
 
   IUDX_PROD("prodVhost"), IUDX_INTERNAL("internalVhost"), IUDX_EXTERNAL("externalVhost");
 
   public String value;
 
-  VHosts(String value) {
+  VirtualHosts(String value) {
     this.value = value;
   }
 

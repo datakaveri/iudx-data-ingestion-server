@@ -1,24 +1,8 @@
 package iudx.data.ingestion.server.apiserver.handlers;
 
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.INVALID_TOKEN;
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.RESOURCE_NOT_FOUND;
-import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
-import static iudx.data.ingestion.server.apiserver.util.Constants.API_METHOD;
-import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
-import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.ENTITIES_URL_REGEX;
-import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
-import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
-import static iudx.data.ingestion.server.apiserver.util.Constants.IID;
-import static iudx.data.ingestion.server.apiserver.util.Constants.INGESTION_URL_REGEX;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_ENTITIES_URL;
-import static iudx.data.ingestion.server.apiserver.util.Constants.NGSILD_INGESTION_URL;
-import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
+import static iudx.data.ingestion.server.apiserver.util.Constants.*;
+
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
@@ -28,6 +12,8 @@ import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
 import iudx.data.ingestion.server.apiserver.util.HttpStatusCode;
 import iudx.data.ingestion.server.authenticator.AuthenticationService;
 import iudx.data.ingestion.server.common.Api;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * IUDX Authentication handler to authenticate token passed in HEADER
@@ -37,16 +23,12 @@ public class AuthHandler implements Handler<RoutingContext> {
   private static final Logger LOGGER = LogManager.getLogger(AuthHandler.class);
   private static final String AUTH_SERVICE_ADDRESS = "iudx.data.ingestion.authentication.service";
   static AuthenticationService authenticator;
-  private final String AUTH_INFO = "authInfo";
+  static Api apis;
   private HttpServerRequest request;
 
-  private  JsonObject jsonConfig;
-  static Api apis;
-
-
-  public static AuthHandler create(Vertx vertx,Api apisEndpoint) {
+  public static AuthHandler create(Vertx vertx, Api apisEndpoint) {
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
-    apis=apisEndpoint;
+    apis = apisEndpoint;
     return new AuthHandler();
   }
 
@@ -61,7 +43,7 @@ public class AuthHandler implements Handler<RoutingContext> {
 
     LOGGER.debug("Info : path " + request.path());
 
-    String token = request.headers().get(HEADER_TOKEN);
+    final String token = request.headers().get(HEADER_TOKEN);
     final String path = getNormalizedPath(request.path());
     final String method = context.request().method().toString();
 
@@ -93,7 +75,6 @@ public class AuthHandler implements Handler<RoutingContext> {
         return;
       }
       context.next();
-      return;
     });
   }
 
@@ -149,8 +130,8 @@ public class AuthHandler implements Handler<RoutingContext> {
     }
     return path;
   }
-  
+
   private String getpathRegex(String path) {
-    return path+"(.*)";
+    return path + "(.*)";
   }
 }

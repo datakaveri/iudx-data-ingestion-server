@@ -14,12 +14,12 @@ class AuthorizationContextFactoryTest {
   public void test(VertxTestContext vertxTestContext) {
     Api apis=Api.getInstance("abc");
     AuthorizationStrategy delegateAuthStrategy =
-        AuthorizationContextFactory.create(IUDXRole.PROVIDER,apis);
+        AuthorizationContextFactory.create(IudxRole.PROVIDER,apis);
     assertTrue(delegateAuthStrategy instanceof ProviderAuthStrategy);
     AuthorizationStrategy providerAuthStrategy =
-        AuthorizationContextFactory.create(IUDXRole.DELEGATE,apis);
+        AuthorizationContextFactory.create(IudxRole.DELEGATE,apis);
     assertTrue(providerAuthStrategy instanceof DelegateAuthStrategy);
-    AuthorizationStrategy adminAuthStrategy = AuthorizationContextFactory.create(IUDXRole.ADMIN,apis);
+    AuthorizationStrategy adminAuthStrategy = AuthorizationContextFactory.create(IudxRole.ADMIN,apis);
     assertTrue(adminAuthStrategy instanceof AdminAuthStrategy);
     vertxTestContext.completeNow();
   }

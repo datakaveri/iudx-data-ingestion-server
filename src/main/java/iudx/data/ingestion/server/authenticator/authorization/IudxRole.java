@@ -2,12 +2,12 @@ package iudx.data.ingestion.server.authenticator.authorization;
 
 import java.util.stream.Stream;
 
-public enum IUDXRole {
+public enum IudxRole {
   CONSUMER("consumer"), PROVIDER("provider"), DELEGATE("delegate"), ADMIN("admin");
 
   private final String role;
 
-  IUDXRole(String role) {
+  IudxRole(String role) {
     this.role = role;
   }
 
@@ -15,7 +15,7 @@ public enum IUDXRole {
     return this.role;
   }
 
-  public static IUDXRole fromRole(final String role) {
+  public static IudxRole fromRole(final String role) {
     return Stream.of(values())
         .filter(v -> v.role.equalsIgnoreCase(role))
         .findAny()

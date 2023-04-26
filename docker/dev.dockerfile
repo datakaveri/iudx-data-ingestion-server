@@ -19,6 +19,9 @@ ENV JAR="iudx.data.ingestion.server-dev-0.0.1-SNAPSHOT-fat.jar"
 WORKDIR /usr/share/app
 # Copying openapi docs 
 COPY docs docs
+COPY iudx-pmd-ruleset.xml iudx-pmd-ruleset.xml
+COPY google_checks.xml google_checks.xml
+
 # Copying dev fatjar from builder stage to final image
 COPY --from=builder /usr/share/app/target/${JAR} ./fatjar.jar
 EXPOSE 8080 8443

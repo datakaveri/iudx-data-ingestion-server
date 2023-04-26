@@ -1,8 +1,5 @@
 package iudx.data.ingestion.server.apiserver.util;
 
-import iudx.data.ingestion.server.apiserver.ApiServerVerticle;
-
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class Constants {
@@ -11,12 +8,13 @@ public class Constants {
   public static final String API_ENDPOINT = "apiEndpoint";
   public static final String API_METHOD = "method";
   public static final String ID = "id";
+  public static final String AUTH_INFO = "authInfo";
 
 
   // NGSI-LD endpoints
 
 
-//  public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
+  //  public static final String NGSILD_BASE_PATH = "/ngsi-ld/v1";
   public static final String NGSILD_ENTITIES_URL = "/entities";
 
   // path regex
@@ -31,8 +29,8 @@ public class Constants {
   public static final String USER_ID = "userid";
   public static final String EPOCH_TIME = "epochTime";
   public static final String ISO_TIME = "isoTime";
-public static final String ORIGIN= "origin";
-public static final String ORIGIN_SERVER ="data-ingestion";
+  public static final String ORIGIN = "origin";
+  public static final String ORIGIN_SERVER = "data-ingestion";
   public static final String IID = "iid";
   public static final String API = "api";
 
@@ -55,14 +53,18 @@ public static final String ORIGIN_SERVER ="data-ingestion";
   public static final String JSON_TITLE = "title";
   public static final String JSON_DETAIL = "detail";
 
-  /** API Documentation endpoint */
+  /**
+   * API Documentation endpoint
+   */
   public static final String ROUTE_STATIC_SPEC = "/apis/spec";
   public static final String ROUTE_DOC = "/apis";
 
-  /** Accept Headers and CORS */
+  /**
+   * Accept Headers and CORS
+   */
   public static final String MIME_APPLICATION_JSON = "application/json";
   public static final String MIME_TEXT_HTML = "text/html";
-  public static final String RESPONSE_SIZE= "response_size";
+  public static final String RESPONSE_SIZE = "response_size";
 
   // messages (Error, Exception, messages..)
   public static final String MSG_BAD_QUERY = "Bad query";
@@ -70,7 +72,8 @@ public static final String ORIGIN_SERVER ="data-ingestion";
   // Validations
   public static final int VALIDATION_ID_MAX_LEN = 512;
   public static final Pattern VALIDATION_ID_PATTERN = Pattern.compile(
-      "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
+      "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}"
+          + "[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
   public static final Pattern VALIDATION_QUEUE_PATTERN =
       Pattern.compile(
           "^[a-zA-Z0-9. _ \\/]{4,100}$");

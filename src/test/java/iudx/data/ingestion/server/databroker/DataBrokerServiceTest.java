@@ -2,7 +2,6 @@ package iudx.data.ingestion.server.databroker;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -10,12 +9,10 @@ import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import iudx.data.ingestion.server.configuration.Configuration;
 import iudx.data.ingestion.server.databroker.util.Util;
-import iudx.data.ingestion.server.databroker.util.VHosts;
+import iudx.data.ingestion.server.databroker.util.VirtualHosts;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
@@ -123,7 +120,7 @@ public class DataBrokerServiceTest {
     RabbitWebClient rabbitWebClient = new RabbitWebClient(vertx, webConfig, propObj);
     rabbitClient = new RabbitClient(client, rabbitWebClient);
     databroker = new DataBrokerServiceImpl(vertx,client, rabbitWebClient, dataBrokerVhost,
-        config,brokerConfig.getString(VHosts.IUDX_INTERNAL.value));
+        config,brokerConfig.getString(VirtualHosts.IUDX_INTERNAL.value));
 
     testContext.completeNow();
   }

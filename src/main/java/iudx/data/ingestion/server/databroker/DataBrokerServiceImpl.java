@@ -1,5 +1,7 @@
 package iudx.data.ingestion.server.databroker;
 
+import static iudx.data.ingestion.server.databroker.util.Constants.*;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.vertx.core.AsyncResult;
@@ -11,12 +13,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import iudx.data.ingestion.server.databroker.util.Util;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.TimeUnit;
-
-import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 public class DataBrokerServiceImpl implements DataBrokerService {
 

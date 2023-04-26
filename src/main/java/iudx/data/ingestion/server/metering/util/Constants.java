@@ -2,7 +2,6 @@ package iudx.data.ingestion.server.metering.util;
 
 public class Constants {
 
-  public static final String ID = "id";
   /* Errors */
   public static final String SUCCESS = "Success";
   public static final String DETAIL = "detail";

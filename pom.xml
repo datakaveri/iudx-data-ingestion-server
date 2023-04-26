@@ -15,7 +15,7 @@
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <apache-log4j2.version>2.17.1</apache-log4j2.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <checkstyle.version>10.3.1</checkstyle.version>
+        <checkstyle.version>10.5.0</checkstyle.version>
         <maven-shade-plugin.version>3.3.0</maven-shade-plugin.version>
         <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
@@ -317,10 +317,10 @@
                     <!-- <violationSeverity>warning</violationSeverity> -->
                     <consoleOutput>true</consoleOutput>
                     <encoding>UTF-8</encoding>
-                    <configLocation>google_checks.xml</configLocation>
-                    <module name="LineLength">
-                        <property name="max" value="120" />
-                    </module>
+                    <configLocation>./google_checks.xml</configLocation>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                    </sourceDirectories>
                 </configuration>
             </plugin>
             <plugin>
@@ -448,6 +448,21 @@
                     </annotationProcessors>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+                <configuration>
+                    <targetJdk>${openjdk.version}</targetJdk>
+                    <rulesets>
+                        <ruleset>./iudx-pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                    <printFailingErrors>true</printFailingErrors>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources</excludeRoot>
+                    </excludeRoots>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -455,37 +470,8 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven-pmd-plugin.version}</version>
-                <configuration>
-                    <targetJdk>11</targetJdk>
-                    <rulesets>
-                        <ruleset>/rulesets/java/braces.xml</ruleset>
-                        <ruleset>/rulesets/java/naming.xml</ruleset>
-                        <ruleset>/rulesets/java/imports.xml</ruleset>
-                        <ruleset>/rulesets/java/unnecessary.xml</ruleset>
-                        <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-                    </rulesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${maven-checkstyle-plugin-google.version}</version>
-                <configuration>
-                    <consoleOutput>true</consoleOutput>
-                    <encoding>UTF-8</encoding>
-                    <configLocation>google_checks.xml</configLocation>
-                    <failOnViolation>false</failOnViolation>
-                </configuration>
-
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>checkstyle</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>3.3.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

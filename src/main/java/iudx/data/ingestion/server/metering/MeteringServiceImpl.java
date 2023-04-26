@@ -1,7 +1,6 @@
 package iudx.data.ingestion.server.metering;
 
-import static iudx.data.ingestion.server.metering.util.Constants.EXCHANGE_NAME;
-import static iudx.data.ingestion.server.metering.util.Constants.ROUTING_KEY;
+import static iudx.data.ingestion.server.metering.util.Constants.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +24,7 @@ public class MeteringServiceImpl implements MeteringService {
     this.dataBrokerService = dataBrokerService;
   }
 
-  public MeteringService insertMeteringValuesInRMQ(JsonObject writeMessage,
+  public MeteringService insertMeteringValuesInRmq(JsonObject writeMessage,
                                                    Handler<AsyncResult<JsonObject>> handler) {
     dataBrokerService.publishMessage(writeMessage, EXCHANGE_NAME, ROUTING_KEY, rmqHandler -> {
       if (rmqHandler.succeeded()) {

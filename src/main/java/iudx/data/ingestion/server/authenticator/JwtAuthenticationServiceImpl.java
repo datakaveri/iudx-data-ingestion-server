@@ -1,9 +1,7 @@
 package iudx.data.ingestion.server.authenticator;
 
 import static iudx.data.ingestion.server.authenticator.Constants.*;
-import java.util.concurrent.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.vertx.core.AsyncResult;
@@ -19,18 +17,21 @@ import io.vertx.ext.web.client.WebClientOptions;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationContextFactory;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationRequest;
 import iudx.data.ingestion.server.authenticator.authorization.AuthorizationStrategy;
-import iudx.data.ingestion.server.authenticator.authorization.IUDXRole;
+import iudx.data.ingestion.server.authenticator.authorization.IudxRole;
 import iudx.data.ingestion.server.authenticator.authorization.JwtAuthorization;
 import iudx.data.ingestion.server.authenticator.authorization.Method;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
 import iudx.data.ingestion.server.common.Api;
+import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
   private static final Logger LOGGER = LogManager.getLogger(JwtAuthenticationServiceImpl.class);
   // resourceIdCache will contain info about resources available(& their ACL) in ingestion server.
   public final Cache<String, String> resourceIdCache = CacheBuilder.newBuilder().maximumSize(1000)
-      .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
+      .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
   final JWTAuth jwtAuth;
   final WebClient catWebClient;
   final String host;
@@ -40,20 +41,16 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final Api apis;
   final String catBasePath;
   final String authServerHost;
-  // resourceGroupCache will contain ACL info about all resource group in ingestion server
-  private final Cache<String, String> resourceGroupCache =
-      CacheBuilder.newBuilder().maximumSize(1000)
-          .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
 
-  public JwtAuthenticationServiceImpl(Vertx vertx, final JWTAuth jwtAuth, final WebClient webClient,
-      final JsonObject config,Api apis) {
+  public JwtAuthenticationServiceImpl(Vertx vertx, final JWTAuth jwtAuth, final JsonObject config,
+                                      Api apis) {
     this.jwtAuth = jwtAuth;
     this.audience = config.getString(DI_AUDIENCE);
     host = config.getString(CAT_SERVER_HOST);
     port = config.getInteger(CAT_SERVER_PORT);
     this.catBasePath = config.getString("dxCatalogueBasePath");
     this.path = catBasePath + CAT_SEARCH_PATH;
-    this.apis=apis;
+    this.apis = apis;
     authServerHost = config.getString("authServerHost");
     WebClientOptions options = new WebClientOptions();
     options.setTrustAll(true).setVerifyHost(false).setSsl(true);
@@ -62,7 +59,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public AuthenticationService tokenIntrospect(JsonObject request, JsonObject authenticationInfo,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                               Handler<AsyncResult<JsonObject>> handler) {
 
     String endPoint = authenticationInfo.getString(API_ENDPOINT);
     String id = authenticationInfo.getString(ID);
@@ -70,16 +67,13 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
-
-    boolean isAdminIngestionEndpoint =endPoint != null && endPoint.equals(apis.getIngestionEndpoint());
-
     ResultContainer result = new ResultContainer();
     jwtDecodeFuture.compose(decodeHandler -> {
       result.jwtData = decodeHandler;
       return isValidAudienceValue(result.jwtData);
     }).compose(audienceHandler -> {
-      LOGGER.debug("audience is valid "+apis.getIngestionEndpoint());
-      LOGGER.debug("endpoint :"+endPoint);
+      LOGGER.debug("audience is valid " + apis.getIngestionEndpoint());
+      LOGGER.debug("endpoint :" + endPoint);
       if (endPoint.equals(apis.getIngestionEndpoint()) && isValidAdminToken(result.jwtData)) {
         //admin token + /ingestion POST, skip id check
         return Future.succeededFuture(true);
@@ -87,7 +81,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
         //check id in token  
         return isValidId(result.jwtData, id);
       }
-    }).compose(validIdHandler ->validateAccess(result.jwtData, authenticationInfo))
+    }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
         .onComplete(completeHandler -> {
           if (completeHandler.succeeded()) {
             LOGGER.debug("Completion handler");
@@ -103,10 +97,6 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
   public Future<JwtData> decodeJwt(String jwtToken) {
     Promise<JwtData> promise = Promise.promise();
-
-    // jwtToken =
-    // "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIzNDliNGI1NS0wMjUxLTQ5MGUtYmVlOS0wMGYzYTVkM2U2NDMiLCJpc3MiOiJhdXRoLnRlc3QuY29tIiwiYXVkIjoiZm9vYmFyLml1ZHguaW8iLCJleHAiOjE2MjU5NDUxMTQsImlhdCI6MTYyNTkwMTkxNCwiaWlkIjoicmc6ZXhhbXBsZS5jb20vOGQ0YjIwZWM0YmYyMWVmYjM2M2U3MjY3MWUxYjViZDc3ZmQ2Y2Y5MS9yZXNvdXJjZS1ncm91cCIsInJvbGUiOiJjb25zdW1lciIsImNvbnMiOnt9fQ.44MehPzbPBgAFWz7k3CSF2b-wHBQktGVJVk-unDLnO3_SrbClyQ3k42PgD7TFKB9H13rqBegr7vI0C4BShZbAw";
-
     TokenCredentials creds = new TokenCredentials(jwtToken);
 
     jwtAuth.authenticate(creds).onSuccess(user -> {
@@ -128,8 +118,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Method method = Method.valueOf(authInfo.getString(METHOD));
     String api = authInfo.getString(API_ENDPOINT);
     AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
-    IUDXRole role = IUDXRole.fromRole(jwtData.getRole());
-    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role,apis);
+    IudxRole role = IudxRole.fromRole(jwtData.getRole());
+    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role, apis);
     LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
     JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
     LOGGER.info("endPoint : " + authInfo.getString(API_ENDPOINT));
@@ -163,19 +153,14 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   }
 
   public boolean isValidAdminToken(JwtData jwtData) {
-    LOGGER.debug("jwtdata : "+jwtData);
-    if (jwtData.getRole() != null && !jwtData.getRole().equals(IUDXRole.ADMIN.getRole())) {
+    LOGGER.debug("jwtdata : " + jwtData);
+    if (jwtData.getRole() != null && !jwtData.getRole().equals(IudxRole.ADMIN.getRole())) {
       return false;
     }
-   
+
     String jwtId = jwtData.getIid().split(":")[1];
     String jwtIss = jwtData.getIss();
-    if (audience != null && audience.equals(jwtId) && jwtIss != null
-        && authServerHost.equalsIgnoreCase(jwtIss)) {
-      return true;
-    } else {
-      return false;
-    }
+    return audience != null && audience.equals(jwtId) && authServerHost.equalsIgnoreCase(jwtIss);
 
   }
 

@@ -21,6 +21,6 @@ public class Constants {
   public static final String JSON_DELEGATE = "delegate";
   public static final String JSON_IID = "iid";
   public static final String JSON_USERID = "userid";
-  
-  public static final List<String> ADMIN_ENDPOINTS=List.of("/ngsi-ld/v1/ingestion");
+
+  public static final List<String> ADMIN_ENDPOINTS = List.of("/ngsi-ld/v1/ingestion");
 }

@@ -1,23 +1,18 @@
 package iudx.data.ingestion.server.metering.util;
 
-import static iudx.data.ingestion.server.metering.util.Constants.DETAIL;
-import static iudx.data.ingestion.server.metering.util.Constants.RESULTS;
-import static iudx.data.ingestion.server.metering.util.Constants.SUCCESS;
-import static iudx.data.ingestion.server.metering.util.Constants.TITLE;
-import static iudx.data.ingestion.server.metering.util.Constants.TOTAL;
-import static iudx.data.ingestion.server.metering.util.Constants.TYPE_KEY;
+import static iudx.data.ingestion.server.metering.util.Constants.*;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import iudx.data.ingestion.server.apiserver.response.ResponseUrn;
 
 public class ResponseBuilder {
-  private final String status;
   private final JsonObject response;
 
-  /** Initialise the object with Success or Failure. */
-  public ResponseBuilder(String status) {
-    this.status = status;
+  /**
+   * Initialise the object with Success or Failure.
+   */
+  public ResponseBuilder() {
     response = new JsonObject();
   }
 
@@ -36,7 +31,9 @@ public class ResponseBuilder {
     return this;
   }
 
-  /** Overloaded methods for Error messages. */
+  /**
+   * Overloaded methods for Error messages.
+   */
   public ResponseBuilder setMessage(String error) {
     response.put(DETAIL, error);
     return this;

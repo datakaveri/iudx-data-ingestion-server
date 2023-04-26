@@ -12,7 +12,7 @@ class JwtDataTest {
 JwtData jwtData=new JwtData();
 @Test
     public void test(VertxTestContext vertxTestContext){
-    assertNull(jwtData.getAccess_token());
+    assertNull(jwtData.getAccessToken());
     assertNull(jwtData.getIss());
     assertEquals(0,jwtData.getExp());
     assertNull(jwtData.getCons());

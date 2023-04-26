@@ -4,12 +4,12 @@ import iudx.data.ingestion.server.common.Api;
 
 public class AuthorizationContextFactory {
 
-  public static AuthorizationStrategy create(IUDXRole role,Api apis) {
-    
-    if(role==null) {
+  public static AuthorizationStrategy create(IudxRole role, Api apis) {
+
+    if (role == null) {
       throw new IllegalArgumentException(role + "role is not defined in IUDX");
     }
-    
+
     switch (role) {
       case PROVIDER: {
         return ProviderAuthStrategy.getInstance(apis);

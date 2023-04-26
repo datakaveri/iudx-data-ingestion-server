@@ -1,8 +1,7 @@
 package iudx.data.ingestion.server.apiserver.service;
 
 import static iudx.data.ingestion.server.apiserver.util.Util.toList;
-import static iudx.data.ingestion.server.authenticator.Constants.CAT_ITEM_PATH;
-import static iudx.data.ingestion.server.authenticator.Constants.CAT_SEARCH_PATH;
+import static iudx.data.ingestion.server.authenticator.Constants.*;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -28,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 public class CatalogueService {
 
   private static final Logger LOGGER = LogManager.getLogger(CatalogueService.class);
+  public static WebClient catWebClient;
   private static String catHost;
   private static int catPort;
   private static String catSearchPath;
@@ -35,13 +35,9 @@ public class CatalogueService {
   private final Cache<String, List<String>> applicableFilterCache =
       CacheBuilder.newBuilder().maximumSize(1000)
           .expireAfterAccess(Constants.CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
-  public static WebClient catWebClient;
-  private long cacheTimerid;
-  private Vertx vertx;
-  private String catBasePath;
+  private final String catBasePath;
 
   public CatalogueService(Vertx vertx, JsonObject config) {
-    this.vertx = vertx;
     catHost = config.getString("catServerHost");
     catPort = config.getInteger("catServerPort");
     catBasePath = config.getString("dxCatalogueBasePath");
@@ -51,11 +47,11 @@ public class CatalogueService {
     WebClientOptions options =
         new WebClientOptions().setTrustAll(true).setVerifyHost(false).setSsl(true);
 
-    if(catWebClient==null){
+    if (catWebClient == null) {
       catWebClient = WebClient.create(vertx, options);
     }
     populateCache();
-    cacheTimerid = vertx.setPeriodic(TimeUnit.DAYS.toMillis(1), handler -> {
+    vertx.setPeriodic(TimeUnit.DAYS.toMillis(1), handler -> {
       populateCache();
     });
   }
@@ -63,7 +59,7 @@ public class CatalogueService {
   /**
    * populate
    *
-   * @return
+   * @return boolean
    */
   public Future<Boolean> populateCache() {
     Promise<Boolean> promise = Promise.promise();
