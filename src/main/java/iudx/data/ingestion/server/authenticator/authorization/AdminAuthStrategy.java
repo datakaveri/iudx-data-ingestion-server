@@ -9,10 +9,6 @@ import java.util.Map;
 public class AdminAuthStrategy implements AuthorizationStrategy {
   static Map<String, List<AuthorizationRequest>> AdminAuthorizationRules = new HashMap<>();
   private static volatile AdminAuthStrategy instance;
-
-  private AdminAuthStrategy() {
-  }
-
   public static AdminAuthStrategy getInstance(Api apis) {
     if (instance == null) {
       synchronized (AdminAuthStrategy.class) {
