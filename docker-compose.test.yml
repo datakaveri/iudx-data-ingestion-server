@@ -17,6 +17,8 @@ services:
       - /home/ubuntu/configs/di-config-test.json:/usr/share/app/configs/config-dev.json
       - /home/ubuntu/configs/keystore-di.jks:/usr/share/app/configs/keystore.jks
       - ./docker/runTests.sh:/usr/share/app/docker/runTests.sh
+      - ./iudx-pmd-ruleset.xml:/usr/share/app/iudx-pmd-ruleset.xml
+      - ./google_checks.xml:/usr/share/app/google_checks.xml
       - ./src/:/usr/share/app/src
       - ${WORKSPACE}:/tmp/test
     networks: 

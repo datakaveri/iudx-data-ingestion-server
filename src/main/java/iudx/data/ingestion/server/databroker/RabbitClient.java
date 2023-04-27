@@ -1,5 +1,7 @@
 package iudx.data.ingestion.server.databroker;
 
+import static iudx.data.ingestion.server.databroker.util.Constants.*;
+
 import com.google.common.cache.Cache;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -9,13 +11,10 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.rabbitmq.RabbitMQClient;
 import iudx.data.ingestion.server.databroker.util.Util;
+import java.util.Optional;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
-
-import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 public class RabbitClient {
 
@@ -72,9 +71,10 @@ public class RabbitClient {
     return promise.future();
   }*/
 
-  public Future<Boolean> populateExchangeCache(String vHost, Cache<String, Boolean> exchangeListCache) {
+  public Future<Boolean> populateExchangeCache(String virtualHost,
+                                               Cache<String, Boolean> exchangeListCache) {
     Promise<Boolean> promise = Promise.promise();
-    String url = "/api/exchanges/" + vHost;
+    String url = "/api/exchanges/" + virtualHost;
     rabbitWebClient.requestAsync(REQUEST_GET, url)
         .onSuccess(ar -> {
           JsonArray response = ar.bodyAsJsonArray();
@@ -94,13 +94,13 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> getExchange(String exchange, String vHost, Boolean doesExchangeExist) {
-    LOGGER.debug("INFO: Getting exchange: {} from vHost: {}", exchange, vHost);
+  public Future<JsonObject> getExchange(String exchange, String virtualHost, Boolean doesExchangeExist) {
+    LOGGER.debug("INFO: Getting exchange: {} from virtualHost: {}", exchange, virtualHost);
     Promise<JsonObject> promise = Promise.promise();
     JsonObject response = new JsonObject();
     if (doesExchangeExist == null) {
       LOGGER.debug("INFO: Cache miss");
-      fetchExchange(exchange, vHost)
+      fetchExchange(exchange, virtualHost)
           .onSuccess(promise::complete)
           .onFailure(ar -> promise.fail(ar.getCause()));
     } else {
@@ -111,20 +111,20 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> getQueue(JsonObject request, String vHost) {
+  public Future<JsonObject> getQueue(JsonObject request, String virtualHost) {
     JsonObject response = new JsonObject();
     Promise<JsonObject> promise = Promise.promise();
     Optional<String> queueOptional = Optional.ofNullable(request.getString("queue"));
     if (queueOptional.isPresent()) {
       String queueName = queueOptional.get();
-      getQueue(queueName, vHost)
+      getQueue(queueName, virtualHost)
           .onComplete(asyncResult -> {
             if (asyncResult.succeeded()) {
               response.put(TITLE, SUCCESS)
                   .put(QUEUE_NAME, queueName);
               Integer status = asyncResult.result().getInteger(TYPE);
               if (status == HttpStatus.SC_NOT_FOUND) {
-                createQueue(queueName, vHost)
+                createQueue(queueName, virtualHost)
                     .onSuccess(ar -> promise.complete(response))
                     .onFailure(promise::fail);
               } else if (status == HttpStatus.SC_OK) {
@@ -146,10 +146,10 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> getQueue(String queue, String vHost) {
+  public Future<JsonObject> getQueue(String queue, String virtualHost) {
     JsonObject response = new JsonObject();
     Promise<JsonObject> promise = Promise.promise();
-    String url = "/api/queues/" + vHost + "/" + Util.encodeString(queue);
+    String url = "/api/queues/" + virtualHost + "/" + Util.encodeString(queue);
     rabbitWebClient.requestAsync(REQUEST_GET, url).onComplete(asyncResult -> {
       if (asyncResult.succeeded()) {
         int status = asyncResult.result().statusCode();
@@ -174,11 +174,11 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> createQueue(String queueName, String vHost) {
+  public Future<JsonObject> createQueue(String queueName, String virtualHost) {
     JsonObject finalResponse = new JsonObject();
     Promise<JsonObject> promise = Promise.promise();
     LOGGER.debug("Info: Creating queue {} for the request", queueName);
-    String url = "/api/queues/" + vHost + "/" + Util.encodeString(queueName);
+    String url = "/api/queues/" + virtualHost + "/" + Util.encodeString(queueName);
     JsonObject arguments = new JsonObject()
         .put(X_MESSAGE_TTL_NAME, X_MESSAGE_TTL_VALUE)
         .put(X_MAXLENGTH_NAME, X_MAXLENGTH_VALUE)
@@ -213,9 +213,9 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> createExchange(String exchangeName, String vHost) {
+  public Future<JsonObject> createExchange(String exchangeName, String virtualHost) {
     Promise<JsonObject> promise = Promise.promise();
-    String url = "/api/exchanges/" + vHost + "/" + Util.encodeString(exchangeName);
+    String url = "/api/exchanges/" + virtualHost + "/" + Util.encodeString(exchangeName);
     JsonObject exchangeProperties = new JsonObject();
     exchangeProperties
         .put(TYPE, EXCHANGE_TYPE)
@@ -247,14 +247,14 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> bindQueue(JsonObject request, String vHost) {
+  public Future<JsonObject> bindQueue(JsonObject request, String virtualHost) {
     JsonObject response = new JsonObject();
     Promise<JsonObject> promise = Promise.promise();
     String exchangeName = Util.encodeString(request.getString(EXCHANGE_NAME));
     String queueName = Util.encodeString(request.getString(QUEUE_NAME));
     String routingKey = request.getString(ROUTING_KEY);
     String url =
-        "/api/bindings/" + vHost + "/e/" + exchangeName + "/q/" + queueName;
+        "/api/bindings/" + virtualHost + "/e/" + exchangeName + "/q/" + queueName;
     JsonObject bindRequest = new JsonObject()
         .put("routing_key", routingKey);
 
@@ -270,16 +270,16 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> setTopicPermissions(JsonObject request, String vHost, String userID) {
-    Promise<JsonObject> promise = Promise.promise();
-    JsonObject response = new JsonObject();
+  public Future<JsonObject> setTopicPermissions(JsonObject request, String virtualHost, String userId) {
+    final Promise<JsonObject> promise = Promise.promise();
     String exchangeName = request.getString(EXCHANGE_NAME);
-    String url = "/api/permissions/" + vHost + "/" + Util.encodeString(userID);
     JsonObject permissionRequest = new JsonObject();
     permissionRequest.put(EXCHANGE, exchangeName);
     permissionRequest.put(WRITE, ALLOW);
     permissionRequest.put(READ, DENY);
     permissionRequest.put(CONFIGURE, DENY);
+    JsonObject response = new JsonObject();
+    String url = "/api/permissions/" + virtualHost + "/" + Util.encodeString(userId);
 
     rabbitWebClient.requestAsync(REQUEST_PUT, url, permissionRequest).onComplete(result -> {
       if (result.succeeded()) {
@@ -326,10 +326,10 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> deleteExchange(String exchangeName, String vHost) {
+  public Future<JsonObject> deleteExchange(String exchangeName, String virtualHost) {
     LOGGER.debug("Info : RabbitClient#deleteExchange() started");
     Promise<JsonObject> promise = Promise.promise();
-    String url = "/api/exchanges/" + vHost + "/" + Util.encodeString(exchangeName);
+    String url = "/api/exchanges/" + virtualHost + "/" + Util.encodeString(exchangeName);
     rabbitWebClient.requestAsync(REQUEST_DELETE, url).onComplete(requestHandler -> {
       JsonObject responseJson = new JsonObject();
       if (requestHandler.succeeded()) {
@@ -352,12 +352,12 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> deleteQueue(String queueName, String vhost) {
+  public Future<JsonObject> deleteQueue(String queueName, String virtualHost) {
     LOGGER.debug("Info : RabbitClient#deleteQueue() started");
     Promise<JsonObject> promise = Promise.promise();
     JsonObject finalResponse = new JsonObject();
     LOGGER.debug("Deleting queue: {}", queueName);
-    String url = "/api/queues/" + vhost + "/" + Util.encodeString(queueName);
+    String url = "/api/queues/" + virtualHost + "/" + Util.encodeString(queueName);
     rabbitWebClient.requestAsync(REQUEST_DELETE, url).onComplete(ar -> {
       if (ar.succeeded()) {
         HttpResponse<Buffer> response = ar.result();
@@ -380,12 +380,12 @@ public class RabbitClient {
     return promise.future();
   }
 
-  private Future<JsonObject> fetchExchange(String exchangeName, String vHost) {
-    LOGGER.debug("INFO: Fetching Exchange: {} from vHost: {}", exchangeName, vHost);
+  private Future<JsonObject> fetchExchange(String exchangeName, String virtualHost) {
+    LOGGER.debug("INFO: Fetching Exchange: {} from virtualHost: {}", exchangeName, virtualHost);
     Promise<JsonObject> promise = Promise.promise();
     JsonObject result = new JsonObject();
     String exchangeUrl = Util.encodeString(exchangeName);
-    String url = "/api/exchanges/" + vHost + "/" + exchangeUrl;
+    String url = "/api/exchanges/" + virtualHost + "/" + exchangeUrl;
     rabbitWebClient.requestAsync(REQUEST_GET, url)
         .onComplete(ar -> {
           if (ar.succeeded()) {

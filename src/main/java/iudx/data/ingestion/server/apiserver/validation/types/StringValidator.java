@@ -1,8 +1,7 @@
 package iudx.data.ingestion.server.apiserver.validation.types;
 
-import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.INVALID_PARAM_VALUE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.QUEUE;
-import static iudx.data.ingestion.server.apiserver.util.Constants.VALIDATION_QUEUE_PATTERN;
+import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
+import static iudx.data.ingestion.server.apiserver.util.Constants.*;
 
 import io.vertx.core.json.JsonObject;
 import iudx.data.ingestion.server.apiserver.exceptions.DxRuntimeException;
@@ -15,8 +14,8 @@ import org.apache.logging.log4j.Logger;
 public class StringValidator implements Validator {
 
   private static final Logger LOGGER = LogManager.getLogger(StringValidator.class);
-  private String value;
-  private JsonObject body;
+  private final String value;
+  private final JsonObject body;
 
   public StringValidator(String value, JsonObject body) {
     this.body = body;
@@ -25,11 +24,11 @@ public class StringValidator implements Validator {
 
   @Override
   public boolean isValid() {
-    if(body.containsKey(QUEUE) && !VALIDATION_QUEUE_PATTERN.matcher(value).matches()){
+    if (body.containsKey(QUEUE) && !VALIDATION_QUEUE_PATTERN.matcher(value).matches()) {
       LOGGER.info("Invalid Queue Value");
       throw new DxRuntimeException(failureCode(), INVALID_PARAM_VALUE, failureMessage(value));
     }
-     return true;
+    return true;
   }
 
   @Override

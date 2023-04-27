@@ -14,7 +14,7 @@ public enum ResponseUrn {
   MISSING_TOKEN("urn:dx:rs:missingAuthorizationToken", "Token needed and not present"),
   INVALID_TOKEN("urn:dx:rs:invalidAuthorizationToken", "Token is invalid"),
   RESOURCE_NOT_FOUND("urn:dx:rs:resourceNotFound", "Document of given id does not exist"),
-  BAD_REQUEST("urn:dx:rs:badRequest","Bad request"),
+  BAD_REQUEST("urn:dx:rs:badRequest", "Bad request"),
 
 
   LIMIT_EXCEED("urn:dx:rs:requestLimitExceeded", "Operation exceeds the default value of limit"),
@@ -26,7 +26,7 @@ public enum ResponseUrn {
       "Invalid json format in post request [schema mismatch]"),
   INVALID_PARAM_VALUE("urn:dx:rs:invalidParameterValue", "Invalid parameter value passed"),
   INVALID_QUEUE_VALUE("urn:dx:rs:invalidQueueValue", "Invalid Queue value passed"),
-  BAD_REQUEST_URN("urn:dx:rs:badRequest","bad request parameter"),
+  BAD_REQUEST_URN("urn:dx:rs:badRequest", "bad request parameter"),
   BACKING_SERVICE_FORMAT("urn:dx:rs:backend", "format error from backing service [cat,auth etc.]"),
   SCHEMA_READ_ERROR("urn:dx:rs:readError", "Fail to read file"),
   YET_NOT_IMPLEMENTED("urn:dx:rs:general", "urn yet not implemented in backend verticle.");
@@ -41,9 +41,7 @@ public enum ResponseUrn {
   }
 
   public static ResponseUrn fromCode(final String urn) {
-    return Stream.of(values())
-        .filter(v -> v.urn.equalsIgnoreCase(urn))
-        .findAny()
+    return Stream.of(values()).filter(v -> v.urn.equalsIgnoreCase(urn)).findAny()
         .orElse(YET_NOT_IMPLEMENTED); // if backend service dont respond with urn
   }
 

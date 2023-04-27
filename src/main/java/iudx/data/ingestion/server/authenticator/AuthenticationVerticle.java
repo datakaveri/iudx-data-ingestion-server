@@ -1,7 +1,7 @@
 package iudx.data.ingestion.server.authenticator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static iudx.data.ingestion.server.authenticator.Constants.*;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -15,8 +15,8 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
 import iudx.data.ingestion.server.common.Api;
-
-import static iudx.data.ingestion.server.authenticator.Constants.AUTH_CERTIFICATE_PATH;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Authentication Verticle.
@@ -39,7 +39,7 @@ public class AuthenticationVerticle extends AbstractVerticle {
   private ServiceBinder binder;
   private MessageConsumer<JsonObject> consumer;
   private WebClient webClient;
-  
+
   private String dxApiBasePath;
 
   static WebClient createWebClient(Vertx vertx, JsonObject config) {
@@ -74,24 +74,23 @@ public class AuthenticationVerticle extends AbstractVerticle {
       /*
        * Default jwtIgnoreExpiry is false. If set through config, then that value is taken
        */
-      boolean jwtIgnoreExpiry = config().getBoolean("jwtIgnoreExpiry") == null ? false
-          : config().getBoolean("jwtIgnoreExpiry");
+      boolean jwtIgnoreExpiry =
+          config().getBoolean("jwtIgnoreExpiry") != null && config().getBoolean("jwtIgnoreExpiry");
       if (jwtIgnoreExpiry) {
         jwtAuthOptions.getJWTOptions().setIgnoreExpiration(true);
-        LOGGER
-            .warn("JWT ignore expiration set to true, do not set IgnoreExpiration in production!!");
+        LOGGER.warn(
+            "JWT ignore expiration set to true, do not set IgnoreExpiration in production!!");
       }
       JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
-      dxApiBasePath=config().getString("dxApiBasePath");
-      Api apis=Api.getInstance(dxApiBasePath);
-      
-      jwtAuthenticationService = new JwtAuthenticationServiceImpl(vertx, jwtAuth,
-          createWebClient(vertx, config()), config(),apis);
+      dxApiBasePath = config().getString("dxApiBasePath");
+      Api apis = Api.getInstance(dxApiBasePath);
+
+      jwtAuthenticationService = new JwtAuthenticationServiceImpl(vertx, jwtAuth, config(), apis);
       /* Publish the Authentication service with the Event Bus against an address. */
 
-      consumer = binder.setAddress(AUTH_SERVICE_ADDRESS).register(AuthenticationService.class,
-          jwtAuthenticationService);
+      consumer = binder.setAddress(AUTH_SERVICE_ADDRESS)
+          .register(AuthenticationService.class, jwtAuthenticationService);
       LOGGER.info("AUTH service deployed");
 
     }).onFailure(handler -> {

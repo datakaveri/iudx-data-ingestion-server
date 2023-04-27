@@ -1,5 +1,7 @@
 package iudx.data.ingestion.server.databroker;
 
+import static iudx.data.ingestion.server.databroker.util.Constants.*;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
@@ -7,20 +9,15 @@ import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import io.vertx.serviceproxy.ServiceBinder;
-import iudx.data.ingestion.server.databroker.util.VHosts;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static iudx.data.ingestion.server.databroker.util.Constants.*;
+import iudx.data.ingestion.server.databroker.util.VirtualHosts;
 
 public class DataBrokerVerticle extends AbstractVerticle {
 
   private static final String BROKER_SERVICE_ADDRESS = "iudx.data.ingestion.broker.service";
-  private static final Logger LOGGER = LogManager.getLogger(DataBrokerVerticle.class);
-  private DataBrokerService databroker;
+  private DataBrokerService dataBroker;
   private RabbitMQOptions config;
   private RabbitMQClient client;
-  private String dataBrokerIP;
+  private String dataBrokerIp;
   private int dataBrokerPort;
   private int dataBrokerManagementPort;
   private String dataBrokerVhost;
@@ -40,7 +37,7 @@ public class DataBrokerVerticle extends AbstractVerticle {
   public void start() throws Exception {
 
     /* Read the configuration and set the rabbitMQ server properties. */
-    dataBrokerIP = config().getString("dataBrokerIP");
+    dataBrokerIp = config().getString("dataBrokerIP");
     dataBrokerPort = config().getInteger("dataBrokerPort");
     dataBrokerManagementPort = config().getInteger("dataBrokerManagementPort");
     dataBrokerVhost = config().getString("dataBrokerVhost");
@@ -55,13 +52,13 @@ public class DataBrokerVerticle extends AbstractVerticle {
     /* Configure the RabbitMQ Data Broker client with input from config files. */
 
     config = new RabbitMQOptions().setUser(dataBrokerUserName).setPassword(dataBrokerPassword)
-        .setHost(dataBrokerIP).setPort(dataBrokerPort).setVirtualHost(dataBrokerVhost)
+        .setHost(dataBrokerIp).setPort(dataBrokerPort).setVirtualHost(dataBrokerVhost)
         .setConnectionTimeout(connectionTimeout).setRequestedHeartbeat(requestedHeartbeat)
         .setHandshakeTimeout(handshakeTimeout).setRequestedChannelMax(requestedChannelMax)
         .setNetworkRecoveryInterval(networkRecoveryInterval).setAutomaticRecoveryEnabled(true);
 
     webConfig = new WebClientOptions().setKeepAlive(true).setConnectTimeout(86400000)
-        .setDefaultHost(dataBrokerIP).setDefaultPort(dataBrokerManagementPort)
+        .setDefaultHost(dataBrokerIp).setDefaultPort(dataBrokerManagementPort)
         .setKeepAliveTimeout(86400000);
 
     JsonObject webClientProperties =
@@ -75,12 +72,12 @@ public class DataBrokerVerticle extends AbstractVerticle {
     rabbitWebClient = new RabbitWebClient(vertx, webConfig, webClientProperties);
 
     binder = new ServiceBinder(vertx);
-    databroker = new DataBrokerServiceImpl(vertx, client, rabbitWebClient, dataBrokerVhost, config,
-        config().getString(VHosts.IUDX_INTERNAL.value));
+    dataBroker = new DataBrokerServiceImpl(vertx, client, rabbitWebClient, dataBrokerVhost, config,
+        config().getString(VirtualHosts.IUDX_INTERNAL.value));
 
     /* Publish the Data Broker service with the Event Bus against an address. */
     consumer =
-        binder.setAddress(BROKER_SERVICE_ADDRESS).register(DataBrokerService.class, databroker);
+        binder.setAddress(BROKER_SERVICE_ADDRESS).register(DataBrokerService.class, dataBroker);
   }
 
   @Override

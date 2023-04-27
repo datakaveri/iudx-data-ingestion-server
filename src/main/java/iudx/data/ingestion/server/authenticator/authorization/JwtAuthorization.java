@@ -5,9 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class JwtAuthorization {
-
-  private static final Logger LOGGER = LogManager.getLogger(JwtAuthorization.class);
-
   private final AuthorizationStrategy authStrategy;
 
   public JwtAuthorization(final AuthorizationStrategy authStrategy) {

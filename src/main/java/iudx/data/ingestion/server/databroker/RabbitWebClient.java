@@ -1,13 +1,7 @@
 package iudx.data.ingestion.server.databroker;
 
-import static iudx.data.ingestion.server.databroker.util.Constants.PASSWORD;
-import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_DELETE;
-import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_GET;
-import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_POST;
-import static iudx.data.ingestion.server.databroker.util.Constants.REQUEST_PUT;
-import static iudx.data.ingestion.server.databroker.util.Constants.USERNAME;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static iudx.data.ingestion.server.databroker.util.Constants.*;
+
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -17,6 +11,8 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RabbitWebClient {
   private static final Logger LOGGER = LogManager.getLogger(RabbitWebClient.class);
@@ -28,10 +24,10 @@ public class RabbitWebClient {
   RabbitWebClient(Vertx vertx, WebClientOptions webClientOptions, JsonObject propJson) {
     this.username = propJson.getString(USERNAME);
     this.password = propJson.getString(PASSWORD);
-    this.webClient = getRabbitMQWebClient(vertx, webClientOptions);
+    this.webClient = getRabbitMqWebClient(vertx, webClientOptions);
   }
 
-  private WebClient getRabbitMQWebClient(Vertx vertx, WebClientOptions webClientOptions) {
+  private WebClient getRabbitMqWebClient(Vertx vertx, WebClientOptions webClientOptions) {
     return WebClient.create(vertx, webClientOptions);
   }
 

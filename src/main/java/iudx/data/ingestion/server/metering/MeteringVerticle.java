@@ -1,6 +1,6 @@
 package iudx.data.ingestion.server.metering;
 
-import static iudx.data.ingestion.server.databroker.util.Constants.BROKER_SERVICE_ADDRESS;
+import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.MessageConsumer;
@@ -22,7 +22,7 @@ public class MeteringVerticle extends AbstractVerticle {
 
   @Override
   public void start() throws Exception {
-    dataBrokerService = DataBrokerService.createProxy(vertx,BROKER_SERVICE_ADDRESS);
+    dataBrokerService = DataBrokerService.createProxy(vertx, BROKER_SERVICE_ADDRESS);
 
     binder = new ServiceBinder(vertx);
     metering = new MeteringServiceImpl(dataBrokerService);

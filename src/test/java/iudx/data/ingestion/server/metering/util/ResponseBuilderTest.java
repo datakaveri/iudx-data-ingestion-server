@@ -12,7 +12,7 @@ class ResponseBuilderTest {
     ResponseBuilder responseBuilder;
     @Test
     public void test(VertxTestContext vertxTestContext){
-        responseBuilder=new ResponseBuilder("200");
+        responseBuilder=new ResponseBuilder();
         JsonArray jsonArray= new JsonArray().add(123);
 
         assertNotNull(responseBuilder.setCount(200));

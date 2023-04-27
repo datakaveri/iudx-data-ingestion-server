@@ -70,7 +70,7 @@ public class JwtAuthServiceImplTest {
     
     WebClient webClient = AuthenticationVerticle.createWebClient(vertx, authConfig, true);
     jwtAuthenticationService =
-        new JwtAuthenticationServiceImpl(vertx, jwtAuth, webClient, authConfig,apis);
+        new JwtAuthenticationServiceImpl(vertx, jwtAuth,authConfig,apis);
 
     // since test token doesn't contain valid id's, so forcibly put some dummy id in the cache for test.
     openId = "foobar.iudx.io";

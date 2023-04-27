@@ -3,7 +3,6 @@ package iudx.data.ingestion.server.databroker.util;
 import static iudx.data.ingestion.server.databroker.util.Constants.*;
 
 import io.vertx.core.json.JsonObject;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -60,13 +59,11 @@ public class Util {
   }
 
   private static String getRoutingKey(String exchangeName) {
-    StringBuilder sb = new StringBuilder(exchangeName);
-    return sb.append('/').append(ROUTING_KEY_ALL).toString();
+    return exchangeName + '/' + ROUTING_KEY_ALL;
   }
 
   private static String getRoutingKey(String exchangeName, String resourceName) {
-    StringBuilder sb = new StringBuilder(exchangeName);
-    return sb.append('/').append('.').append(resourceName).toString();
+    return exchangeName + '/' + '.' + resourceName;
   }
 
   public static JsonObject getResponseJson(int type, String title, String detail) {

@@ -36,7 +36,7 @@ public class ValidationHandlerTest {
 
     @BeforeEach
     public void setUp(Vertx vertx){
-        validationHandler =new ValidationHandler(vertx,RequestType.ENTITY);
+        validationHandler =new ValidationHandler(RequestType.ENTITY);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ValidationHandlerTest {
        /* parameters = MultiMap.caseInsensitiveMultiMap();
         parameters.set(Constants.ID, "asdasd/asdasd");*/
 
-        validationHandler2 = new ValidationHandler(vertx,RequestType.ENTITY);
+        validationHandler2 = new ValidationHandler(RequestType.ENTITY);
 
         assertThrows(Exception.class, ()-> validationHandler.handle(routingContextMock));
         verify(routingContextMock,times(0)).next();

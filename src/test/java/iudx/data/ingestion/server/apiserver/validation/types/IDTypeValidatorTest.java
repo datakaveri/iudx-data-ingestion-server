@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(VertxExtension.class)
 class IDTypeValidatorTest {
 
-    IDTypeValidator idTypeValidator;
+    IdTypeValidator idTypeValidator;
 
     @BeforeEach
     public void setup(Vertx vertx, VertxTestContext testContext) {
@@ -42,7 +42,7 @@ class IDTypeValidatorTest {
     @Description("geometry type parameter allowed values.")
     public void testValidIDTypeValue(String value, boolean required, Vertx vertx,
                                      VertxTestContext testContext) {
-        idTypeValidator = new IDTypeValidator(value, required);
+        idTypeValidator = new IdTypeValidator(value, required);
         assertTrue(idTypeValidator.isValid());
         testContext.completeNow();
     }
@@ -87,7 +87,7 @@ class IDTypeValidatorTest {
     @Description("id type parameter invalid values.")
     public void testInvalidIDTypeValue(String value, boolean required, Vertx vertx,
                                        VertxTestContext testContext) {
-        idTypeValidator = new IDTypeValidator(value, required);
+        idTypeValidator = new IdTypeValidator(value, required);
         assertThrows(DxRuntimeException.class, () -> idTypeValidator.isValid());
         testContext.completeNow();
     }
