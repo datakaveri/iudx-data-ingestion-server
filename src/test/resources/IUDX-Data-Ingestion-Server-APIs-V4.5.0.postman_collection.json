@@ -15,6 +15,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"pm.environment.set(\"delegateToken\", jsonData.results.accessToken);",
 									"postman.setEnvironmentVariable(\"delegateToken\", jsonData.results.accessToken);"
@@ -82,6 +86,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"pm.environment.set(\"delegateToken-RG\", jsonData.results.accessToken);",
 									"postman.setEnvironmentVariable(\"delegateToken-RG\", jsonData.results.accessToken);"
@@ -149,6 +157,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"pm.environment.set(\"adminToken\", jsonData.results.accessToken);",
 									"postman.setEnvironmentVariable(\"adminToken\", jsonData.results.accessToken);"
@@ -234,9 +246,13 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
+									"",
+									"    ",
 									"   ",
 									"});"
 								],
@@ -481,9 +497,11 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
 									"   ",
 									"});"
 								],
@@ -612,10 +630,11 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"      pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
-									"   ",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -755,9 +774,11 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
 									"   ",
 									"});"
 								],
@@ -886,9 +907,11 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\")",
 									"   ",
 									"});"
 								],
@@ -1038,9 +1061,11 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\")",
 									"   ",
 									"});"
 								],
@@ -1190,9 +1215,11 @@
 									"// Test the response",
 									"pm.test(\"Check response body\", function () {    ",
 									"    const body = pm.response.json();",
-									"     pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
 									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
 									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\")",
 									"   ",
 									"});"
 								],
