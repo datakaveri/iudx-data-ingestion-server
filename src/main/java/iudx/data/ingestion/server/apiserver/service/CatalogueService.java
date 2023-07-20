@@ -1,7 +1,10 @@
 package iudx.data.ingestion.server.apiserver.service;
 
+import static iudx.data.ingestion.server.apiserver.util.Constants.ITEM_TYPES;
 import static iudx.data.ingestion.server.apiserver.util.Util.toList;
-import static iudx.data.ingestion.server.authenticator.Constants.*;
+import static iudx.data.ingestion.server.authenticator.Constants.CACHE_TIMEOUT_AMOUNT;
+import static iudx.data.ingestion.server.authenticator.Constants.CAT_ITEM_PATH;
+import static iudx.data.ingestion.server.authenticator.Constants.CAT_SEARCH_PATH;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -15,9 +18,11 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.predicate.ResponsePredicate;
-import iudx.data.ingestion.server.authenticator.Constants;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -110,6 +115,44 @@ public class CatalogueService {
             promise.fail(responseHandler.cause());
           }
         });
+    return promise.future();
+  }
+
+  // getRelItem
+  public Future<JsonObject> getCAtItem(String id) {
+    LOGGER.debug("get item for id: {} ", id);
+    Promise<JsonObject> promise = Promise.promise();
+
+    catWebClient
+        .get(catPort, catHost, catSearchPath)
+        .addQueryParam("property", "[id]")
+        .addQueryParam("value", "[[" + id + "]]")
+        .addQueryParam("filter", "[id,provider,resourceGroup,type]")
+        .expect(ResponsePredicate.JSON)
+        .send(
+            relHandler -> {
+              if (relHandler.succeeded()
+                  && relHandler.result().bodyAsJsonObject().getInteger("totalHits") > 0) {
+                JsonArray resultArray =
+                    relHandler.result().bodyAsJsonObject().getJsonArray("results");
+                JsonObject response = resultArray.getJsonObject(0);
+
+                Set<String> type = new HashSet<String>(new JsonArray().getList());
+                type = new HashSet<String>(response.getJsonArray("type").getList());
+                Set<String> itemTypeSet =
+                    type.stream().map(e -> e.split(":")[1]).collect(Collectors.toSet());
+                itemTypeSet.retainAll(ITEM_TYPES);
+                String itemType =
+                    itemTypeSet.toString().replaceAll("\\[", "").replaceAll("\\]", "");
+                LOGGER.info("itemType: {} ", itemType);
+                response.put("type", itemType);
+                promise.complete(response);
+              } else {
+                LOGGER.error("catalogue call search api failed: " + relHandler.cause());
+                promise.fail("catalogue call search api failed");
+              }
+            });
+
     return promise.future();
   }
 

@@ -1,6 +1,11 @@
 package iudx.data.ingestion.server.databroker.util;
 
-import static iudx.data.ingestion.server.databroker.util.Constants.*;
+import static iudx.data.ingestion.server.databroker.util.Constants.DETAIL;
+import static iudx.data.ingestion.server.databroker.util.Constants.EXCHANGE_NAME;
+import static iudx.data.ingestion.server.databroker.util.Constants.ROUTING_KEY;
+import static iudx.data.ingestion.server.databroker.util.Constants.ROUTING_KEY_ALL;
+import static iudx.data.ingestion.server.databroker.util.Constants.TITLE;
+import static iudx.data.ingestion.server.databroker.util.Constants.TYPE;
 
 import io.vertx.core.json.JsonObject;
 import java.net.URLEncoder;
@@ -10,12 +15,10 @@ public class Util {
 
   public static JsonObject getMetadata(JsonObject request) {
     JsonObject result = new JsonObject();
-    String id = request.getString("id");
-    String[] arr = id.split("/");
-    String exchangeName = getExchangeName(arr);
+    String exchangeName = getExchangeName(request);
     result.put(EXCHANGE_NAME, exchangeName);
-    if (arr.length == 5) {
-      result.put(ROUTING_KEY, getRoutingKey(exchangeName, getResourceName(arr)));
+    if (request.containsKey("resourceGroup")) {
+      result.put(ROUTING_KEY, getRoutingKey(exchangeName, getResourceName(request)));
     } else {
       result.put(ROUTING_KEY, getRoutingKey(exchangeName));
     }
@@ -26,36 +29,25 @@ public class Util {
     return URLEncoder.encode(s, StandardCharsets.UTF_8);
   }
 
-  private static String getResourceName(String[] arr) {
-    return arr[4];
+  private static String getResourceName(JsonObject request) {
+    return request.getString("id");
   }
 
-  public static String getResourceGroupName(String[] arr) {
-    return arr[3];
+  public static String getResourceGroupName(JsonObject request) {
+    return request.getString("resourceGroup");
   }
 
-  public static String getResourceServerName(String[] arr) {
-    return arr[2];
+  public static String getResourceServerName(JsonObject request) {
+    return request.getString("resourceServer");
   }
 
-  public static String getProviderName(String[] arr) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 2; i++) {
-      sb.append(arr[i]);
-      sb.append('/');
-    }
-    sb.setLength(sb.length() - 1);
-    return sb.toString();
+  public static String getProviderName(JsonObject request) {
+    return request.getString("provider");
   }
 
-  private static String getExchangeName(String[] arr) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 4; i++) {
-      sb.append(arr[i]);
-      sb.append('/');
-    }
-    sb.setLength(sb.length() - 1);
-    return sb.toString();
+  private static String getExchangeName(JsonObject request) {
+    return request.containsKey("resourceGroup") ? request.getString("resourceGroup") :
+        request.getString("id");
   }
 
   private static String getRoutingKey(String exchangeName) {

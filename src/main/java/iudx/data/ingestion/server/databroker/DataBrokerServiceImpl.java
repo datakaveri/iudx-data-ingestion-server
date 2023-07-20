@@ -1,6 +1,15 @@
 package iudx.data.ingestion.server.databroker;
 
-import static iudx.data.ingestion.server.databroker.util.Constants.*;
+import static iudx.data.ingestion.server.databroker.util.Constants.CACHE_TIMEOUT_AMOUNT;
+import static iudx.data.ingestion.server.databroker.util.Constants.DOES_EXCHANGE_EXIST;
+import static iudx.data.ingestion.server.databroker.util.Constants.ERROR;
+import static iudx.data.ingestion.server.databroker.util.Constants.ERROR_MESSAGE;
+import static iudx.data.ingestion.server.databroker.util.Constants.EXCHANGE_NAME;
+import static iudx.data.ingestion.server.databroker.util.Constants.FAILURE;
+import static iudx.data.ingestion.server.databroker.util.Constants.QUEUE_NAME;
+import static iudx.data.ingestion.server.databroker.util.Constants.ROUTING_KEY;
+import static iudx.data.ingestion.server.databroker.util.Constants.SUCCESS;
+import static iudx.data.ingestion.server.databroker.util.Constants.TYPE;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -43,7 +52,8 @@ public class DataBrokerServiceImpl implements DataBrokerService {
     // TODO Auto-generated method stub
     LOGGER.debug("Info : DataBrokerServiceImpl#publishData() started");
     if (request != null && !request.isEmpty()) {
-      JsonObject metaData = Util.getMetadata(request);
+      JsonObject metaData = Util.getMetadata(request.getJsonObject("catItem"));
+      request.remove("catItem");
       String exchange = metaData.getString(EXCHANGE_NAME);
       Boolean doesExchangeExist = exchangeListCache.getIfPresent(exchange);
       rabbitClient.getExchange(exchange, dataBrokerVhost, doesExchangeExist).compose(ar -> {
@@ -74,8 +84,9 @@ public class DataBrokerServiceImpl implements DataBrokerService {
     LOGGER.debug("Info : DataBrokerServiceImpl#ingestData() started");
     if (request != null && !request.isEmpty()) {
       JsonObject object = new JsonObject().put(ERROR, null);
-      JsonObject metaData = Util.getMetadata(request);
+      JsonObject metaData = Util.getMetadata(request.getJsonObject("catItem"));
       String exchangeName = metaData.getString(EXCHANGE_NAME);
+      request.remove("catItem");
       rabbitClient.getQueue(request, dataBrokerVhost).compose(ar -> {
         LOGGER.debug("Info: Get queue successful");
         object.mergeIn(metaData).put(QUEUE_NAME, ar.getString(QUEUE_NAME))
@@ -107,7 +118,7 @@ public class DataBrokerServiceImpl implements DataBrokerService {
                                             Handler<AsyncResult<JsonObject>> handler) {
     LOGGER.debug("Info: DataBrokerServiceImpl#ingestDataDelete() started");
     if (request != null && !request.isEmpty()) {
-      JsonObject metaData = Util.getMetadata(request);
+      JsonObject metaData = Util.getMetadata(request.getJsonObject("catItem"));
       String exchangeName = metaData.getString(EXCHANGE_NAME);
       rabbitClient.deleteExchange(exchangeName, dataBrokerVhost).onSuccess(ar -> {
         LOGGER.debug("Deletion of exchange successful");
