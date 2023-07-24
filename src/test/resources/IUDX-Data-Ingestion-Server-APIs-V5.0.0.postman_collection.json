@@ -1,0 +1,1461 @@
+{
+	"info": {
+		"_postman_id": "21cc4dff-38e3-42dd-b3e8-6f1e1b4c25fa",
+		"name": "IUDX-Data-Ingestion-Server-APIs-V5.0.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"item": [
+				{
+					"name": "Get DELEGATE token for uploading a Resource",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"delegateToken\", jsonData.results.accessToken);",
+									"postman.setEnvironmentVariable(\"delegateToken\", jsonData.results.accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "clientId",
+								"value": "{{clientID}}",
+								"type": "text"
+							},
+							{
+								"key": "clientSecret",
+								"value": "{{clientSecret}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemId\": \"83c2e5c2-3574-4e11-9530-2b1fbdfce832\", \n  \"itemType\": \"resource\",\n  \"role\": \"delegate\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{auth-url}}/{{dxAuthBasePath}}/token",
+							"protocol": "https",
+							"host": [
+								"{{auth-url}}"
+							],
+							"path": [
+								"{{dxAuthBasePath}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DELEGATE token for uploading a Resource Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"delegateToken-RG\", jsonData.results.accessToken);",
+									"postman.setEnvironmentVariable(\"delegateToken-RG\", jsonData.results.accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "clientId",
+								"value": "{{clientID}}",
+								"type": "text"
+							},
+							{
+								"key": "clientSecret",
+								"value": "{{clientSecret}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemId\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\", \n  \"itemType\": \"resource_group\",\n  \"role\": \"delegate\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{auth-url}}/{{dxAuthBasePath}}/token",
+							"protocol": "https",
+							"host": [
+								"{{auth-url}}"
+							],
+							"path": [
+								"{{dxAuthBasePath}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ADMIN token for uploading a Resource/Resource Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"adminToken\", jsonData.results.accessToken);",
+									"postman.setEnvironmentVariable(\"adminToken\", jsonData.results.accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "clientId",
+								"value": "{{clientID}}",
+								"type": "text"
+							},
+							{
+								"key": "clientSecret",
+								"value": "{{clientSecret}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemId\": \"rs.iudx.io\", \n  \"itemType\": \"resource_server\",\n  \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{auth-url}}/{{dxAuthBasePath}}/token",
+							"protocol": "https",
+							"host": [
+								"{{auth-url}}"
+							],
+							"path": [
+								"{{dxAuthBasePath}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/entites request",
+			"item": [
+				{
+					"name": "201 (success) Publish with Resource Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
+									"",
+									"    ",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{delegateToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"currentLevel\": 100.16,\n            \"referenceLevel\": 15.9,\n            \"measuredDistance\": 14.74,\n            \"id\": \"83c2e5c2-3574-4e11-9530-2b1fbdfce832\",\n            \"observationDateTime\": \"2020-09-20T18:30:00+05:30\",\n            \"deviceInfo\": {\n                \"deviceID\": \"FWR055\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"entities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "201 (success) Publish with ResourceGroup Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
+									"",
+									"    ",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{delegateToken-RG}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"currentLevel\": 100.16,\n            \"referenceLevel\": 15.9,\n            \"measuredDistance\": 14.74,\n            \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n            \"observationDateTime\": \"2020-09-20T18:30:00+05:30\",\n            \"deviceInfo\": {\n                \"deviceID\": \"FWR055\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"entities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 (Bad Request) Not a Json Input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 400 (Bad Request Data)\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Bad request\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Bad query\");",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"currentLevel\": 1.16,\n            \"referenceLevel\": 15.9,\n            \"measuredDistance\": 14.74,\n            \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n            \"observationDateTime\": \"2020-09-20T18:30:00+05:30\",\n            \"deviceInfo\": {\n                \"deviceID\": \"FWR055\"\n            }\n        ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"entities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "405 (Method Not Allowed) Invalid API method",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 405 (Method Not Allowed)\", function () {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"currentLevel\": 1.16,\n            \"referenceLevel\": 15.9,\n            \"measuredDistance\": 14.74,\n            \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n            \"observationDateTime\": \"2020-09-20T18:30:00+05:30\",\n            \"deviceInfo\": {\n                \"deviceID\": \"FWR055\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"entities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (Invalid) Invalid Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIzNDliNGI1NS0wMjUxLTQ5MGUtYmVlOS0wMGYzYTVkM2U2NDMiL",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"currentLevel\": 1.16,\n            \"referenceLevel\": 15.9,\n            \"measuredDistance\": 14.74,\n            \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n            \"observationDateTime\": \"2020-09-20T18:30:00+05:30\",\n            \"deviceInfo\": {\n                \"deviceID\": \"FWR055\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/entities",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"entities"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/ingestion request",
+			"item": [
+				{
+					"name": "201 (success) Admin Creating ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{delegateToken-RG}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Admin Creating ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "abcd",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Admin Deleting ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{delegateToken-RG}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=8b95ab80-2aaf-4636-a65e-7f2563d0d371",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8b95ab80-2aaf-4636-a65e-7f2563d0d371"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Admin Deleting ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=8b95ab80-2aaf-4636-a65e-7f2563d0d371",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8b95ab80-2aaf-4636-a65e-7f2563d0d371"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "201 (success) Delegate Creating ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\");",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{delegateToken-RG}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Delegate Creating ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Delegate Deleting ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\")",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{delegateToken-RG}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"8b95ab80-2aaf-4636-a65e-7f2563d0d371\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=8b95ab80-2aaf-4636-a65e-7f2563d0d371",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8b95ab80-2aaf-4636-a65e-7f2563d0d371"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Delegate Deleting ResourceGroup and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information\",\n    \"queue\":\"test/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=8b95ab80-2aaf-4636-a65e-7f2563d0d371",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "8b95ab80-2aaf-4636-a65e-7f2563d0d371"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "201 (success) Delegate Creating ResourceId and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 201 (Created)\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\")",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{adminToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"b58da193-23d9-43eb-b98a-a103d4b6103c\",\n    \"queue\": \"flood/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=b58da193-23d9-43eb-b98a-a103d4b6103c",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "b58da193-23d9-43eb-b98a-a103d4b6103c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized) Delegate Creating ResourceId and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"b58da193-23d9-43eb-b98a-a103d4b6103c\",\n    \"queue\": \"flood/ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=b58da193-23d9-43eb-b98a-a103d4b6103c",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "b58da193-23d9-43eb-b98a-a103d4b6103c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200  Delegate Deleting ResourceId and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    const resultsjsonData = body.results[0];",
+									"    pm.expect(body).to.have.property(\"title\", \"success\");",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:rs:success\");",
+									"    pm.expect(body).to.have.property(\"results\");",
+									"    pm.expect(resultsjsonData).to.have.property(\"detail\")",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{adminToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"b58da193-23d9-43eb-b98a-a103d4b6103c\",\n    \"queue\": \"ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=b58da193-23d9-43eb-b98a-a103d4b6103c",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "b58da193-23d9-43eb-b98a-a103d4b6103c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 (not authorized)  Delegate Deleting ResourceId and Queue",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 401 (Not Authorized)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"// Test the response header",
+									"pm.test(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"pm.test(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"title\", \"Unauthorized\");",
+									"    pm.expect(body).to.have.property(\"detail\", \"Unauthorized\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"id\": \"b58da193-23d9-43eb-b98a-a103d4b6103c\",\n    \"queue\": \"ingestion/testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=b58da193-23d9-43eb-b98a-a103d4b6103c",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "b58da193-23d9-43eb-b98a-a103d4b6103c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(405) Method Not Allowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test the response code",
+									"pm.test(\"response is 405 (Method Not Allowed)\", function () {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{adminToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{base_url}}/{{basePath}}/ingestion?id=b58da193-23d9-43eb-b98a-a103d4b6103c",
+							"protocol": "https",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{basePath}}",
+								"ingestion"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "b58da193-23d9-43eb-b98a-a103d4b6103c"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

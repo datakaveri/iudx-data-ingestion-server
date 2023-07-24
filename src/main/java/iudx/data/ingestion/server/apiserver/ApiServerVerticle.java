@@ -248,13 +248,12 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<JsonObject> cAtItem = catalogueService.getCAtItem(id);
-    cAtItem.onComplete(catRsp -> {
+    Future<JsonObject> catItem = catalogueService.getCatItem(id);
+    catItem.onComplete(catRsp -> {
       if (catRsp.succeeded()) {
         LOGGER.info("Success: ID Found in Catalouge.");
         JsonObject catItemJson = catRsp.result();
         requestJson.put("catItem", catItemJson);
-        LOGGER.info("hhkh "+catItemJson);
         databroker.publishData(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
@@ -289,8 +288,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<JsonObject> cAtItem = catalogueService.getCAtItem(id);
-    cAtItem.onComplete(catRsp -> {
+    Future<JsonObject> catItem = catalogueService.getCatItem(id);
+    catItem.onComplete(catRsp -> {
       if (catRsp.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
         JsonObject catItemJson = catRsp.result();
@@ -329,8 +328,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<JsonObject> cAtItem = catalogueService.getCAtItem(id);
-    cAtItem.onComplete(catRsp -> {
+    Future<JsonObject> catItem = catalogueService.getCatItem(id);
+    catItem.onComplete(catRsp -> {
       if (catRsp.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
         JsonObject catItemJson = catRsp.result();

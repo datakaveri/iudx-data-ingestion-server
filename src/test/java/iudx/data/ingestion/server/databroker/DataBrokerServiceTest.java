@@ -1,6 +1,9 @@
 package iudx.data.ingestion.server.databroker;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.VertxExtension;
@@ -10,6 +13,7 @@ import io.vertx.rabbitmq.RabbitMQOptions;
 import iudx.data.ingestion.server.configuration.Configuration;
 import iudx.data.ingestion.server.databroker.util.Util;
 import iudx.data.ingestion.server.databroker.util.VirtualHosts;
+import java.nio.file.LinkOption;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -17,9 +21,16 @@ import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static iudx.data.ingestion.server.databroker.util.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(VertxExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -49,6 +60,7 @@ public class DataBrokerServiceTest {
   private static String resourceId;
   private static String badResourceId;
   private static JsonObject adapterData;
+  static RabbitMQClient rmqClientMock;
 
   private static final Logger logger = LogManager.getLogger(DataBrokerServiceTest.class);
 
@@ -274,10 +286,12 @@ public class DataBrokerServiceTest {
   @DisplayName("Registering an adaptor with only datasetId but not queueName")
   @Order(8)
   void successRegisterAdaptorCaseI(VertxTestContext testContext) {
+    JsonObject adapterDataCopy = adapterData.copy();
+    adapterDataCopy.remove("resourceGroup");
     JsonObject adaptorData = new JsonObject()
         .put("id", datasetId)
-        .put("catItem", adapterData);
-    JsonObject metaData = Util.getMetadata(adapterData);
+        .put("catItem", adapterDataCopy);
+    JsonObject metaData = Util.getMetadata(adapterDataCopy);
     JsonObject expected = new JsonObject()
         .put(TYPE, SUCCESS)
         .put(QUEUE_NAME, DEFAULT_QUEUE)
@@ -288,6 +302,7 @@ public class DataBrokerServiceTest {
       if (ar.succeeded()) {
         JsonObject response = ar.result();
         logger.info("Ingest Data Post response: {}", response);
+        logger.info("expected: "+expected);
         assertEquals(expected, response);
         testContext.completeNow();
       } else {
@@ -498,6 +513,25 @@ public class DataBrokerServiceTest {
     rabbitClient.deleteQueue(queueName, dataBrokerVhost)
         .onSuccess(ar -> {
           logger.debug("Delete queue response: {}", ar);
+          assertEquals(expected, ar);
+          testContext.completeNow();
+        })
+        .onFailure(ar -> {
+          logger.error("Delete queue failed due to {}", ar.getCause().toString());
+          testContext.failNow(ar.getCause());
+        });
+  }
+  @Test
+  @DisplayName("Get Get/Fetch exchange")
+  @Order(16)
+  void successgetExchange(VertxTestContext testContext) {
+    JsonObject expected = new JsonObject()
+        .put("does_exchange_exist", false);
+
+    rabbitClient.getExchange(queueName, dataBrokerVhost,null)
+        .onSuccess(ar -> {
+          logger.debug("Delete queue response: {}", ar);
+          logger.info(ar);
           assertEquals(expected, ar);
           testContext.completeNow();
         })
