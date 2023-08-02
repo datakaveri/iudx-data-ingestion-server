@@ -2,6 +2,8 @@ package iudx.data.ingestion.server.authenticator;
 
 import static iudx.data.ingestion.server.authenticator.Constants.API_ENDPOINT;
 import static iudx.data.ingestion.server.authenticator.Constants.ID;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_IID;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_USERID;
 import static iudx.data.ingestion.server.authenticator.Constants.METHOD;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -583,5 +585,55 @@ public class JwtAuthServiceImplTest {
     boolean result=jwtAuthenticationService.isValidAdminToken(jwtData);
     assertTrue(result);
     testContext.completeNow();
+  }
+  @Test
+  @DisplayName("success - valid Role")
+  public void testValidRole(VertxTestContext testContext) {
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
+    jwtData.setRole("admin");
+
+    jwtAuthenticationService
+        .isValidRole(jwtData)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                assertEquals("rs.iudx.io", handler.result().getString(JSON_IID));
+                assertEquals(
+                    "844e251b-574b-46e6-9247-f76f1f70a637",
+                    handler.result().getString(JSON_USERID));
+                testContext.completeNow();
+              } else {
+                testContext.failNow("failed");
+              }
+            });
+  }
+
+  @Test
+  @DisplayName("fail - valid Role")
+  public void testinValidRole(VertxTestContext testContext) {
+    JwtData jwtData = new JwtData();
+    jwtData.setIss("auth.test.com");
+    jwtData.setAud("rs.iudx.io");
+    jwtData.setExp(1627408865L);
+    jwtData.setIat(1627408865L);
+    jwtData.setIid("rs:rs.iudx.io");
+    jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
+    jwtData.setRole("consumer");
+
+    jwtAuthenticationService
+        .isValidRole(jwtData)
+        .onFailure(
+            handler -> {
+              JsonObject jsonObject = new JsonObject(handler.getMessage());
+              assertTrue(jsonObject.containsKey("401"));
+              assertEquals("Only admin access allowed.", jsonObject.getString("401"));
+              testContext.completeNow();
+            });
   }
 }

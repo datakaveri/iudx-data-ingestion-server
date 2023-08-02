@@ -1,5 +1,7 @@
 package iudx.data.ingestion.server.apiserver.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class Constants {
@@ -72,10 +74,24 @@ public class Constants {
   // Validations
   public static final int VALIDATION_ID_MAX_LEN = 512;
   public static final Pattern VALIDATION_ID_PATTERN = Pattern.compile(
-      "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}"
-          + "[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");
+      "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+
+  /*
+    "^[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z0-9.]{4,100}/{1}[a-zA-Z.]{4,100}/{1}"
+        + "[a-zA-Z-_.]{4,100}/{1}[a-zA-Z0-9-_.]{4,100}$");*/
   public static final Pattern VALIDATION_QUEUE_PATTERN =
       Pattern.compile(
           "^[a-zA-Z0-9. _ \\/]{4,100}$");
-
+  public static final String PROVIDER = "provider";
+  public static final String ITEM_TYPE_RESOURCE = "Resource";
+  public static final String ITEM_TYPE_RESOURCE_GROUP = "ResourceGroup";
+  public static final String ITEM_TYPE_RESOURCE_SERVER = "ResourceServer";
+  public static final String ITEM_TYPE_PROVIDER = "Provider";
+  public static final ArrayList<String> ITEM_TYPES =
+      new ArrayList<String>(
+          Arrays.asList(
+              ITEM_TYPE_RESOURCE,
+              ITEM_TYPE_RESOURCE_GROUP,
+              ITEM_TYPE_RESOURCE_SERVER,
+              ITEM_TYPE_PROVIDER));
 }

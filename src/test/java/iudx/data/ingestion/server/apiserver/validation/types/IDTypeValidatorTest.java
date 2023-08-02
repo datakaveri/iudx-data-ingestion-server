@@ -29,10 +29,10 @@ class IDTypeValidatorTest {
         // Add any valid value which will pass successfully.
         return Stream.of(
                 Arguments.of(
-                        "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information/surat-itms-live-eta",
+                        "5b7556b5-0779-4c47-9cf2-3f209779aa22",
                         true),
                 Arguments.of(
-                        "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/pune-env-flood/FWR055",
+                        "5b7556b5-0779-4c47-9cf2-3f209779aa22",
                         true),
                 Arguments.of(null, false));
     }

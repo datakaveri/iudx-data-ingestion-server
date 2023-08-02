@@ -34,8 +34,6 @@ public class CatalogueServiceTest {
     Vertx vertxObj;
     JsonObject config;
     CatalogueService catalogueService;
-
-
     @Mock
     HttpRequest<Buffer> httpRequest;
     @Mock
@@ -130,7 +128,21 @@ public class CatalogueServiceTest {
             }
         });
         verify(CatalogueService.catWebClient,times(2)).get(anyInt(),anyString(),anyString());
-        verify(httpRequest,times(2)).send(any());
+        verify(httpRequest, times(2)).send(any());
+    }
+
+    @Test
+    @DisplayName("Testing pass for get item from cat server")
+    public void testGetCatItemSucess(VertxTestContext vertxTestContext) {
+        JsonObject responseJSonObject = new JsonObject();
+        responseJSonObject.put("type", "urn:dx:cat:Success");
+        responseJSonObject.put("totalHits", 10)
+            .put("results", new JsonArray().add(new JsonObject()));
+        when(httpResponse.bodyAsJsonObject()).thenReturn(responseJSonObject);
+        catalogueService.getCatItem("dummy_id");
+        vertxTestContext.completeNow();
+        verify(CatalogueService.catWebClient, times(2)).get(anyInt(), anyString(), anyString());
+        verify(httpRequest, times(2)).send(any());
     }
 
 }

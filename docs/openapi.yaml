@@ -1,4 +1,3 @@
-
 openapi: 3.0.2
 
 
@@ -17,7 +16,7 @@ consumes:
 
 info:
   title: Data Exchange Data Ingestion Server APIs
-  version: 4.5.0
+  version: 5.0.0
   description: >
     # Introduction
 
@@ -178,7 +177,7 @@ paths:
           required: true
           schema:
             type: string
-            maxLength: 512
+            format: uuid
 
 
       x-codeSamples:
@@ -314,7 +313,7 @@ components:
           maxLength: 50
         id:
           type: string
-          maxLength: 512
+          format: uuid
         measuredDistance:
           type: number
           maxLength: 50
@@ -333,7 +332,7 @@ components:
           "currentLevel": 100.16,
           "referenceLevel": 15.9,
           "measuredDistance": 14.74,
-          "id": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information/surat-itms-live-eta",
+          "id": "33b75d3e-bc65-40e5-97e4-ad4e99f60354",
           "observationDateTime": "2020-09-20T18:30:00+05:30",
           "deviceInfo": {
             "deviceID": "FWR055"
@@ -348,17 +347,17 @@ components:
       properties:
         id:
           type: string
-          maxLength: 512
+          format: uuid
         queue:
           type: string
           maxLength: 50
       example:
         {
-          "id": "iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information",
+          "id": "33b75d3e-bc65-40e5-97e4-ad4e99f60354",
           "queue": "test/ingestion/testing"
         }
     standardCreateSuccessResponse:
-      tile: standardCreateSuccessResponse
+      title: standardCreateSuccessResponse
       type: object
       properties:
         type:
@@ -378,7 +377,7 @@ components:
             "detail":"Creation of resource group and queue successful,Ingest data operation successful"
           }]
     standardDeleteSuccessResponse:
-      tile: standardDeleteSuccessResponse
+      title: standardDeleteSuccessResponse
       type: object
       properties:
         type:
@@ -399,7 +398,7 @@ components:
           }]
     entityresponse:
       title: entityresponse
-      ttype: object
+      type: object
       properties:
         type:
           type: string

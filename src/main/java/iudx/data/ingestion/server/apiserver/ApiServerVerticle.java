@@ -1,8 +1,36 @@
 package iudx.data.ingestion.server.apiserver;
 
 import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.SUCCESS;
-import static iudx.data.ingestion.server.apiserver.util.Constants.*;
-import static iudx.data.ingestion.server.metering.util.Constants.*;
+import static iudx.data.ingestion.server.apiserver.util.Constants.API;
+import static iudx.data.ingestion.server.apiserver.util.Constants.API_ENDPOINT;
+import static iudx.data.ingestion.server.apiserver.util.Constants.APPLICATION_JSON;
+import static iudx.data.ingestion.server.apiserver.util.Constants.CONTENT_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.EPOCH_TIME;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_ACCEPT;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_ALLOW_ORIGIN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_CONTENT_LENGTH;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_CONTENT_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_HOST;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_ORIGIN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_REFERER;
+import static iudx.data.ingestion.server.apiserver.util.Constants.HEADER_TOKEN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ID;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ISO_TIME;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_DETAIL;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TITLE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.JSON_TYPE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_APPLICATION_JSON;
+import static iudx.data.ingestion.server.apiserver.util.Constants.MIME_TEXT_HTML;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ORIGIN;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ORIGIN_SERVER;
+import static iudx.data.ingestion.server.apiserver.util.Constants.PROVIDER;
+import static iudx.data.ingestion.server.apiserver.util.Constants.RESPONSE_SIZE;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_DOC;
+import static iudx.data.ingestion.server.apiserver.util.Constants.ROUTE_STATIC_SPEC;
+import static iudx.data.ingestion.server.apiserver.util.Constants.USER_ID;
+import static iudx.data.ingestion.server.metering.util.Constants.PRIMARY_KEY;
+import static iudx.data.ingestion.server.metering.util.Constants.PROVIDER_ID;
+import static iudx.data.ingestion.server.metering.util.Constants.RESULTS;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -220,16 +248,18 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<Boolean> isIdExist = catalogueService.isItemExist(id);
-    LOGGER.info("Success: " + isIdExist.succeeded());
-    isIdExist.onComplete(idExistence -> {
-      if (idExistence.succeeded()) {
+    Future<JsonObject> catItem = catalogueService.getCatItem(id);
+    catItem.onComplete(catRsp -> {
+      if (catRsp.succeeded()) {
         LOGGER.info("Success: ID Found in Catalouge.");
+        JsonObject catItemJson = catRsp.result();
+        requestJson.put("catItem", catItemJson);
         databroker.publishData(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
-            routingContext.data().put(RESPONSE_SIZE, 0);
-            Future.future(fu -> updateAuditTable(routingContext));
+            JsonObject authInfo = (JsonObject) routingContext.data().get("authInfo");
+            authInfo.mergeIn(catItemJson);
+            Future.future(fu -> updateAuditTable(authInfo));
             JsonObject responseJson = new JsonObject()
                 .put(JSON_TYPE, SUCCESS.getUrn())
                 .put(JSON_TITLE, SUCCESS.getMessage())
@@ -258,16 +288,18 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<Boolean> isIdExist = catalogueService.isItemExist(id);
-    isIdExist.onComplete(idExistence -> {
-      LOGGER.info("Success: " + isIdExist.succeeded());
-      if (idExistence.succeeded()) {
+    Future<JsonObject> catItem = catalogueService.getCatItem(id);
+    catItem.onComplete(catRsp -> {
+      if (catRsp.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
+        JsonObject catItemJson = catRsp.result();
+        requestJson.put("catItem", catItemJson);
         databroker.ingestDataPost(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
-            routingContext.data().put(RESPONSE_SIZE, 0);
-            Future.future(fu -> updateAuditTable(routingContext));
+            JsonObject authInfo = (JsonObject) routingContext.data().get("authInfo");
+            authInfo.mergeIn(catItemJson);
+            Future.future(fu -> updateAuditTable(authInfo));
             JsonObject responseJson = new JsonObject()
                 .put(JSON_TYPE, SUCCESS.getUrn())
                 .put(JSON_TITLE, SUCCESS.getMessage())
@@ -296,16 +328,18 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.info("ID " + id);
     /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<Boolean> isIdExist = catalogueService.isItemExist(id);
-    LOGGER.info("Success: " + isIdExist.succeeded());
-    isIdExist.onComplete(idExistence -> {
-      if (idExistence.succeeded()) {
+    Future<JsonObject> catItem = catalogueService.getCatItem(id);
+    catItem.onComplete(catRsp -> {
+      if (catRsp.succeeded()) {
         LOGGER.info("Success: ID Found in Catalogue.");
+        JsonObject catItemJson = catRsp.result();
+        requestJson.put("catItem", catItemJson);
         databroker.ingestDataDelete(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
-            routingContext.data().put(RESPONSE_SIZE, 0);
-            Future.future(fu -> updateAuditTable(routingContext));
+            JsonObject authInfo = (JsonObject) routingContext.data().get("authInfo");
+            authInfo.mergeIn(catItemJson);
+            Future.future(fu -> updateAuditTable(authInfo));
             JsonObject responseJson = new JsonObject()
                 .put(JSON_TYPE, SUCCESS.getUrn())
                 .put(JSON_TITLE, SUCCESS.getMessage())
@@ -333,11 +367,6 @@ public class ApiServerVerticle extends AbstractVerticle {
    */
 
   private void handleSuccessResponse(HttpServerResponse response, int statusCode, String result) {
-    LOGGER.debug("result350: " + result);
-    /*JsonObject res = new JsonObject();
-    res.put(JSON_TYPE, SUCCESS.getUrn())
-        .put(JSON_TITLE, SUCCESS.getMessage())
-        .put("results", SUCCESS.getMessage());*/
     response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(statusCode)
         .end(result);
   }
@@ -354,10 +383,8 @@ public class ApiServerVerticle extends AbstractVerticle {
         statusCode.getDescription());
   }
 
-  private Future<Void> updateAuditTable(RoutingContext context) {
+  private Future<Void> updateAuditTable(JsonObject auditJson) {
     final Promise<Void> promise = Promise.promise();
-    JsonObject authInfo = (JsonObject) context.data().get("authInfo");
-
     ZonedDateTime zst = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
     long time = zst.toInstant().toEpochMilli();
     String isoTime =
@@ -367,20 +394,18 @@ public class ApiServerVerticle extends AbstractVerticle {
             .toString();
 
     JsonObject request = new JsonObject();
-    String resourceId = authInfo.getString(ID);
+    String resourceId = auditJson.getString(ID);
     String primaryKey = UUID.randomUUID().toString().replace("-", "");
-    String providerId =
-        resourceId.substring(0, resourceId.indexOf('/', resourceId.indexOf('/') + 1));
 
     request.put(PRIMARY_KEY, primaryKey);
-    request.put(PROVIDER_ID, providerId);
+    request.put(PROVIDER_ID, auditJson.getString(PROVIDER));
     request.put(EPOCH_TIME, time);
     request.put(ISO_TIME, isoTime);
-    request.put(USER_ID, authInfo.getValue(USER_ID));
+    request.put(USER_ID, auditJson.getValue(USER_ID));
     request.put(ID, resourceId);
-    request.put(API, authInfo.getValue(API_ENDPOINT));
+    request.put(API, auditJson.getValue(API_ENDPOINT));
     request.put(ORIGIN, ORIGIN_SERVER);
-    request.put(RESPONSE_SIZE, context.data().get(RESPONSE_SIZE));
+    request.put(RESPONSE_SIZE, 0);
     meteringService.insertMeteringValuesInRmq(
         request,
         handler -> {
