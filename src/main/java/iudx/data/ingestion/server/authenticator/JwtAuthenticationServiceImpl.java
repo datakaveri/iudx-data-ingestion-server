@@ -159,9 +159,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     }
 
     String jwtId = jwtData.getIid().split(":")[1];
-    String jwtIss = jwtData.getIss();
-    return audience != null && audience.equals(jwtId) && authServerHost.equalsIgnoreCase(jwtIss);
-
+    return audience != null && audience.equals(jwtId);
   }
 
   public Future<Boolean> isValidId(JwtData jwtData, String id) {
@@ -203,6 +201,5 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     boolean isResourceExist;
 
   }
-
 
 }
