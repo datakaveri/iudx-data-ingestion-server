@@ -26,7 +26,7 @@
         <junit-jupiter.params>5.10.2</junit-jupiter.params>
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <lmax-disruptor.version>4.0.0</lmax-disruptor.version>
-        <jackson-core.version>2.17.0-rc1</jackson-core.version>
+        <jackson-core.version>2.16.1</jackson-core.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
