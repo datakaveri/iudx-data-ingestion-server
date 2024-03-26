@@ -24,7 +24,7 @@ The <b>Data Ingestion Server</b> is the "Ingestion Firewall and Data Cleaning Mi
 
 
 ## API Docs 
-The api docs can be found [here] *need to add the link here*.
+The api docs can be found [here](https://push.cos.iudx.org.in/apis).
 
 ## Prerequisites
 
@@ -37,7 +37,6 @@ The Data ingestion pipeline connects to external dependencies namely
 Find the installations of the above along with the configurations to modify the database url, port and associated credentials in the appropriate sections [here](SETUP.md)
 
 ## Get Started
-
 ### Make configuration
 Make a config file based on the template in `./configs/config-example.json` 
 - Generate a certificate using Lets Encrypt or other methods
