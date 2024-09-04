@@ -23,4 +23,5 @@ public class Constants {
   public static final String JSON_USERID = "userid";
 
   public static final List<String> ADMIN_ENDPOINTS = List.of("/ngsi-ld/v1/ingestion");
+  public static final int JWT_LEEWAY_TIME = 30;
 }
