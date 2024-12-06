@@ -1,7 +1,7 @@
 ARG VERSION="0.0.1-SNAPSHOT"
 
 # Using maven base image in builder stage to build Java code
-FROM maven:3-openjdk-11-slim as builder
+FROM maven:3-eclipse-temurin-21-jammy as builder
 
 WORKDIR /usr/share/app
 COPY pom.xml .
@@ -12,7 +12,7 @@ COPY src src
 RUN mvn clean package -Dmaven.test.skip=true
 
 # Java Runtime as the base for final image
-FROM openjdk:11-jre-slim-buster
+FROM eclipse-temurin:21.0.5_11-jre-jammy
 
 ARG VERSION
 ENV JAR="iudx.data.ingestion.server-dev-0.0.1-SNAPSHOT-fat.jar"
