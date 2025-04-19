@@ -98,7 +98,7 @@ public class RabbitClient {
     LOGGER.debug("INFO: Getting exchange: {} from virtualHost: {}", exchange, virtualHost);
     Promise<JsonObject> promise = Promise.promise();
     JsonObject response = new JsonObject();
-    if (doesExchangeExist == null || !doesExchangeExist) {
+    if (doesExchangeExist == null) {
       LOGGER.debug("INFO: Cache miss");
       fetchExchange(exchange, virtualHost)
           .onSuccess(promise::complete)
@@ -132,7 +132,7 @@ public class RabbitClient {
               } else {
                 promise.fail(asyncResult.cause());
               }
-              LOGGER.debug("Info: Queue {} found for the request", queueName);
+              LOGGER.info("Info: Queue {} found for the request", queueName);
             } else {
               promise.fail(asyncResult.cause());
             }

@@ -66,7 +66,6 @@ public class DataBrokerServiceImpl implements DataBrokerService {
           .getExchange(exchange, dataBrokerVhost, doesExchangeExist)
           .compose(
               ar -> {
-                LOGGER.debug("line 67: Info: " + ar.toString());
                 if (!ar.getBoolean(DOES_EXCHANGE_EXIST, false)) {
                   return Future.failedFuture(
                       "Exchange doesn't exist for provided Resource item");
