@@ -260,7 +260,7 @@ public class ApiServerVerticle extends AbstractVerticle {
             JsonObject authInfo = (JsonObject) routingContext.data().get("authInfo");
             authInfo.mergeIn(catItemJson);
 
-            Future.future(fu -> updateAuditTable(authInfo)); // fire-and-forget audit
+            Future.future(fu -> updateAuditTable(authInfo));
 
             JsonObject responseJson = new JsonObject()
                     .put(JSON_TYPE, SUCCESS.getUrn())

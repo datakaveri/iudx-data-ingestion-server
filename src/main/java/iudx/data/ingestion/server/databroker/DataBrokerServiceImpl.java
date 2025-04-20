@@ -33,8 +33,7 @@ public class DataBrokerServiceImpl implements DataBrokerService {
   private final String dataBrokerVhost;
   private final RabbitMQClient client;
   private final Cache<String, Boolean> exchangeListCache =
-      CacheBuilder.newBuilder().maximumSize(1000)
-          .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
+      CacheBuilder.newBuilder().maximumSize(1000).build();
 
   public DataBrokerServiceImpl(
       Vertx vertx,
