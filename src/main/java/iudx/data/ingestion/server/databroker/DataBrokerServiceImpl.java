@@ -36,13 +36,18 @@ public class DataBrokerServiceImpl implements DataBrokerService {
       CacheBuilder.newBuilder().maximumSize(1000)
           .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
 
-  public DataBrokerServiceImpl(Vertx vertx, RabbitMQClient client, RabbitWebClient rabbitWebClient,
-                               String dataBrokerVhost, RabbitMQOptions config,
-                               String vhostForAuditing) {
+  public DataBrokerServiceImpl(
+      Vertx vertx,
+      RabbitMQClient client,
+      RabbitWebClient rabbitWebClient,
+      String dataBrokerVhost,
+      RabbitMQOptions config,
+      String vhostForAuditing) {
     this.rabbitClient = new RabbitClient(client, rabbitWebClient);
     this.dataBrokerVhost = dataBrokerVhost;
-    config.setVirtualHost(vhostForAuditing);
-    this.client = RabbitMQClient.create(vertx, config);
+    RabbitMQOptions options = new RabbitMQOptions(config);
+    options.setVirtualHost(vhostForAuditing);
+    this.client = RabbitMQClient.create(vertx, options);
     rabbitClient.populateExchangeCache(dataBrokerVhost, exchangeListCache);
   }
 
