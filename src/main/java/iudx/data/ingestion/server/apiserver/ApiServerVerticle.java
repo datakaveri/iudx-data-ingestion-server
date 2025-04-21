@@ -239,45 +239,63 @@ public class ApiServerVerticle extends AbstractVerticle {
    */
 
   private void handleEntitiesPostQuery(RoutingContext routingContext) {
-    LOGGER.debug("Info:handleEntitiesPostQuery method started.");
-    JsonObject requestJson = routingContext.getBodyAsJson();
-    LOGGER.debug("Info: request Json :: ;" + requestJson);
+    LOGGER.debug("Info: handleEntitiesPostQuery method started.");
 
-    // ValidatorsHandlersFactory validationFactory = new ValidatorsHandlersFactory();
+    JsonObject requestJson = routingContext.getBodyAsJson();
     String id = requestJson.getString(ID);
-    LOGGER.info("ID " + id);
-    /* Handles HTTP response from server to client */
     HttpServerResponse response = routingContext.response();
-    Future<JsonObject> catItem = catalogueService.getCatItem(id);
-    catItem.onComplete(catRsp -> {
+
+    catalogueService.getCatItem(id).onComplete(catRsp -> {
       if (catRsp.succeeded()) {
-        LOGGER.info("Success: ID Found in Catalouge.");
+        LOGGER.info("Success: ID Found in Catalogue.");
         JsonObject catItemJson = catRsp.result();
         requestJson.put("catItem", catItemJson);
+
+        String publishID = UUID.randomUUID().toString();
+        requestJson.put("publishID", publishID);
+
         databroker.publishData(requestJson, handler -> {
           if (handler.succeeded()) {
             LOGGER.info("Success: Ingestion Success");
+
             JsonObject authInfo = (JsonObject) routingContext.data().get("authInfo");
             authInfo.mergeIn(catItemJson);
+
             Future.future(fu -> updateAuditTable(authInfo));
+
             JsonObject responseJson = new JsonObject()
-                .put(JSON_TYPE, SUCCESS.getUrn())
-                .put(JSON_TITLE, SUCCESS.getMessage())
-                .put(RESULTS, new JsonArray().add(new JsonObject().put("detail",
-                    "message published successfully,ingestion success")));
-            handleSuccessResponse(response, 201, responseJson.toString());
-          } else if (handler.failed()) {
-            LOGGER.error("Fail: Ingestion Fail");
-            handleFailedResponse(response, 400, ResponseUrn.INVALID_PAYLOAD_FORMAT);
+                    .put(JSON_TYPE, SUCCESS.getUrn())
+                    .put(JSON_TITLE, SUCCESS.getMessage())
+                    .put(RESULTS, new JsonArray().add(
+                            new JsonObject()
+                                    .put("detail", "message published successfully, ingestion success")
+                                    .put("publishID", handler.result().getString("publishID"))
+                    ));
+
+            handleSuccessResponse(response, 201, responseJson.encode());
+
+          } else {
+            LOGGER.error("Fail: Ingestion Fail - {}", handler.cause().getMessage());
+
+            handleFailedResponse(
+                    response,
+                    HttpStatusCode.getByValue(400),
+                    ResponseUrn.INVALID_PAYLOAD_FORMAT,
+                    handler.cause().getMessage());
           }
         });
+
       } else {
-        LOGGER.error("Fail: ID does not exist. ");
-        handleFailedResponse(response, 404, ResponseUrn.RESOURCE_NOT_FOUND);
+        LOGGER.error("Fail: ID does not exist in Catalogue - {}", catRsp.cause().getMessage());
+
+        handleFailedResponse(
+                response,
+                HttpStatusCode.getByValue(404),
+                ResponseUrn.RESOURCE_NOT_FOUND,
+                "ID does not exist in catalogue");
       }
     });
   }
-
 
   public void handleIngestPostQuery(RoutingContext routingContext) {
     LOGGER.debug("Info:handleIngestPostQuery method started.");
@@ -376,6 +394,14 @@ public class ApiServerVerticle extends AbstractVerticle {
     HttpStatusCode status = HttpStatusCode.getByValue(statusCode);
     response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(status.getValue())
         .end(generateResponse(failureType, status).toString());
+  }
+
+  private void handleFailedResponse(HttpServerResponse response, HttpStatusCode statusCode,
+                                    ResponseUrn ur, String message) {
+    response.putHeader(CONTENT_TYPE, APPLICATION_JSON).setStatusCode(statusCode.getValue())
+            .end(   new JsonObject().put(JSON_TYPE, ur.getUrn())
+                    .put(JSON_TITLE, statusCode.getDescription())
+                    .put(JSON_DETAIL, message).encode());
   }
 
   private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {

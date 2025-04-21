@@ -417,7 +417,8 @@ components:
         title: success
         results: [
           {
-            "detail": "message published successfully,ingestion success"
+            "detail": "message published successfully,ingestion success",
+            "publishID": "6035ad25-9949-4a57-99b2-8ed2dc600200"
           }]
     standardBadRequestErrorResponse:
       title: standardBadRequestErrorResponse
