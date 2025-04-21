@@ -41,7 +41,7 @@ public class RabbitClient {
     String exchangeName = metaData.getString(EXCHANGE_NAME);
     String routingKey = metaData.getString(ROUTING_KEY);
     JsonObject response = new JsonObject();
-    LOGGER.debug("Sending message to exchange: {}, with routing key: {}", exchangeName, routingKey);
+    LOGGER.info("Sending message to exchange: {}, with routing key: {}", exchangeName, routingKey);
     client.basicPublish(exchangeName, routingKey, request.toBuffer(),
         asyncResult -> {
           if (asyncResult.succeeded()) {
@@ -132,7 +132,7 @@ public class RabbitClient {
               } else {
                 promise.fail(asyncResult.cause());
               }
-              LOGGER.debug("Info: Queue {} found for the request", queueName);
+              LOGGER.info("Info: Queue {} found for the request", queueName);
             } else {
               promise.fail(asyncResult.cause());
             }
