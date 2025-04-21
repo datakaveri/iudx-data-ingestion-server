@@ -3,7 +3,7 @@ package iudx.data.ingestion.server.apiserver.util;
 public enum HttpStatusCode {
 
   BAD_REQUEST(400, "Bad Request"),
-  RESOURCE_NOT_FOUND(404, "Resource not in Catalogue."),
+  RESOURCE_NOT_FOUND(404, "Resource not found"),
   INVALID_TOKEN(401, "Unauthorized");
 
 

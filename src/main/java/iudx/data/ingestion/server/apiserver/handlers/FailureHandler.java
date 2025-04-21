@@ -31,6 +31,7 @@ public class FailureHandler implements Handler<RoutingContext> {
 
       context.response().putHeader(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
           .setStatusCode(exception.getStatusCode()).end(response.toString());
+      return;
     }
 
     if (failure instanceof RuntimeException) {

@@ -41,7 +41,7 @@ public class RabbitClient {
     String exchangeName = metaData.getString(EXCHANGE_NAME);
     String routingKey = metaData.getString(ROUTING_KEY);
     JsonObject response = new JsonObject();
-    LOGGER.debug("Sending message to exchange: {}, with routing key: {}", exchangeName, routingKey);
+    LOGGER.info("Sending message to exchange: {}, with routing key: {}", exchangeName, routingKey);
     client.basicPublish(exchangeName, routingKey, request.toBuffer(),
         asyncResult -> {
           if (asyncResult.succeeded()) {
@@ -82,7 +82,7 @@ public class RabbitClient {
             JsonObject exchange = (JsonObject) json;
             String exchangeName = exchange.getString(NAME);
             if (!exchangeName.isEmpty()) {
-              LOGGER.debug("Adding {} exchange into cache", exchangeName);
+              LOGGER.info("Adding {} exchange into cache", exchangeName);
               exchangeListCache.put(exchangeName, true);
             }
           });
@@ -95,7 +95,7 @@ public class RabbitClient {
   }
 
   public Future<JsonObject> getExchange(String exchange, String virtualHost, Boolean doesExchangeExist) {
-    LOGGER.debug("INFO: Getting exchange: {} from virtualHost: {}", exchange, virtualHost);
+    LOGGER.info("INFO: Getting exchange: {} from virtualHost: {}", exchange, virtualHost);
     Promise<JsonObject> promise = Promise.promise();
     JsonObject response = new JsonObject();
     if (doesExchangeExist == null) {
@@ -132,7 +132,7 @@ public class RabbitClient {
               } else {
                 promise.fail(asyncResult.cause());
               }
-              LOGGER.debug("Info: Queue {} found for the request", queueName);
+              LOGGER.info("Info: Queue {} found for the request", queueName);
             } else {
               promise.fail(asyncResult.cause());
             }
