@@ -18,6 +18,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
@@ -51,7 +52,7 @@ public class DataBrokerServiceImpl implements DataBrokerService {
   }
 
   @Override
-  public DataBrokerService publishData(JsonObject request, Handler<AsyncResult<JsonObject>> handler) {
+  public DataBrokerService publishData(JsonArray request, JsonObject metadata, Handler<AsyncResult<JsonArray>> handler) {
     LOGGER.debug("Info: DataBrokerServiceImpl#publishData() started");
 
     if (request == null || request.isEmpty()) {
@@ -60,9 +61,7 @@ public class DataBrokerServiceImpl implements DataBrokerService {
     }
 
     try {
-      JsonObject metaData = Util.getMetadata(request.getJsonObject("catItem"));
-      request.remove("catItem");
-
+      JsonObject metaData = Util.getMetadata(metadata);
       String exchange = metaData.getString(EXCHANGE_NAME);
       Boolean doesExchangeExist = exchangeListCache.getIfPresent(exchange);
 
@@ -80,10 +79,9 @@ public class DataBrokerServiceImpl implements DataBrokerService {
                       })
               .onSuccess(
                       success -> {
-                        LOGGER.debug("Info: Message published successfully");
+                        LOGGER.debug("Info: Message published successfully" + success);
                         handler.handle(
-                                Future.succeededFuture(
-                                        new JsonObject().put("publishID", request.getString("publishID"))));
+                                Future.succeededFuture(success));
                       })
               .onFailure(
                       error -> {
@@ -99,39 +97,52 @@ public class DataBrokerServiceImpl implements DataBrokerService {
     return this;
   }
 
-
-
   @Override
-  public DataBrokerService ingestDataPost(JsonObject request,
-                                          Handler<AsyncResult<JsonObject>> handler) {
+  public DataBrokerService ingestDataPost(
+      JsonObject request, Handler<AsyncResult<JsonObject>> handler) {
     LOGGER.debug("Info : DataBrokerServiceImpl#ingestData() started");
     if (request != null && !request.isEmpty()) {
       JsonObject object = new JsonObject().put(ERROR, null);
       JsonObject metaData = Util.getMetadata(request.getJsonObject("catItem"));
       String exchangeName = metaData.getString(EXCHANGE_NAME);
       request.remove("catItem");
-      rabbitClient.getQueue(request, dataBrokerVhost).compose(ar -> {
-        LOGGER.debug("Info: Get queue successful");
-        object.mergeIn(metaData).put(QUEUE_NAME, ar.getString(QUEUE_NAME))
-            .put(ERROR, "Exchange creation failed");
-        return rabbitClient.createExchange(exchangeName, dataBrokerVhost);
-      }).compose(ar -> {
-        LOGGER.debug("Info: Exchange creation successful");
-        object.put(ERROR, "Queue binding failed");
-        exchangeListCache.put(exchangeName, true);
-        return rabbitClient.bindQueue(object, dataBrokerVhost);
-      }).onSuccess(ar -> {
-        LOGGER.debug("Info: Queue binding successful");
-        LOGGER.debug("Ingest data operation successful");
-        handler.handle(Future.succeededFuture(
-            new JsonObject().put(TYPE, SUCCESS).put(EXCHANGE_NAME, exchangeName)
-                .put(QUEUE_NAME, object.getString(QUEUE_NAME))
-                .put(ROUTING_KEY, object.getString(ROUTING_KEY))));
-      }).onFailure(ar -> {
-        LOGGER.error("Error: {}", object.getString(ERROR));
-        LOGGER.fatal("Error: Ingest data operation failed due to {}", ar.getCause().toString());
-        handler.handle(Future.failedFuture(ar.getCause()));
-      });
+      rabbitClient
+          .getQueue(request, dataBrokerVhost)
+          .compose(
+              ar -> {
+                LOGGER.debug("Info: Get queue successful");
+                object
+                    .mergeIn(metaData)
+                    .put(QUEUE_NAME, ar.getString(QUEUE_NAME))
+                    .put(ERROR, "Exchange creation failed");
+                return rabbitClient.createExchange(object, dataBrokerVhost);
+              })
+          .compose(
+              ar -> {
+                LOGGER.debug("Info: Exchange creation successful");
+                object.put(ERROR, "Queue binding failed");
+                exchangeListCache.put(exchangeName, true);
+                return rabbitClient.bindQueue(object, dataBrokerVhost);
+              })
+          .onSuccess(
+              ar -> {
+                LOGGER.debug("Info: Queue binding successful");
+                LOGGER.debug("Ingest data operation successful");
+                handler.handle(
+                    Future.succeededFuture(
+                        new JsonObject()
+                            .put(TYPE, SUCCESS)
+                            .put(EXCHANGE_NAME, exchangeName)
+                            .put(QUEUE_NAME, object.getString(QUEUE_NAME))
+                            .put(ROUTING_KEY, object.getString(ROUTING_KEY))));
+              })
+          .onFailure(
+              ar -> {
+                LOGGER.error("Error: {}", object.getString(ERROR));
+                LOGGER.fatal(
+                    "Error: Ingest data operation failed due to {}", ar.getCause().toString());
+                handler.handle(Future.failedFuture(ar.getCause()));
+              });
     }
     return this;
   }
