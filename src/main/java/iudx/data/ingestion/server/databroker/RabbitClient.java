@@ -36,20 +36,39 @@ public class RabbitClient {
     });
   }
 
-  public Future<JsonObject> publishMessage(JsonObject request, JsonObject metaData) {
-    Promise<JsonObject> promise = Promise.promise();
+  public Future<JsonArray> publishMessage(JsonArray request, JsonObject metaData) {
+    Promise<JsonArray> promise = Promise.promise();
     String exchangeName = metaData.getString(EXCHANGE_NAME);
     String routingKey = metaData.getString(ROUTING_KEY);
-    JsonObject response = new JsonObject();
-    LOGGER.info("Sending message to exchange: {}, with routing key: {}", exchangeName, routingKey);
-    client.basicPublish(exchangeName, routingKey, request.toBuffer(),
-        asyncResult -> {
-          if (asyncResult.succeeded()) {
-            promise.complete(response);
-          } else {
-            promise.fail(asyncResult.cause());
-          }
-        });
+    JsonArray publishIds = new JsonArray();
+
+    LOGGER.info("Sending each message separately to exchange: {}, with routing key: {}", exchangeName, routingKey);
+
+    // Iterate over each JSON object in the array
+    request.forEach(item -> {
+      if (item instanceof JsonObject) {
+        JsonObject jsonObject = (JsonObject) item;
+        String publishID = java.util.UUID.randomUUID().toString();
+        jsonObject.put("publishID", publishID);
+        publishIds.add(publishID);
+
+        // Publish each JSON object separately
+        client.basicPublish(
+                exchangeName,
+                routingKey,
+                jsonObject.toBuffer(),
+                asyncResult -> {
+                  if (asyncResult.succeeded()) {
+                    LOGGER.info("Message with publishID {} sent successfully", publishID);
+                  } else {
+                    LOGGER.error("Failed to send message with publishID {}", publishID, asyncResult.cause());
+                  }
+                });
+      }
+    });
+
+    // Complete the promise after all messages are processed
+    promise.complete(publishIds);
     return promise.future();
   }
 
@@ -213,37 +232,64 @@ public class RabbitClient {
     return promise.future();
   }
 
-  public Future<JsonObject> createExchange(String exchangeName, String virtualHost) {
+  public Future<JsonObject> createExchange(JsonObject request, String virtualHost) {
     Promise<JsonObject> promise = Promise.promise();
+    String exchangeName = request.getString(EXCHANGE_NAME);
+    String routingKey = request.getString(ROUTING_KEY);
+    LOGGER.info("exchangeName: "+exchangeName);
     String url = "/api/exchanges/" + virtualHost + "/" + Util.encodeString(exchangeName);
     JsonObject exchangeProperties = new JsonObject();
-    exchangeProperties
-        .put(TYPE, EXCHANGE_TYPE)
-        .put(AUTO_DELETE, false)
-        .put(DURABLE, true);
-    rabbitWebClient.requestAsync(REQUEST_PUT, url, exchangeProperties).onComplete(result -> {
-      if (result.succeeded()) {
-        JsonObject responseJson = new JsonObject();
-        HttpResponse<Buffer> response = result.result();
-        LOGGER.debug("Exchange creation response: {}", response.bodyAsJsonObject());
-        int statusCode = response.statusCode();
-        if (statusCode == HttpStatus.SC_CREATED) {
-          responseJson.put(EXCHANGE, exchangeName);
-        } else if (statusCode == HttpStatus.SC_NO_CONTENT) {
-          responseJson = Util.getResponseJson(HttpStatus.SC_CONFLICT, FAILURE, EXCHANGE_EXISTS);
-        } else if (statusCode == HttpStatus.SC_BAD_REQUEST) {
-          responseJson = Util.getResponseJson(statusCode, FAILURE,
-              EXCHANGE_EXISTS_WITH_DIFFERENT_PROPERTIES);
-        }
-        LOGGER.debug("Exchange Created Successfully with result: " + responseJson);
-        promise.complete(responseJson);
-      } else {
-        JsonObject errorJson = Util.getResponseJson(HttpStatus.SC_INTERNAL_SERVER_ERROR, ERROR,
-            EXCHANGE_CREATE_ERROR);
-        LOGGER.error("Failure in exchange creation due to: " + result.cause());
-        promise.fail(errorJson.toString());
-      }
-    });
+    exchangeProperties.put(TYPE, EXCHANGE_TYPE).put(AUTO_DELETE, false).put(DURABLE, true);
+
+    rabbitWebClient
+            .requestAsync(REQUEST_PUT, url, exchangeProperties)
+            .onComplete(result -> {
+              if (result.succeeded()) {
+                HttpResponse<Buffer> response = result.result();
+                JsonObject responseJson = new JsonObject();
+                int statusCode = response.statusCode();
+                LOGGER.debug("Exchange creation response: {}", response.bodyAsJsonObject());
+                if (statusCode == HttpStatus.SC_CREATED) {
+                  responseJson.put(EXCHANGE, exchangeName);
+
+                  // Validate exchangeName and routingKey
+                  if (exchangeName == null || routingKey == null) {
+                    LOGGER.error("Exchange name or routing key is null. Cannot proceed with binding.");
+                    promise.fail("Exchange name or routing key is null.");
+                    return;
+                  }
+
+                  JsonObject bindingRequest = new JsonObject()
+                          .put(QUEUE_NAME, DEFAULT_QUEUE)
+                          .put(EXCHANGE_NAME, exchangeName)
+                          .put(ROUTING_KEY, routingKey);
+
+                  bindQueue(bindingRequest, virtualHost)
+                          .onComplete(bindResult -> {
+                            if (bindResult.succeeded()) {
+                              LOGGER.debug("Binding request successful for Default Queue");
+                            } else {
+                              LOGGER.warn("Binding request failed for Default Queue: {}", bindResult.cause());
+                            }
+                          });
+
+                } else if (statusCode == HttpStatus.SC_NO_CONTENT) {
+                  responseJson = Util.getResponseJson(HttpStatus.SC_CONFLICT, FAILURE, EXCHANGE_EXISTS);
+                } else if (statusCode == HttpStatus.SC_BAD_REQUEST) {
+                  responseJson = Util.getResponseJson(
+                          statusCode, FAILURE, EXCHANGE_EXISTS_WITH_DIFFERENT_PROPERTIES);
+                }
+
+                LOGGER.debug("Exchange Created Successfully with result: {}", responseJson);
+                promise.complete(responseJson);
+              } else {
+                JsonObject errorJson = Util.getResponseJson(
+                        HttpStatus.SC_INTERNAL_SERVER_ERROR, ERROR, EXCHANGE_CREATE_ERROR);
+                LOGGER.error("Failure in exchange creation due to: {}", result.cause());
+                promise.fail(errorJson.toString());
+              }
+            });
+
     return promise.future();
   }
 
