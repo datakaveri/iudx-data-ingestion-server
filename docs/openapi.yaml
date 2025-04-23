@@ -173,22 +173,13 @@ paths:
             type: string
             maxLength: 512
             pattern: ^[a-zA-Z0-9\/\@\.]*$
-        - name: id
-          in: query
-          description: >
-            A <b> valid DX ID </b> of the resource.
-          required: true
-          schema:
-            type: string
-            format: uuid
-
 
       x-codeSamples:
         - lang: 'cURL'
           label: 'delete data ingestion stream'
           source: |
-            curl --location --request DELETE 'https://example-di.com/ngsi-ld/v1/ingestion?id=iisc.ac.in/89a36273d77dac4cf38114fca1bbe64392547f86/rs.iudx.io/surat-itms-realtime-information' \
-            --header 'token: <tokenValue>' \
+            curl --location --request DELETE 'https://example-di.com/ngsi-ld/v1/ingestion' \
+            --header 'token:  <tokenValue>' \
             --header 'Content-Type: application/json' \
             --data-raw '<payload>'
 
@@ -199,7 +190,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/postingestionrequest'
+              $ref: '#/components/schemas/deletetingestionrequest'
 
       responses:
         '200':
@@ -299,53 +290,45 @@ components:
   schemas:
     postentityrequest:
       title: postentityrequest
-      required:
-        - currentLevel
-        - referenceLevel
-        - measuredDistance
-        - id
-        - observationDateTime
-        - deviceInfo
-      type: object
-      properties:
-        currentLevel:
-          type: number
-          maxLength: 50
-        referenceLevel:
-          type: number
-          maxLength: 50
-        id:
-          type: string
-          format: uuid
-        measuredDistance:
-          type: number
-          maxLength: 50
-        observationDateTime:
-          type: string
-          maxLength: 50
-        deviceInfo:
-          type: array
-          items :
+      type: array
+      items:
+        type: object
+        required:
+          - id
+        properties:
+          currentLevel:
+            type: number
+            maxLength: 50
+          referenceLevel:
+            type: number
+            maxLength: 50
+          id:
             type: string
-            maxLength : 50
-
-          maxLength: 50
+            format: uuid
+          measuredDistance:
+            type: number
+            maxLength: 50
+          observationDateTime:
+            type: string
+            maxLength: 50
+          deviceInfo:
+            type: array
+            items:
+              type: string
+              maxLength: 50
+            maxLength: 50
       example:
-        {
-          "currentLevel": 100.16,
-          "referenceLevel": 15.9,
-          "measuredDistance": 14.74,
-          "id": "33b75d3e-bc65-40e5-97e4-ad4e99f60354",
-          "observationDateTime": "2020-09-20T18:30:00+05:30",
-          "deviceInfo": {
-            "deviceID": "FWR055"
-          }
-        }
+        - id: "33b75d3e-bc65-40e5-97e4-ad4e99f60354"
+          currentLevel: 100.16
+          referenceLevel: 15.9
+          measuredDistance: 14.74
+          observationDateTime: "2020-09-20T18:30:00+05:30"
+          deviceInfo:
+            - "deviceID: FWR055"
     postingestionrequest:
       title: postingestionrequest
       required:
         - id
-        - queue
       type: object
       properties:
         id:
@@ -358,6 +341,19 @@ components:
         {
           "id": "33b75d3e-bc65-40e5-97e4-ad4e99f60354",
           "queue": "test/ingestion/testing"
+        }
+    deletetingestionrequest:
+      title: deletetingestionrequest
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      example:
+        {
+          "id": "33b75d3e-bc65-40e5-97e4-ad4e99f60354"
         }
     standardCreateSuccessResponse:
       title: standardCreateSuccessResponse
@@ -417,7 +413,11 @@ components:
         title: success
         results: [
           {
-            "detail": "message published successfully,ingestion success"
+            "detail": "message published successfully,ingestion success",
+            "publishID": [
+              "e3cd8acf-80b3-4271-b509-194f714c75c8",
+              "bea1fca3-7233-4ce1-b2b1-5beae6016fac"
+            ]
           }]
     standardBadRequestErrorResponse:
       title: standardBadRequestErrorResponse
