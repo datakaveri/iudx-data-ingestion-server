@@ -7,6 +7,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -58,7 +59,7 @@ public interface DataBrokerService {
    * @return DataBrokerService which is a Service
    **/
   @Fluent
-  DataBrokerService publishData(JsonObject request, Handler<AsyncResult<JsonObject>> handler);
+  DataBrokerService publishData(JsonArray request, JsonObject metadata, Handler<AsyncResult<JsonArray>> handler);
 
   @Fluent
   DataBrokerService publishMessage(JsonObject body, String toExchange,

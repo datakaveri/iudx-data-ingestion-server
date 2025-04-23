@@ -35,11 +35,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext context) {
     request = context.request();
-    JsonObject requestJson = context.body().asJsonObject();
-
-    if (requestJson == null) {
-      requestJson = new JsonObject();
-    }
+    //JsonObject requestJson = context.body().asJsonObject();
 
     LOGGER.debug("Info : path " + request.path());
 
@@ -47,16 +43,17 @@ public class AuthHandler implements Handler<RoutingContext> {
     final String path = getNormalizedPath(request.path());
     final String method = context.request().method().toString();
 
+    String idFromPath = request.getParam("id"); // Extract `id` from the path parameter
     String paramId = getIdFromRequest();
     LOGGER.info("id from param : " + paramId);
-    String bodyId = getIdFromBody(context);
-    LOGGER.info("id from body : " + bodyId);
 
     String id;
-    if (paramId != null && !paramId.isBlank()) {
-      id = paramId;
+    if (idFromPath != null && !idFromPath.isBlank()) {
+      id = idFromPath; // Prioritize `id` from the path
+    } else if (paramId != null && !paramId.isBlank()) {
+      id = paramId; // Fallback to `paramId`
     } else {
-      id = bodyId;
+      id = getIdFromBody(context); // Fallback to `bodyId`
     }
     LOGGER.info("id : " + id);
 
@@ -64,7 +61,7 @@ public class AuthHandler implements Handler<RoutingContext> {
         new JsonObject().put(API_ENDPOINT, path).put(HEADER_TOKEN, token).put(API_METHOD, method)
             .put(ID, id);
 
-    authenticator.tokenIntrospect(requestJson, authInfo, authHandler -> {
+    authenticator.tokenIntrospect(new JsonObject(), authInfo, authHandler -> {
 
       if (authHandler.succeeded()) {
         authInfo.put(IID, authHandler.result().getValue(IID));
@@ -110,8 +107,29 @@ public class AuthHandler implements Handler<RoutingContext> {
   }
 
   private String getIdFromBody(RoutingContext context) {
-    JsonObject body = context.body().asJsonObject();
-    return body.getString(ID);
+    String id = null;
+    try {
+      if (context.body().asJsonObject() != null) {
+        JsonObject body = context.body().asJsonObject();
+        LOGGER.debug("Body is a JsonObject: {}", body);
+        id = body.getString(ID);
+      }
+    } catch (ClassCastException e) {
+      LOGGER.debug("Body is not a JsonObject, trying as JsonArray.");
+      try {
+        if (context.body().asJsonArray() != null) {
+          JsonObject body = context.body().asJsonArray().getJsonObject(0);
+          LOGGER.debug("Body is a JsonArray, first element: {}", body);
+          id = body.getString(ID);
+        }
+      } catch (Exception ex) {
+        LOGGER.error("Error while processing body as JsonArray: {}", ex.getMessage());
+      }
+    }
+    if (id == null) {
+      LOGGER.error("ID not found in the request body.");
+    }
+    return id;
   }
 
   /**

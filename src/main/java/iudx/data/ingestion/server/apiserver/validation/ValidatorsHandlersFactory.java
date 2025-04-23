@@ -32,7 +32,7 @@ public class ValidatorsHandlersFactory {
         validator = getIngestRequestValidations(body);
         break;
       case INGEST_DELETE:
-        validator = getIngestDeleteRequestValidations(parameters);
+        validator = getIngestDeleteRequestValidations(body);
         break;
       default:
         break;
@@ -41,9 +41,9 @@ public class ValidatorsHandlersFactory {
     return validator;
   }
 
-  private List<Validator> getIngestDeleteRequestValidations(MultiMap parameters) {
+  private List<Validator> getIngestDeleteRequestValidations(JsonObject body) {
     List<Validator> validators = new ArrayList<>();
-    validators.add(new IdTypeValidator(parameters.get(NGSILD_QUERY_ID), true));
+    validators.add(new IdTypeValidator(body.getString(NGSILD_QUERY_ID), true));
     return validators;
   }
 
