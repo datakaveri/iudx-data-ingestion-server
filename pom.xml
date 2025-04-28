@@ -6,29 +6,29 @@
     <name>iudx-data-ingestion-server</name>
 
     <properties>
-        <vertx.version>4.5.4</vertx.version>
-        <openjdk.version>11</openjdk.version>
+        <vertx.version>4.5.11</vertx.version>
+        <openjdk.version>21</openjdk.version>
         <hazelcast.version>4.0.2</hazelcast.version>
-        <micrometer.version>1.12.3</micrometer.version>
-        <curator.version>5.6.0</curator.version>
-        <apache-commons-lang3.version>3.14.0</apache-commons-lang3.version>
-        <junit-jupiter-engine.version>5.10.2</junit-jupiter-engine.version>
-        <apache-log4j2.version>2.23.0</apache-log4j2.version>
-        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
-        <checkstyle.version>10.13.0</checkstyle.version>
-        <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-        <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
-        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
-        <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
-        <maven-checkstyle-plugin-google.version>3.3.1</maven-checkstyle-plugin-google.version>
-        <maven-surefire-report-plugin.version>3.2.1</maven-surefire-report-plugin.version>
-        <junit-jupiter.params>5.10.2</junit-jupiter.params>
-        <junit-jupiter.version>5.10.2</junit-jupiter.version>
+        <micrometer.version>1.14.1</micrometer.version>
+        <curator.version>5.7.1</curator.version>
+        <apache-commons-lang3.version>3.17.0</apache-commons-lang3.version>
+        <junit-jupiter-engine.version>5.11.3</junit-jupiter-engine.version>
+        <apache-log4j2.version>2.24.1</apache-log4j2.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <checkstyle.version>10.20.0</checkstyle.version>
+        <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
+        <maven-javadoc-plugin.version>3.11.1</maven-javadoc-plugin.version>
+        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
+        <maven-checkstyle-plugin-google.version>3.6.0</maven-checkstyle-plugin-google.version>
+        <maven-surefire-report-plugin.version>3.5.2</maven-surefire-report-plugin.version>
+        <junit-jupiter.params>5.11.3</junit-jupiter.params>
+        <junit-jupiter.version>5.11.3</junit-jupiter.version>
         <lmax-disruptor.version>4.0.0</lmax-disruptor.version>
-        <jackson-core.version>2.16.1</jackson-core.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <jackson-core.version>2.18.1</jackson-core.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exec.mainClass>iudx.data.ingestion.server.deploy.Deployer</exec.mainClass>
         <exec.mainClassDev>iudx.data.ingestion.server.deploy.DeployerDev
@@ -59,13 +59,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.10.0</version>
+            <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.10.0</version>
+            <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -173,7 +173,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.16.1</version>
+            <version>1.17.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -202,6 +202,14 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <version>${micrometer.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus-simpleclient -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus-simpleclient</artifactId>
+            <version>1.14.1</version>
+        </dependency>
+
         <!-- Packages for Vertx Hazelcast cluster manager  -->
         <dependency>
             <groupId>io.vertx</groupId>
@@ -450,8 +458,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                  <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>21</source>
+                    <target>21</target>
                     <annotationProcessors>
                         <annotationProcessor>io.vertx.codegen.CodeGenProcessor</annotationProcessor>
                     </annotationProcessors>
