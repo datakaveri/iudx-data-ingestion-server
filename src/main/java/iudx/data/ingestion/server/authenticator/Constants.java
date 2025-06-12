@@ -22,6 +22,11 @@ public class Constants {
   public static final String JSON_IID = "iid";
   public static final String JSON_USERID = "userid";
 
+  public static final String JSON_ROLE = "role";
+  public static final String JSON_DRL = "drl";
+  public static final String JSON_DID = "did";
+  public static final String JSON_EXPIRY = "expiry";
+
   public static final List<String> ADMIN_ENDPOINTS = List.of("/ngsi-ld/v1/ingestion");
   public static final int JWT_LEEWAY_TIME = 30;
 }

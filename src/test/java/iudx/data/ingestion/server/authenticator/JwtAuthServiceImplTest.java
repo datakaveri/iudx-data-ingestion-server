@@ -109,8 +109,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("ri:foobar.iudx.io");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
@@ -136,8 +136,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("ri:foobar.iudx.io");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
@@ -314,8 +314,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
@@ -345,8 +345,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("api")));
@@ -376,8 +376,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1628713148L);
-    jwtData.setIat(1628669948L);
+    jwtData.setExp(1628713148);
+    jwtData.setIat(1628669948);
     jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
@@ -406,8 +406,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
@@ -437,8 +437,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rg:example.com/79e7bfa62fad6c765bac69154c2f24c94c95220a/resource-group");
     jwtData.setRole("provider");
     jwtData.setCons(new JsonObject().put("access", new JsonArray().add("ingestion")));
@@ -504,8 +504,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid(
         "rg:datakaveri.org/04a15c9960ffda227e9546f3f46e629e1fe4132b/rs.iudx.io/pune-env-flood/FWR053");
     jwtData.setRole("provider");
@@ -530,8 +530,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid(
         "rg:datakaveri.org/04a15c9960ffda227e9546f3f46e629e1fe4132b/rs.iudx.io/pune-env-flood/FWR053");
     jwtData.setRole("provider");
@@ -555,8 +555,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("abc.iudx.io1");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid(
         "rg:datakaveri.org/04a15c9960ffda227e9546f3f46e629e1fe4132b/rs.iudx.io/pune-env-flood/FWR053");
     jwtData.setRole("provider");
@@ -577,8 +577,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rs:rs.iudx.io");
     jwtData.setRole("admin");
     
@@ -592,8 +592,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rs:rs.iudx.io");
     jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
     jwtData.setRole("admin");
@@ -620,8 +620,8 @@ public class JwtAuthServiceImplTest {
     JwtData jwtData = new JwtData();
     jwtData.setIss("auth.test.com");
     jwtData.setAud("rs.iudx.io");
-    jwtData.setExp(1627408865L);
-    jwtData.setIat(1627408865L);
+    jwtData.setExp(1627408865);
+    jwtData.setIat(1627408865);
     jwtData.setIid("rs:rs.iudx.io");
     jwtData.setSub("844e251b-574b-46e6-9247-f76f1f70a637");
     jwtData.setRole("consumer");

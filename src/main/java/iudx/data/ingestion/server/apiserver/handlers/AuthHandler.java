@@ -2,6 +2,10 @@ package iudx.data.ingestion.server.apiserver.handlers;
 
 import static iudx.data.ingestion.server.apiserver.response.ResponseUrn.*;
 import static iudx.data.ingestion.server.apiserver.util.Constants.*;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_DID;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_DRL;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_EXPIRY;
+import static iudx.data.ingestion.server.authenticator.Constants.JSON_ROLE;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -66,6 +70,10 @@ public class AuthHandler implements Handler<RoutingContext> {
       if (authHandler.succeeded()) {
         authInfo.put(IID, authHandler.result().getValue(IID));
         authInfo.put(USER_ID, authHandler.result().getValue(USER_ID));
+        authInfo.put(JSON_EXPIRY, authHandler.result().getValue(JSON_EXPIRY));
+        authInfo.put(JSON_ROLE, authHandler.result().getValue(JSON_ROLE));
+        authInfo.put(JSON_DID, authHandler.result().getValue(JSON_DID));
+        authInfo.put(JSON_DRL, authHandler.result().getValue(JSON_DRL));
         context.data().put(AUTH_INFO, authInfo);
       } else {
         processAuthFailure(context, authHandler.cause().getMessage());

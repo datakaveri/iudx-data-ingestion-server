@@ -16,6 +16,7 @@ public class Util {
   public static JsonObject getMetadata(JsonObject request) {
     JsonObject result = new JsonObject();
     String exchangeName = getExchangeName(request);
+    result.put("ownerId", request.getString("ownerId"));
     result.put(EXCHANGE_NAME, exchangeName);
     if (request.containsKey("resourceGroup")) {
       result.put(ROUTING_KEY, getRoutingKey(exchangeName, getResourceName(request)));

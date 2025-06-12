@@ -14,9 +14,7 @@ JwtData jwtData=new JwtData();
     public void test(VertxTestContext vertxTestContext){
     assertNull(jwtData.getAccessToken());
     assertNull(jwtData.getIss());
-    assertEquals(0,jwtData.getExp());
     assertNull(jwtData.getCons());
-    assertEquals(0,jwtData.getIat());
     assertNotNull(jwtData.toString());
     assertNotNull(jwtData.toJson());
     vertxTestContext.completeNow();
