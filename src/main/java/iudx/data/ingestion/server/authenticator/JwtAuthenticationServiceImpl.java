@@ -22,7 +22,6 @@ import iudx.data.ingestion.server.authenticator.authorization.JwtAuthorization;
 import iudx.data.ingestion.server.authenticator.authorization.Method;
 import iudx.data.ingestion.server.authenticator.model.JwtData;
 import iudx.data.ingestion.server.common.Api;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,8 +33,11 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
   private static final Logger LOGGER = LogManager.getLogger(JwtAuthenticationServiceImpl.class);
   // resourceIdCache will contain info about resources available(& their ACL) in ingestion server.
-  public final Cache<String, String> resourceIdCache = CacheBuilder.newBuilder().maximumSize(1000)
-      .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES).build();
+  public final Cache<String, String> resourceIdCache =
+      CacheBuilder.newBuilder()
+          .maximumSize(1000)
+          .expireAfterAccess(CACHE_TIMEOUT_AMOUNT, TimeUnit.MINUTES)
+          .build();
   final JWTAuth jwtAuth;
   final WebClient catWebClient;
   final String host;
@@ -46,8 +48,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final String catBasePath;
   final String authServerHost;
 
-  public JwtAuthenticationServiceImpl(Vertx vertx, final JWTAuth jwtAuth, final JsonObject config,
-                                      Api apis) {
+  public JwtAuthenticationServiceImpl(
+      Vertx vertx, final JWTAuth jwtAuth, final JsonObject config, Api apis) {
     this.jwtAuth = jwtAuth;
     this.audience = config.getString(DI_AUDIENCE);
     host = config.getString(CAT_SERVER_HOST);
@@ -62,8 +64,8 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public AuthenticationService tokenIntrospect(JsonObject request, JsonObject authenticationInfo,
-                                               Handler<AsyncResult<JsonObject>> handler) {
+  public AuthenticationService tokenIntrospect(
+      JsonObject request, JsonObject authenticationInfo, Handler<AsyncResult<JsonObject>> handler) {
 
     String endPoint = authenticationInfo.getString(API_ENDPOINT);
     String id = authenticationInfo.getString(ID);
@@ -72,30 +74,37 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
     // stop moving forward if jwtDecode is a failure.
     ResultContainer result = new ResultContainer();
-    jwtDecodeFuture.compose(decodeHandler -> {
-      result.jwtData = decodeHandler;
-      return isValidAudienceValue(result.jwtData);
-    }).compose(audienceHandler -> {
-      LOGGER.debug("audience is valid " + apis.getIngestionEndpoint());
-      LOGGER.debug("endpoint :" + endPoint);
-      if (endPoint.equals(apis.getIngestionEndpoint()) && isValidAdminToken(result.jwtData)) {
-        //admin token + /ingestion POST, skip id check
-        return Future.succeededFuture(true);
-      } else {
-        //check id in token  
-        return isValidId(result.jwtData, id);
-      }
-    }).compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
-        .onComplete(completeHandler -> {
-          if (completeHandler.succeeded()) {
-            LOGGER.debug("Completion handler");
-            handler.handle(Future.succeededFuture(completeHandler.result()));
-          } else {
-            LOGGER.debug("Failure handler");
-            LOGGER.error("error : " + completeHandler.cause());
-            handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
-          }
-        });
+    jwtDecodeFuture
+        .compose(
+            decodeHandler -> {
+              result.jwtData = decodeHandler;
+              return isValidAudienceValue(result.jwtData);
+            })
+        .compose(
+            audienceHandler -> {
+              LOGGER.debug("audience is valid " + apis.getIngestionEndpoint());
+              LOGGER.debug("endpoint :" + endPoint);
+              if (endPoint.equals(apis.getIngestionEndpoint())
+                  && isValidAdminToken(result.jwtData)) {
+                // admin token + /ingestion POST, skip id check
+                return Future.succeededFuture(true);
+              } else {
+                // check id in token
+                return isValidId(result.jwtData, id);
+              }
+            })
+        .compose(validIdHandler -> validateAccess(result.jwtData, authenticationInfo))
+        .onComplete(
+            completeHandler -> {
+              if (completeHandler.succeeded()) {
+                LOGGER.debug("Completion handler");
+                handler.handle(Future.succeededFuture(completeHandler.result()));
+              } else {
+                LOGGER.debug("Failure handler");
+                LOGGER.error("error : " + completeHandler.cause());
+                handler.handle(Future.failedFuture(completeHandler.cause().getMessage()));
+              }
+            });
     return this;
   }
 
@@ -143,11 +152,11 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
       jsonResponse.put(JSON_DRL, jwtData.getDrl());
       jsonResponse.put(JSON_DID, jwtData.getDid());
       jsonResponse.put(
-              JSON_EXPIRY,
-              LocalDateTime.ofInstant(
-                              Instant.ofEpochSecond(Long.parseLong(jwtData.getExp().toString())),
-                              ZoneId.systemDefault())
-                      .toString());
+          JSON_EXPIRY,
+          LocalDateTime.ofInstant(
+                  Instant.ofEpochSecond(Long.parseLong(jwtData.getExp().toString())),
+                  ZoneId.systemDefault())
+              .toString());
       promise.complete(jsonResponse);
     } else {
       LOGGER.info("failed");
@@ -215,7 +224,5 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final class ResultContainer {
     JwtData jwtData;
     boolean isResourceExist;
-
   }
-
 }
